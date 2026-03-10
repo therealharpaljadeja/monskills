@@ -155,4 +155,4 @@ Addresses in token list repo are organized by token names in folders, there is a
 
 **CRITICAL**
 
-After looking at all the available options above, if you are still not able to find the address ask the user for it but do not at all hallucinate an address and Do not provide mainnet address when a testnet address was asked for.
+⚠️ After looking at all the available options above, if you are still not able to find the address ask the user for it but do not at all hallucinate an address and do not provide mainnet address when a testnet address was asked for.

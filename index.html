@@ -4,19 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MONSKILLS — Knowledge Skills for AI Agents</title>
-<meta name="description" content="Knowledge skills for AI agents.">
+<meta name="description" content="Skills for developing apps on Monad. Assists LLM with frontend, smart contract deployment, and deploying to production.">
 <meta property="og:title" content="MONSKILLS">
-<meta property="og:description" content="Knowledge skills for AI agents.">
+<meta property="og:description" content="Skills for developing apps on Monad. Assists LLM with frontend, smart contract deployment, and deploying to production.">
 <meta property="og:url" content="https://monskills.com">
 <meta property="og:type" content="website">
 <style>
 :root {
-  --bg: #0a0a1a;
+  --bg: #0E091C;
   --fg: #c8d0e8;
   --dim: #5f6a8a;
-  --accent: #6c9bff;
-  --border: #1a1a2e;
-  --hover: #10102a;
+  --accent: #6E54FF;
+  --border: #1e1530;
+  --hover: #150e28;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -136,31 +136,47 @@ h2 {
   font-size: 13px;
 }
 
-.how-to-methods {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 0.75rem;
+.how-to-tabs {
   margin-top: 1rem;
 }
-.how-to-method {
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 0.75rem 1rem;
-  background: var(--hover);
+.how-to-tab-nav {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
 }
-.how-to-method-title {
+.how-to-tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.5rem 1rem;
+  font-family: inherit;
   font-size: 13px;
   font-weight: 600;
-  color: var(--accent);
-  margin-bottom: 0.25rem;
+  color: var(--dim);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
 }
-.how-to-method-desc {
+.how-to-tab-btn:hover { color: var(--fg); }
+.how-to-tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.how-to-tab-panel {
+  display: none;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  background: var(--hover);
+}
+.how-to-tab-panel.active { display: block; }
+.how-to-tab-panel .tab-desc {
   font-size: 12px;
   color: var(--dim);
   margin-bottom: 0.5rem;
   line-height: 1.5;
 }
-.how-to-method code {
+.how-to-tab-panel code {
   display: block;
   font-family: monospace;
   font-size: 11px;
@@ -289,43 +305,45 @@ h2 {
  ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚══════╝
 </div>
 
-<p class="tagline">Knowledge skills for AI agents.<span class="cursor"></span></p>
+<p class="tagline">Skills for developing apps on Monad. Assists LLM with frontend, smart contract deployment, and deploying to production.<span class="cursor"></span></p>
 
 <button class="hero-btn copy-btn" data-url="https://monskills.com/SKILL.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> monskills.com/SKILL.md</button>
-
-<h2>Skills</h2>
-
-<div class="skill">
-  <div class="skill-name">Example</div>
-  <div class="skill-desc">A blank skill template to get started. Replace this with your first real skill.</div>
-  <button class="copy-btn" data-url="https://monskills.com/example/SKILL.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> monskills.com/example/SKILL.md</button>
-</div>
 
 <h2>How to Use</h2>
 <p class="section-text">Give your AI agent any skill URL. It fetches the page, reads the content, and instantly gains that knowledge. No install, no CLI, no package manager.</p>
 
-<div class="how-to-methods">
-  <div class="how-to-method">
-    <div class="how-to-method-title">Just tell your Agent</div>
-    <div class="how-to-method-desc">Give any agent a monskills URL and tell it to go learn.</div>
+<div class="how-to-tabs">
+  <div class="how-to-tab-nav">
+    <button class="how-to-tab-btn active" data-tab="agent">Just tell your Agent</button>
+    <button class="how-to-tab-btn" data-tab="curl">curl / fetch</button>
+    <button class="how-to-tab-btn" data-tab="plugin">Claude Code plugin</button>
+  </div>
+  <div class="how-to-tab-panel active" data-tab="agent">
+    <div class="tab-desc">Give any agent a monskills URL and tell it to go learn.</div>
     <code>"Read monskills.com before you start building"</code>
   </div>
-  <div class="how-to-method">
-    <div class="how-to-method-title">curl / fetch</div>
-    <div class="how-to-method-desc">For scripting, pipelines, and system prompts.</div>
+  <div class="how-to-tab-panel" data-tab="curl">
+    <div class="tab-desc">For scripting, pipelines, and system prompts.</div>
     <code>curl -s https://monskills.com/SKILL.md</code>
   </div>
-  <div class="how-to-method">
-    <div class="how-to-method-title">Claude Code plugin</div>
-    <div class="how-to-method-desc">Auto-loads knowledge on every coding task.</div>
-    <code>claude plugin install https://github.com/harpalsinh/monskills</code>
+  <div class="how-to-tab-panel" data-tab="plugin">
+    <div class="tab-desc">Auto-loads knowledge on every coding task.</div>
+    <code>claude plugin install https://github.com/therealharpaljadeja/monskills</code>
   </div>
 </div>
 
-<h2>Contributing</h2>
-<p class="section-text">Something wrong or missing? <a href="https://github.com/harpalsinh/monskills">Open a PR</a>.</p>
+<h2>Skills</h2>
 
-<div class="footer">MIT License · <a href="https://github.com/harpalsinh/monskills">GitHub Repo</a></div>
+<div class="skill">
+  <div class="skill-name">Addresses</div>
+  <div class="skill-desc">Smart contract addresses for well known protocols on Monad. Includes testnet and mainnet.</div>
+  <button class="copy-btn" data-url="https://monskills.com/addresses/SKILL.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> monskills.com/addresses/SKILL.md</button>
+</div>
+
+<h2>Contributing</h2>
+<p class="section-text">Something wrong or missing? <a href="https://github.com/therealharpaljadeja/monskills">Open a PR</a>.</p>
+
+<div class="footer">MIT License · <a href="https://github.com/therealharpaljadeja/monskills">GitHub Repo</a></div>
 
 <div id="modal" class="modal-backdrop" aria-hidden="true">
   <div class="modal-box" role="dialog" aria-modal="true">
@@ -341,6 +359,17 @@ h2 {
 </div>
 
 <script>
+// Tab switching
+document.querySelectorAll('.how-to-tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.how-to-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.how-to-tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelector('.how-to-tab-panel[data-tab="' + tab + '"]').classList.add('active');
+  });
+});
+
 // Minimal markdown to HTML renderer (no external deps)
 function renderMarkdown(md) {
   const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
