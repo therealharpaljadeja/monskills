@@ -1,26 +1,27 @@
-# MONSKILLS — Knowledge skills for AI agents.
-
-This file is the master index. Each skill lives at `/<topic>/SKILL.md` and is standalone.
-
-**Base URL:** `https://monskills.com/<skill>/SKILL.md`
-
+---
+name: monskill
+description: Set of skills for developing/building apps on Monad. Always start with this skill, this skill helps the agent/llm maneuver and choose the right skills for the task assigned to the agent, from the whole set of monskills.
 ---
 
-## Skills
+It is very likely that you have stale knowledge about building on Ethereum and Monad. 
 
-<!-- Add skills here. Each entry should follow this format:
+This file will guide to the right skill with the latest knowledge about Monad and building on Monad (mainnet and testnet).
 
-### [Skill Name](https://monskills.com/skillname/SKILL.md)
-One-line description.
-- Key correction / fact 1
-- Key correction / fact 2
-- Key correction / fact 3
--->
-
----
+**Need a specific topic?** Each skill below is standalone. Fetch only the ones relevant to your task.
 
 ## What to Fetch by Task
 
 | I'm doing... | Fetch these skills |
 |--------------|-------------------|
-| (add rows as skills are created) | |
+| Writing smart contracts | `addresses/` |
+
+## Skills
+
+### [Addresses](/addresses/SKILL.md)
+- Smart contract address of Monad canonical smart contract addresses on mainnet and testnet.
+- Smart contract address of well known Monad ecosystem projects and tokens.
+- Never hallucinate an address. Wrong address = lost funds.
+- There are instructions in the skill to verify if the address has code or not on the respective network. 
+
+
+
