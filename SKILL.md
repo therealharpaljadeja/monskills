@@ -14,6 +14,7 @@ This file will guide to the right skill with the latest knowledge about Monad an
 | I'm doing... | Fetch these skills |
 |--------------|-------------------|
 | Writing smart contracts | `addresses/` |
+| Agent wallet management, deploy smart contracts or perform onchain actions | `wallet/` |
 | Adding wallet connect to a frontend | `wallet-integration/` |
 
 ## Skills
@@ -23,6 +24,11 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - Smart contract address of well known Monad ecosystem projects and tokens.
 - Never hallucinate an address. Wrong address = lost funds.
 - There are instructions in the skill to verify if the address has code or not on the respective network.
+
+### [Wallet](/wallet/SKILL.md)
+- Agent wallet management and Safe multisig creation on Monad mainnet and testnet.
+- Deploy smart contracts and perform onchain actions via Safe multisig.
+- Propose transactions to Safe Transaction Service with EIP-712 signatures.
 
 ### [Wallet Integration](/wallet-integration/SKILL.md)
 - Integrate wallet connection into a Next.js app using RainbowKit with Wagmi and viem.
