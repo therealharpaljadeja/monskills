@@ -11,6 +11,7 @@
   "license": "MIT",
   "keywords": ["monad", "ethereum", "solidity", "web3", "blockchain", "dapp"],
   "skills": [
-    "./addresses"
+    "./addresses",
+    "./wallet"
   ]
 }
