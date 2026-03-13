@@ -20,7 +20,7 @@ This method requires no Vercel CLI installation and no authentication. It uses t
 First, download the deploy script and make it executable:
 
 ```bash
-curl -sO https://monskills.com/vercel-deploy/deploy.sh && chmod +x deploy.sh
+curl -sO https://monskills.vercel.app/vercel-deploy/deploy.sh && chmod +x deploy.sh
 ```
 
 Then run it from the project directory or pass the path as an argument:
