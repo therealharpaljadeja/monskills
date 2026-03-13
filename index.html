@@ -314,21 +314,26 @@ h2 {
 
 <div class="how-to-tabs">
   <div class="how-to-tab-nav">
-    <button class="how-to-tab-btn active" data-tab="agent">Just tell your Agent</button>
+    <button class="how-to-tab-btn active" data-tab="skills">npx skills</button>
+    <button class="how-to-tab-btn" data-tab="agent">Just tell your Agent</button>
+    <button class="how-to-tab-btn" data-tab="claude">Claude Code</button>
     <button class="how-to-tab-btn" data-tab="curl">curl / fetch</button>
-    <button class="how-to-tab-btn" data-tab="plugin">Claude Code plugin</button>
   </div>
-  <div class="how-to-tab-panel active" data-tab="agent">
-    <div class="tab-desc">Give any agent a monskills URL and tell it to go learn.</div>
-    <code>"Read monskills.vercel.app before you start building"</code>
+  <div class="how-to-tab-panel active" data-tab="skills">
+    <div class="tab-desc">Works with Claude Code, Cursor, Codex, Copilot, and 40+ other agents.</div>
+    <code>npx skills add therealharpaljadeja/monskills</code>
+  </div>
+  <div class="how-to-tab-panel" data-tab="agent">
+    <div class="tab-desc">Give any agent the monskills URL and a task. It fetches the skills and starts building.</div>
+    <code>"Read monskills.vercel.app and build me an NFT minting app on Monad"</code>
+  </div>
+  <div class="how-to-tab-panel" data-tab="claude">
+    <div class="tab-desc">Install as a Claude Code plugin. Auto-loads knowledge on every coding task.</div>
+    <code>/plugin marketplace add therealharpaljadeja/monskills</code>
   </div>
   <div class="how-to-tab-panel" data-tab="curl">
     <div class="tab-desc">For scripting, pipelines, and system prompts.</div>
     <code>curl -s https://monskills.vercel.app/SKILL.md</code>
-  </div>
-  <div class="how-to-tab-panel" data-tab="plugin">
-    <div class="tab-desc">Auto-loads knowledge on every coding task.</div>
-    <code>claude plugin install https://github.com/therealharpaljadeja/monskills</code>
   </div>
 </div>
 
