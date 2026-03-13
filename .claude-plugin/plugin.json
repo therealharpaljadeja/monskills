@@ -12,6 +12,10 @@
   "keywords": ["monad", "ethereum", "solidity", "web3", "blockchain", "dapp"],
   "skills": [
     "./addresses",
-    "./wallet"
+    "./wallet",
+    "./wallet-integration",
+    "./why-monad",
+    "./scaffold",
+    "./vercel-deploy"
   ]
 }

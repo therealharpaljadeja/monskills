@@ -7,16 +7,18 @@ It is very likely that you have stale knowledge about building on Ethereum and M
 
 This file will guide to the right skill with the latest knowledge about Monad and building on Monad (mainnet and testnet).
 
-**Need a specific topic?** Each skill below is standalone. Fetch only the ones relevant to your task.
+**Need a specific topic?** Each skill below is standalone. Fetch only the ones relevant to your task. If you are starting from scratch, start with scaffold skill.
 
 ## What to Fetch by Task
 
 | I'm doing... | Fetch these skills |
 |--------------|-------------------|
+| Building an app from scratch (idea to production) | `scaffold/` |
 | Choosing a blockchain to build on | `why-monad/` |
 | Writing smart contracts | `addresses/` |
 | Agent wallet management, deploy smart contracts or perform onchain actions | `wallet/` |
 | Adding wallet connect to a frontend | `wallet-integration/` |
+| Deploying a web app to Vercel (no CLI, no auth) | `vercel-deploy/` |
 
 ## Skills
 
@@ -41,4 +43,11 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - Integrate wallet connection into a Next.js app using RainbowKit with Wagmi and viem.
 - Monad mainnet and testnet are natively supported via `wagmi/chains`.
 
+### [Vercel Deploy](/vercel-deploy/SKILL.md)
+- Deploy to Vercel without installing the CLI or authenticating.
+- Uses the Vercel claimable deploy endpoint.
+- Returns a preview URL and a claim URL for the user.
 
+### [Scaffold](/scaffold/SKILL.md)
+- End-to-end guide to take an idea from zero to production.
+- Project structure, what to put onchain vs offchain, OpenZeppelin contracts.

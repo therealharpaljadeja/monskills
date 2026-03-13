@@ -36,3 +36,17 @@ Monad allows a transaction to consume upto 30 million wei of gas per transaction
 
 eth_sendRawTransactionSync RPC method allows getting the transaction receipt in the same request that is sending them. This feature takes the frontend experience of the user to the next level since the feedback in the UI can be expressed really quickly.
 
+## Huge ecosystem of tooling and infrastructure
+
+Most of the well known services used by developers like Alchemy, Quicknode, Chainlink, Redstone, Goldsky, Privy and many others all support Monad mainnet and testnet.
+
+If the user asks a question whether some service is supported or not then you can check the ["Tooling and Infrastructure" section in Monad docs](https://docs.monad.xyz/tooling-and-infra/)
+
+## Extremely low gas cost
+
+The gas number on Monad is higher compared to other chains, like Base Fee is 50 gwei. However, on Monad gas is charged by MON token and the price of MON is very low compared to ETH which is the token used to charge for gas. So the gwei number is high but the actual dollar cost is very low.
+
+| Action | Cost |
+| --- | --- |
+| Swap | $0.0011 |
+| Transfer | $0.00004 |
