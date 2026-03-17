@@ -1,10 +1,12 @@
 {
   "rewrites": [
+    { "source": "/SKILL.md", "destination": "/api/skill?name=monskill" },
+    { "source": "/:skill(scaffold|why-monad|addresses|wallet|wallet-integration|vercel-deploy)/SKILL.md", "destination": "/api/skill?name=:skill" },
     { "source": "/:skill(scaffold|why-monad|addresses|wallet|wallet-integration|vercel-deploy)", "destination": "/api/skill?name=:skill" }
   ],
   "functions": {
     "api/skill.js": {
-      "includeFiles": "*/SKILL.md"
+      "includeFiles": "{SKILL.md,*/SKILL.md}"
     }
   },
   "headers": [

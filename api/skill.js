@@ -3,6 +3,7 @@ import { join } from "path";
 import { getDb, hashIp } from "./_lib/db.js";
 
 const VALID_SKILLS = [
+  "monskill",
   "scaffold",
   "why-monad",
   "addresses",
@@ -20,7 +21,10 @@ export default async function handler(req, res) {
 
   let content;
   try {
-    content = readFileSync(join(process.cwd(), skill, "SKILL.md"), "utf-8");
+    const filePath = skill === "monskill"
+      ? join(process.cwd(), "SKILL.md")
+      : join(process.cwd(), skill, "SKILL.md");
+    content = readFileSync(filePath, "utf-8");
   } catch {
     return res.status(404).send("Skill not found");
   }
