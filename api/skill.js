@@ -39,9 +39,11 @@ export default async function handler(req, res) {
       "unknown";
     const ipHash = hashIp(rawIp);
 
-    sql`INSERT INTO skill_downloads (skill_name, ip_hash) VALUES (${skill}, ${ipHash})`.catch(
-      () => {}
-    );
+    try {
+      await sql`INSERT INTO skill_downloads (skill_name, ip_hash) VALUES (${skill}, ${ipHash})`;
+    } catch (e) {
+      console.error("Failed to log download:", e);
+    }
   }
 
   res.setHeader("Content-Type", "text/markdown; charset=utf-8");
