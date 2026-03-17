@@ -1,8 +1,8 @@
 {
-  "rewrites": [
-    { "source": "/SKILL.md", "destination": "/api/skill?name=monskill" },
-    { "source": "/:skill(scaffold|why-monad|addresses|wallet|wallet-integration|vercel-deploy)/SKILL.md", "destination": "/api/skill?name=:skill" },
-    { "source": "/:skill(scaffold|why-monad|addresses|wallet|wallet-integration|vercel-deploy)", "destination": "/api/skill?name=:skill" }
+  "routes": [
+    { "src": "/SKILL.md", "dest": "/api/skill?name=monskill" },
+    { "src": "/(scaffold|why-monad|addresses|wallet|wallet-integration|vercel-deploy)/SKILL.md", "dest": "/api/skill?name=$1" },
+    { "src": "/(scaffold|why-monad|addresses|wallet|wallet-integration|vercel-deploy)", "dest": "/api/skill?name=$1" }
   ],
   "functions": {
     "api/skill.js": {
