@@ -10,36 +10,36 @@ This document defines the trust boundaries in the MONSKILLS system, identifying 
  UNTRUSTED                    BOUNDARY                     TRUSTED
  ─────────                    ────────                     ───────
 
- ┌──────────┐                                       ┌──────────────┐
+ ┌───────────┐                                       ┌───────────────┐
  │ Internet  │                                       │ Neon DB       │
  │           │                                       │               │
  │ AI agents │──── HTTPS ────┐                       │ Only accessed │
  │ Browsers  │               │                       │ via DATABASE_ │
  │ curl      │               ▼                       │ URL (TLS)     │
- └──────────┘        ┌──────────────┐                └──────┬───────┘
+ └───────────┘       ┌───────────────┐               └───────┬───────┘
                      │ Vercel Edge   │                       │
                      │               │                       │
                      │ Routes config │                       │
                      │ (pattern      │                       │
                      │  matching)    │                       │
-                     └──────┬───────┘                       │
-                            │                                │
-                            ▼                                │
-                     ┌──────────────┐                       │
-                     │ api/skill.js  │───── SQL/HTTPS ──────┘
+                     └───────┬───────┘                       │
+                             │                               │
+                             ▼                               │
+                     ┌───────────────┐                       │
+                     │ api/skill.js  │───── SQL/HTTPS ───────┘
                      │               │
                      │ - Validates   │
                      │   skill name  │
                      │ - Hashes IP   │
                      │ - Reads file  │
-                     └──────────────┘
+                     └───────────────┘
                             │
-                     ┌──────────────┐
+                     ┌───────────────┐
                      │ api/stats.js  │
                      │               │
                      │ - Validates   │
                      │   secret key  │
-                     └──────────────┘
+                     └───────────────┘
 ```
 
 ## Trust Boundaries

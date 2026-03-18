@@ -9,27 +9,27 @@ MONSKILLS is a static website with a thin serverless tracking layer. Skills (mar
 ### Level 1 — System Context
 
 ```
-┌─────────────┐       HTTPS        ┌──────────────────┐
-│  AI Agent    │ ──────────────────>│    MONSKILLS      │
-│  (Claude,    │  GET /scaffold     │  (Vercel)         │
-│   Cursor,    │<──────────────────│                    │
-│   Codex)     │  text/markdown     │                    │
-└─────────────┘                    └────────┬───────────┘
-                                            │
-┌─────────────┐       HTTPS                │
-│  Developer   │ ──────────────────>        │
-│  (Browser)   │  GET /                     │
-│              │<──────────────────         │
-└─────────────┘  text/html                  │
-                                            │ SQL over HTTPS
-┌─────────────┐       HTTPS                │
-│  Maintainer  │ ──────────────────>        │
-│              │  GET /api/stats?key=...    │
-│              │<──────────────────         ▼
-└─────────────┘  application/json   ┌──────────────────┐
-                                    │  Neon PostgreSQL   │
-                                    │  (Serverless)      │
-                                    └──────────────────┘
+┌─────────────┐       HTTPS          ┌──────────────────┐
+│  AI Agent   │ ──────────────────>  │    MONSKILLS     │
+│  (Claude,   │  GET /scaffold       │  (Vercel)        │
+│   Cursor,   │<──────────────────   │                  │
+│   Codex)    │  text/markdown       │                  │
+└─────────────┘                      └────────┬─────────┘
+                                              │
+┌─────────────┐        HTTPS                  │
+│  Developer  │   ──────────────────>         │
+│  (Browser)  │        GET /                  │
+│             │  <──────────────────          │
+└─────────────┘      text/html                │
+                                              │ SQL over HTTPS
+┌─────────────┐        HTTPS                  │
+│  Maintainer │   ──────────────────>         │
+│             │    GET /api/stats?key=...     │
+│             │  <──────────────────          ▼
+└─────────────┘    application/json    ┌──────────────────┐
+                                       │  Neon PostgreSQL │
+                                       │  (Serverless)    │
+                                       └──────────────────┘
 ```
 
 **Actors:**
@@ -43,42 +43,43 @@ MONSKILLS is a static website with a thin serverless tracking layer. Skills (mar
 ### Level 2 — Container Diagram
 
 ```
-┌─────────────────────────────────────────────────────────┐
+┌───────────────────────────────────────────────────────────┐
 │                     MONSKILLS (Vercel)                    │
-│                                                          │
-│  ┌──────────────┐    ┌───────────────────────────────┐  │
-│  │  Landing Page │    │   Vercel Serverless Functions  │  │
-│  │  (index.html) │    │                               │  │
-│  │               │    │  ┌─────────────┐              │  │
-│  │  Static HTML  │    │  │ /api/skill  │──┐           │  │
-│  │  + Vanilla JS │    │  │             │  │           │  │
-│  │               │    │  └─────────────┘  │           │  │
-│  │  Renders MD   │    │                   │ SQL/HTTPS │  │
-│  │  in modal     │    │  ┌─────────────┐  │           │  │
-│  └──────────────┘    │  │ /api/stats  │──┤           │  │
-│                       │  │  (protected)│  │           │  │
-│  ┌──────────────┐    │  └─────────────┘  │           │  │
-│  │ Skill Files   │    │                   │           │  │
-│  │ (*.SKILL.md)  │◄───│  ┌─────────────┐  │           │  │
-│  │               │    │  │ _lib/db.js  │  │           │  │
-│  │ scaffold/     │    │  │ (hash + db) │  │           │  │
-│  │ wallet/       │    │  └─────────────┘  │           │  │
-│  │ addresses/    │    │                   │           │  │
-│  │ ...           │    └───────────────────┤           │  │
-│  └──────────────┘                        │           │  │
-│                                           │           │  │
-└───────────────────────────────────────────┼───────────┘  │
-                                            │              │
-                                            ▼              │
-                                    ┌──────────────────┐   │
-                                    │ Neon PostgreSQL   │   │
-                                    │                   │   │
-                                    │ skill_downloads   │   │
-                                    │ ├─ id (serial)    │   │
-                                    │ ├─ skill_name     │   │
-                                    │ ├─ ip_hash        │   │
-                                    │ └─ downloaded_at  │   │
-                                    └──────────────────┘   │
+│                                                           │
+│  ┌───────────────┐     ┌───────────────────────────────┐  │
+│  │  Landing Page │     │   Vercel Serverless Functions │  │
+│  │  (index.html) │     │                               │  │
+│  │               │     │  ┌─────────────┐              │  │
+│  │  Static HTML  │     │  │ /api/skill  │──┐           │  │
+│  │  + Vanilla JS │     │  │             │  │           │  │
+│  │               │     │  └─────────────┘  │           │  │
+│  │  Renders MD   │     │                   │ SQL/HTTPS │  │
+│  │  in modal     │     │  ┌─────────────┐  │           │  │
+│  └───────────────┘     │  │ /api/stats  │──┤           │  │
+│                        │  │  (protected)│  │           │  │
+│  ┌──────────────┐      │  └─────────────┘  │           │  │
+│  │ Skill Files  │      │                   │           │  │
+│  │ (*.SKILL.md) │◄───  │  ┌─────────────┐  │           │  │
+│  │              │      │  │ _lib/db.js  │  │           │  │
+│  │ scaffold/    │      │  │ (hash + db) │  │           │  │
+│  │ wallet/      │      │  └─────────────┘  │           │  │
+│  │ addresses/   │      │                   │           │  │
+│  │ ...          │      └───────────────────┤           │  │
+│  └──────────────┘                         │            │  │
+│                                           │            │  │
+└───────────────────────────────────────────┼────────────┘  │
+                                            │               │
+                                            ▼               │
+                                    ┌──────────────────┐    │
+                                    │ Neon PostgreSQL  │    │
+                                    │                  │    │
+                                    │ skill_downloads  │    │
+                                    │ ├─ id (serial)   │    │
+                                    │ ├─ skill_name    │    │
+                                    │ ├─ ip_hash       │    │
+                                    │ └─ downloaded_at │    │
+                                    └──────────────────┘    │
+└───────────────────────────────────────────────────────────┘
 ```
 
 ### Level 3 — Component: Skill Serving Flow
@@ -87,13 +88,13 @@ MONSKILLS is a static website with a thin serverless tracking layer. Skills (mar
    Request: GET /scaffold
           │
           ▼
-  ┌───────────────┐
+  ┌────────────────┐
   │ Vercel Routes  │  vercel.json routes config
   │ (pattern match)│
-  └───────┬───────┘
+  └───────┬────────┘
           │  matched → /api/skill?name=scaffold
           ▼
-  ┌───────────────┐
+  ┌────────────────┐
   │ api/skill.js   │
   │                │
   │ 1. Validate    │  Check skill name against allowlist
@@ -109,7 +110,7 @@ MONSKILLS is a static website with a thin serverless tracking layer. Skills (mar
   │                │
   │ 5. Return      │
   │    markdown    │
-  └───────────────┘
+  └────────────────┘
           │
           ▼
    Response: 200 text/markdown
