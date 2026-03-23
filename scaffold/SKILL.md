@@ -8,6 +8,7 @@ description: End to end guide to take an idea build an app to production, if you
 [ ] - Plan architecture and folder structure
 [ ] - Decide which components of the app will be onchain
 [ ] - Scaffold the project
+[ ] - Initialize git repo (`git init && git add -A && git commit -m "initial commit"`)
 [ ] - Don't build exisiting contracts from scratch, use Openzeppelin contracts where ever possible
 [ ] - Build smart contracts
 [ ] - Build frontend use Wagmi, Next.js and Shadcn if user has no preferences
@@ -66,6 +67,8 @@ For wallet connection use Rainbowkit, there is a skill file for the same named w
 Monad supports eth_sendRawTransactionSync RPC method and useSendTransactionSync uses that RPC method to send transaction and get the receipt in the same function call, that way the UI can be much more fast.
 
 ## Deploy to Vercel
+
+Before deploying, ensure all files are committed to git (`git add -A && git commit`). The deploy script archives only git-tracked files, so uncommitted or untracked files will not be included in the deployment.
 
 Fetch the `vercel-deploy/` skill for deployment instructions. It deploys to Vercel without requiring CLI installation or authentication.
 
