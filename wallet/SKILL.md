@@ -11,9 +11,10 @@ For instructions on how to create and use a Safe multisig check out the SAFE_WAL
 
 **Security rules:**
 - NEVER ask for user's private key (critical violation)
-- Use the agent wallet (~/.monskills/wallet.json)
+- Use the agent wallet (encrypted keystore at `~/.monskills/keystore`)
+- NEVER export or store private keys in plaintext
 
-Check if the agent has generated a wallet before. If it is created there will be a wallet.json file ~/.monskills folder with the private key and the address.
+Check if the agent has generated a wallet before. If the keystore directory `~/.monskills/keystore` exists and contains a keystore file, the wallet already exists.
 
 If not found then create a wallet.
 
@@ -31,19 +32,34 @@ foundryup --version
 
 The instructions to install Foundry can be found here: https://www.getfoundry.sh/introduction/installation
 
-**CRITICAL for agents:** If you generate a wallet for the user, you MUST persist it for future use.
-
 ## Generating a new wallet
 
-1. Create wallet
+1. Create the keystore directory and generate an encrypted keystore:
 
 ```bash
-cast wallet new
+mkdir -p ~/.monskills/keystore && cast wallet new ~/.monskills/keystore --unsafe-password ""
 ```
 
-2. **Immediately save** the address and private key in wallet.json file in ~/.monskills folder.
-3. Inform the user where the wallet details are stored.
+This creates an encrypted keystore file in `~/.monskills/keystore/`. The private key is never stored in plaintext.
+
+2. Note the address from the output. To retrieve the address later:
+
+```bash
+cast wallet list --dir ~/.monskills/keystore
+```
+
+3. Inform the user where the wallet keystore is stored (`~/.monskills/keystore/`).
 4. Fund the wallet on Monad testnet via faucet before deployment.
+
+## Decrypting the private key for scripts
+
+When a script needs the private key (e.g. as an env var), decrypt it on-the-fly:
+
+```bash
+cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore <KEYSTORE_FILENAME> --unsafe-password ""
+```
+
+Replace `<KEYSTORE_FILENAME>` with the filename of the keystore file in `~/.monskills/keystore/` (without the directory path).
 
 **Why this matters:** Users need access to their wallet to:
 - Deploy additional contracts
