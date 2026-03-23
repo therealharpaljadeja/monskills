@@ -90,7 +90,7 @@ If multisig details are not found then create a multisig.
 
 **Correct flow:**
 
-1. Make sure the agent has a wallet (check for details in wallet.json file in ~/.monskills folder).
+1. Make sure the agent has a wallet (check for encrypted keystore in `~/.monskills/keystore/`).
 2. Make sure Foundry toolkit is installed (foundryup --version)
 3. Ask the user for 2 wallet address to be signers on the multisig.
 4. Deploy Safe with DeploySafeCREATE2.sol (check for the script in the same folder)
@@ -111,9 +111,10 @@ while [ "$(cast balance $AGENT_WALLET_ADDRESS --rpc-url https://testnet-rpc.mona
 done
 
 # Deploy Safe with CREATE2 (standard SafeProxyFactory)
+# Decrypt private key on-the-fly from encrypted keystore
 OWNER_1=$OWNER_1 OWNER_2=$OWNER_2 OWNER_3=$CLAUDE_ADDRESS \
   forge script DeploySafeCREATE2.sol:DeploySafeCREATE2 \
-    --private-key private-key-from-wallet-json
+    --private-key $(cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore $KEYSTORE_FILENAME --unsafe-password "") \
     --rpc-url https://testnet-rpc.monad.xyz \
     --broadcast
 
@@ -128,9 +129,10 @@ echo "🌐 https://app.safe.global/home?safe=monad-testnet:$SAFE_ADDRESS"
 cast balance $AGENT_WALLET_ADDRESS --rpc-url https://rpc.monad.xyz
 
 # Deploy Safe with CREATE2 (standard SafeProxyFactory)
+# Decrypt private key on-the-fly from encrypted keystore
 OWNER_1=$OWNER_1 OWNER_2=$OWNER_2 OWNER_3=$CLAUDE_ADDRESS \
   forge script DeploySafeCREATE2.sol:DeploySafeCREATE2 \
-    --private-key private-key-from-wallet-json
+    --private-key $(cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore $KEYSTORE_FILENAME --unsafe-password "") \
     --rpc-url https://rpc.monad.xyz \
     --broadcast
 
@@ -213,9 +215,10 @@ npm install --no-save viem
 # Check for propose.mjs file in the same utils folder.
 
 # Run proposal — set CHAIN_ID to 143 (mainnet) or 10143 (testnet)
+# Decrypt private key on-the-fly from encrypted keystore
 CHAIN_ID=$CHAIN_ID \
   SAFE_ADDRESS=$SAFE_ADDRESS \
-  PRIVATE_KEY=$PRIVATE_KEY \
+  PRIVATE_KEY=$(cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore $KEYSTORE_FILENAME --unsafe-password "") \
   DEPLOYMENT_BYTECODE=$(jq -r '.transactions[0].transaction.input' \
     broadcast/Deploy.s.sol/$CHAIN_ID/dry-run/run-latest.json) \
   node propose.mjs

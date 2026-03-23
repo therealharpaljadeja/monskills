@@ -68,12 +68,12 @@ elif [ -d "$INPUT_PATH" ]; then
   FRAMEWORK=$(detect_framework "$PROJECT_PATH/package.json")
 
   echo "Packaging project..." >&2
-  tar -czf "$TARBALL" \
-    --exclude='node_modules' \
-    --exclude='.git' \
-    --exclude='.env' \
-    --exclude='.env.*' \
-    -C "$PROJECT_PATH" .
+  # Use git ls-files to archive only source-controlled files.
+  # This is safer than a denylist (--exclude) because it ensures build artifacts,
+  # secrets, and other untracked files are never sent to Vercel — matching how
+  # Vercel's standard build flow works (it only sees your git repo).
+  # Unlike `git archive`, `git ls-files` includes uncommitted changes to tracked files.
+  git -C "$PROJECT_PATH" ls-files -z | tar -czf "$TARBALL" --null -T - -C "$PROJECT_PATH"
 else
   echo "Error: Input must be a directory or a .tgz file" >&2
   exit 1
