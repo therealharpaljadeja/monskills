@@ -15,6 +15,18 @@ This method requires no Vercel CLI installation and no authentication. It uses t
 4. Poll the preview URL until the build completes
 5. Return preview and claim URLs to the user
 
+### Before deploying
+
+The project **must** have a `vercel.json` at its root. Without it, Vercel will not detect the framework and the build will fail with `No Output Directory named "public" found`.
+
+Create `vercel.json` in the project root:
+
+```json
+{
+  "framework": "nextjs"
+}
+```
+
 ### Usage
 
 First, download the deploy script and make it executable:
