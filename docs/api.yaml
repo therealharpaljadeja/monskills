@@ -8,7 +8,7 @@ info:
     url: https://github.com/therealharpaljadeja/monskills
 
 servers:
-  - url: https://monskills.vercel.app
+  - url: https://skills.devnads.com
     description: Production
 
 paths:

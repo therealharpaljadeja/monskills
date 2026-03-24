@@ -2,7 +2,7 @@
 
 Knowledge skills for AI agents building on Monad. Each skill is a standalone markdown file that agents fetch and read into their context.
 
-**Live site:** https://monskills.vercel.app
+**Live site:** https://skills.devnads.com
 
 ## Skills
 
