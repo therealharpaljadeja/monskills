@@ -317,21 +317,22 @@ h2 {
   const maxLen = Math.max(...lines.map(l => l.length));
   const padded = lines.map(l => l.padEnd(maxLen));
 
-  // Wrap each non-space character in a span
-  let html = '';
+  // Wrap each non-space character in a span using safe DOM APIs
+  ascii.textContent = '';
   for (let row = 0; row < padded.length; row++) {
     for (let col = 0; col < maxLen; col++) {
       const ch = padded[row][col] || ' ';
       if (ch === ' ') {
-        html += ' ';
+        ascii.appendChild(document.createTextNode(' '));
       } else {
-        const safe = ch === '<' ? '&lt;' : ch === '>' ? '&gt;' : ch === '&' ? '&amp;' : ch;
-        html += '<span class="ch">' + safe + '</span>';
+        const span = document.createElement('span');
+        span.className = 'ch';
+        span.textContent = ch;
+        ascii.appendChild(span);
       }
     }
-    if (row < padded.length - 1) html += '\n';
+    if (row < padded.length - 1) ascii.appendChild(document.createTextNode('\n'));
   }
-  ascii.innerHTML = html;
 
   const chars = ascii.querySelectorAll('.ch');
   gsap.set(chars, { autoAlpha: 0 });
