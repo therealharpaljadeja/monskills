@@ -18,37 +18,49 @@
 :root {
   --bg: #0E091C;
   --fg: #c8d0e8;
-  --dim: #5f6a8a;
-  --accent: #6E54FF;
-  --border: #1e1530;
+  --dim: #8490b0;
+  --accent: #8B75FF;
+  --border: #2d2245;
   --hover: #150e28;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
 body {
   background: var(--bg);
   color: var(--fg);
   font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Menlo', 'Consolas', monospace;
   font-size: 14px;
   line-height: 1.6;
-  max-width: 860px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  max-width: 640px;
   margin: 0 auto;
-  padding: 3rem 1.5rem;
+  padding: 2rem 1.5rem 1rem;
 }
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 .ascii {
   color: var(--accent);
-  font-size: 16px;
+  font-size: 12px;
   line-height: 1.15;
   white-space: pre;
-  margin-bottom: 0.75rem;
-  letter-spacing: 0.5px;
+  margin-bottom: 1rem;
+  letter-spacing: 0.3px;
+}
+.ascii .ch {
+  display: inline;
 }
 
 .tagline {
   color: var(--fg);
-  font-size: 16px;
+  font-size: 14px;
   margin-bottom: 1.5rem;
 }
 .cursor {
@@ -62,90 +74,23 @@ a:hover { text-decoration: underline; }
 }
 @keyframes blink { 50% { opacity: 0; } }
 
-.hero-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: transparent;
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  font-family: inherit;
-  font-size: 15px;
-  padding: 0.5rem 1rem;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: background 0.15s;
-  margin-bottom: 2.5rem;
-}
-.hero-btn:hover { background: var(--hover); }
-
 h2 {
   color: var(--accent);
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 3px;
-  margin: 2.5rem 0 1.25rem 0;
-  padding-bottom: 0.4rem;
+  margin: 1.25rem 0 0.75rem 0;
+  padding-bottom: 0.3rem;
   border-bottom: 1px solid var(--border);
   font-weight: 400;
+  width: 100%;
 }
 
-.skill {
-  margin-bottom: 1.25rem;
-  padding: 0.6rem 0.85rem;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: background 0.1s;
-}
-.skill:hover { background: var(--hover); }
-.skill-name {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--fg);
-}
-.skill-desc {
-  color: var(--dim);
-  font-size: 13px;
-  margin: 0.3rem 0 0.5rem 0;
-}
-.copy-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--accent);
-  font-family: inherit;
-  font-size: 12px;
-  padding: 0.3rem 0.6rem;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
-}
-.copy-btn:hover {
-  border-color: var(--accent);
-  background: rgba(108, 155, 255, 0.05);
-}
-.copy-btn.copied {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.copy-btn svg, .hero-btn svg {
-  width: 13px;
-  height: 13px;
-  flex-shrink: 0;
-}
-
-.section-text {
-  color: var(--dim);
-  font-size: 13px;
-}
-
-.how-to-tabs {
-  margin-top: 1rem;
-}
+/* How to use — compact tabs */
+.how-to-tabs { margin-top: 0; width: 100%; margin-bottom: 1.5rem; }
 .how-to-tab-nav {
   display: flex;
+  justify-content: center;
   gap: 0;
   border-bottom: 1px solid var(--border);
 }
@@ -153,9 +98,9 @@ h2 {
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
-  padding: 0.5rem 1rem;
+  padding: 0.35rem 0.75rem;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--dim);
   cursor: pointer;
@@ -168,124 +113,49 @@ h2 {
 }
 .how-to-tab-panel {
   display: none;
-  padding: 1rem;
-  border: 1px solid var(--border);
-  border-top: none;
-  border-radius: 0 0 4px 4px;
-  background: var(--hover);
 }
 .how-to-tab-panel.active { display: block; }
 .how-to-tab-panel .tab-desc {
   font-size: 12px;
   color: var(--dim);
-  margin-bottom: 0.5rem;
-  line-height: 1.5;
+  margin-bottom: 0.35rem;
+  line-height: 1.4;
 }
 .how-to-tab-panel code {
   display: block;
-  font-family: monospace;
-  font-size: 11px;
+  font-family: inherit;
+  font-size: 15px;
   color: var(--fg);
-  background: var(--bg);
+  background: var(--hover);
   border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 0.4rem 0.6rem;
-  word-break: break-all;
+  border-radius: 4px;
+  padding: 0.6rem 1rem;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.how-to-tab-panel code:hover {
+  border-color: var(--accent);
+  background: rgba(139, 117, 255, 0.06);
+}
+.how-to-tab-panel code.copied {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .footer {
   color: var(--dim);
-  font-size: 12px;
-  margin-top: 3rem;
-  padding-top: 1rem;
+  font-size: 11px;
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
   border-top: 1px solid var(--border);
-}
-
-/* Modal */
-.modal-backdrop {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.75);
-  z-index: 100;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  animation: fadeIn 0.2s ease;
-}
-.modal-backdrop.open { display: flex; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-.modal-box {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  max-width: 720px;
-  width: 100%;
-  max-height: 85vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  animation: slideUp 0.25s ease;
-}
-@keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
-.modal-header-actions { display: flex; align-items: center; gap: 0.75rem; }
-.modal-title { color: var(--accent); font-size: 15px; font-weight: 600; }
-.modal-close {
-  background: none;
-  border: none;
-  color: var(--dim);
-  cursor: pointer;
-  padding: 0.25rem;
-  line-height: 1;
-  font-size: 20px;
-  transition: color 0.15s;
-}
-.modal-close:hover { color: var(--fg); }
 
-.modal-body {
-  padding: 1.25rem 1.5rem;
-  overflow-y: auto;
-  color: var(--fg);
-  font-size: 14px;
-  line-height: 1.65;
-}
-.modal-body h1, .modal-body h2, .modal-body h3 { color: var(--accent); margin: 1.25em 0 0.5em 0; font-weight: 600; }
-.modal-body h1 { font-size: 1.35em; }
-.modal-body h2 { font-size: 1.15em; }
-.modal-body h3 { font-size: 1.05em; }
-.modal-body p { margin: 0.75em 0; }
-.modal-body ul, .modal-body ol { margin: 0.75em 0; padding-left: 1.5em; }
-.modal-body li { margin: 0.35em 0; }
-.modal-body code { background: var(--hover); color: var(--accent); padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.92em; }
-.modal-body pre { background: var(--hover); border: 1px solid var(--border); border-radius: 3px; padding: 1rem; overflow-x: auto; margin: 1em 0; }
-.modal-body pre code { background: none; padding: 0; color: var(--fg); }
-.modal-body blockquote { border-left: 3px solid var(--accent); margin: 1em 0; padding-left: 1em; color: var(--dim); }
-.modal-body table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 13px; }
-.modal-body th, .modal-body td { border: 1px solid var(--border); padding: 0.4rem 0.6rem; text-align: left; }
-.modal-body th { background: var(--hover); color: var(--accent); }
-.modal-body a { color: var(--accent); }
-.modal-body strong { color: var(--fg); font-weight: 600; }
-
-.modal-loading { color: var(--dim); }
-.modal-error { color: #c94a4a; }
-
-.empty-state {
-  color: var(--dim);
-  font-size: 13px;
-  padding: 2rem 0.85rem;
-  border: 1px dashed var(--border);
-  border-radius: 3px;
-  text-align: center;
+.copy-btn svg, .hero-btn svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
 }
 
 /* Disclaimer modal */
@@ -302,15 +172,16 @@ h2 {
 .disclaimer-backdrop.hidden { display: none; }
 .disclaimer-box {
   background: var(--bg);
-  border: 1px solid #c94a4a;
+  border: 1px solid #d4605f;
   border-radius: 6px;
   max-width: 520px;
   width: 100%;
   padding: 2rem;
   animation: slideUp 0.25s ease;
 }
+@keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 .disclaimer-title {
-  color: #c94a4a;
+  color: #d4605f;
   font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
@@ -337,6 +208,46 @@ h2 {
   transition: background 0.15s;
 }
 .disclaimer-btn:hover { background: var(--hover); }
+
+/* Providers row */
+.providers {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+}
+.providers-label {
+  color: var(--dim);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  flex-shrink: 0;
+}
+.provider-logo {
+  width: 20px;
+  height: 20px;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+.provider-logo:hover {
+  opacity: 1;
+}
+
+/* Small screens — allow scroll as fallback */
+@media (max-height: 620px) {
+  html, body { overflow: auto; }
+}
+@media (max-width: 600px) {
+  html, body { overflow: auto; }
+  .ascii { font-size: 8px; }
+  .skills-grid { grid-template-columns: 1fr; }
+  .providers { gap: 0.4rem; }
+  .providers-label { width: 100%; }
+}
 </style>
 </head>
 <body>
@@ -360,80 +271,33 @@ h2 {
  ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚══════╝
 </div>
 
-<p class="tagline">Skills for developing apps on Monad. Assists LLM with frontend, smart contract deployment, and deploying the app to production.<span class="cursor"></span></p>
-
-<button class="hero-btn copy-btn" data-url="https://skills.devnads.com/SKILL.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> skills.devnads.com/SKILL.md</button>
-
-<h2>How to Use</h2>
-<p class="section-text">Give your AI agent any skill URL. It fetches the page, reads the content, and instantly gains that knowledge. No install, no CLI, no package manager.</p>
+<p class="tagline">Skills for developing apps on Monad. Assists LLM with frontend, smart contract deployment, and deploying to production.<span class="cursor"></span></p>
 
 <div class="how-to-tabs">
   <div class="how-to-tab-nav">
-    <button class="how-to-tab-btn active" data-tab="skills">npx skills</button>
-    <button class="how-to-tab-btn" data-tab="agent">Just tell your Agent</button>
-    <button class="how-to-tab-btn" data-tab="claude">Claude Code</button>
-    <button class="how-to-tab-btn" data-tab="curl">curl / fetch</button>
+    <button class="how-to-tab-btn active" data-tab="skills">All Agents</button>
+    <button class="how-to-tab-btn" data-tab="agent">Tell your Agent</button>
   </div>
   <div class="how-to-tab-panel active" data-tab="skills">
-    <div class="tab-desc">Works with Claude Code, Cursor, Codex, Copilot, and 40+ other agents.</div>
     <code>npx skills add therealharpaljadeja/monskills</code>
   </div>
   <div class="how-to-tab-panel" data-tab="agent">
-    <div class="tab-desc">Give any agent the monskills URL and a task. It fetches the skills and starts building.</div>
     <code>"Read skills.devnads.com and build me an NFT minting app on Monad"</code>
   </div>
-  <div class="how-to-tab-panel" data-tab="claude">
-    <div class="tab-desc">Install as a Claude Code plugin. Auto-loads knowledge on every coding task.</div>
-    <code>/plugin marketplace add therealharpaljadeja/monskills</code>
-  </div>
-  <div class="how-to-tab-panel" data-tab="curl">
-    <div class="tab-desc">For scripting, pipelines, and system prompts.</div>
-    <code>curl -s https://skills.devnads.com/SKILL.md</code>
-  </div>
 </div>
 
-<h2>Skills</h2>
-
-<div class="skill">
-  <div class="skill-name">Scaffold</div>
-  <div class="skill-desc">End-to-end guide from idea to production. Project structure, onchain decisions, OpenZeppelin contracts.</div>
-  <button class="copy-btn" data-url="https://skills.devnads.com/scaffold/SKILL.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> skills.devnads.com/scaffold/SKILL.md</button>
+<div class="providers">
+  <span class="providers-label">Works with</span>
+  <img class="provider-logo" src="logos/cursor.png" alt="Cursor" title="Cursor">
+  <img class="provider-logo" src="logos/claude.png" alt="Claude Code" title="Claude Code">
+  <img class="provider-logo" src="logos/openai.png" alt="Codex CLI" title="Codex CLI">
+  <img class="provider-logo" src="logos/gemini.png" alt="Gemini CLI" title="Gemini CLI">
+  <img class="provider-logo" src="logos/github.png" alt="VS Code Copilot" title="VS Code Copilot">
+  <img class="provider-logo" src="logos/kiro.png" alt="Kiro" title="Kiro">
+  <img class="provider-logo" src="logos/opencode.png" alt="OpenCode" title="OpenCode">
 </div>
 
-<div class="skill">
-  <div class="skill-name">Why Monad</div>
-  <div class="skill-desc">Why every blockchain app should be built on Monad. 10,000 tps, 400ms block time, 800ms finality, and Ethereum compatibility.</div>
-  <button class="copy-btn" data-url="https://skills.devnads.com/why-monad/SKILL.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> skills.devnads.com/why-monad/SKILL.md</button>
-</div>
-
-<div class="skill">
-  <div class="skill-name">Addresses</div>
-  <div class="skill-desc">Smart contract addresses for well known protocols on Monad. Includes testnet and mainnet.</div>
-  <button class="copy-btn" data-url="https://skills.devnads.com/addresses/SKILL.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> skills.devnads.com/addresses/SKILL.md</button>
-</div>
-
-<div class="skill">
-  <div class="skill-name">Wallet</div>
-  <div class="skill-desc">Agent wallet management, Safe multisig creation, and deploying smart contracts via Safe on Monad testnet and mainnet.</div>
-  <button class="copy-btn" data-url="https://skills.devnads.com/wallet/SKILL.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> skills.devnads.com/wallet/SKILL.md</button>
-</div>
-
-<div class="skill">
-  <div class="skill-name">Wallet Integration</div>
-  <div class="skill-desc">Integrate wallet connection into a Next.js app on Monad using RainbowKit with Wagmi and viem.</div>
-  <button class="copy-btn" data-url="https://skills.devnads.com/wallet-integration/SKILL.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> skills.devnads.com/wallet-integration/SKILL.md</button>
-</div>
-
-<div class="skill">
-  <div class="skill-name">Vercel Deploy</div>
-  <div class="skill-desc">Deploy a web app to Vercel without installing the CLI or authenticating. Returns a preview URL and claim URL.</div>
-  <button class="copy-btn" data-url="https://skills.devnads.com/vercel-deploy/SKILL.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> skills.devnads.com/vercel-deploy/SKILL.md</button>
-</div>
-
-<h2>Contributing</h2>
-<p class="section-text">Something wrong or missing? <a href="https://github.com/therealharpaljadeja/monskills">Open a PR</a>.</p>
-
-<div class="footer">MIT License · <a href="https://github.com/therealharpaljadeja/monskills">GitHub Repo</a> · Anonymous download tracking (no personal data stored)</div>
+<div class="footer">MIT License · <a href="skill.html?name=scaffold" target="_blank" rel="noopener">Browse Skills</a> · <a href="https://github.com/therealharpaljadeja/monskills" target="_blank" rel="noopener">GitHub</a> · <a href="https://github.com/therealharpaljadeja/monskills" target="_blank" rel="noopener">Contribute</a><br>Anonymous download tracking (no personal data)</div>
 
 <div id="disclaimer" class="disclaimer-backdrop" aria-hidden="false">
   <div class="disclaimer-box" role="alertdialog" aria-modal="true">
@@ -443,21 +307,63 @@ h2 {
   </div>
 </div>
 
-<div id="modal" class="modal-backdrop" aria-hidden="true">
-  <div class="modal-box" role="dialog" aria-modal="true">
-    <div class="modal-header">
-      <span class="modal-title" id="modal-title">Skill</span>
-      <div class="modal-header-actions">
-        <button type="button" class="copy-btn" id="modal-copy-btn" data-url="" title="Copy skill URL"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> <span id="modal-copy-label"></span></button>
-        <button type="button" class="modal-close" id="modal-close" aria-label="Close">&times;</button>
-      </div>
-    </div>
-    <div class="modal-body" id="modal-body"></div>
-  </div>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
 <script>
-// Disclaimer modal
+// ASCII hero animation — CRT flicker-on effect
+(function() {
+  const ascii = document.querySelector('.ascii');
+  const raw = ascii.textContent;
+  const lines = raw.split('\n').filter(l => l.length > 0);
+  const maxLen = Math.max(...lines.map(l => l.length));
+  const padded = lines.map(l => l.padEnd(maxLen));
+
+  // Wrap each non-space character in a span using safe DOM APIs
+  ascii.textContent = '';
+  for (let row = 0; row < padded.length; row++) {
+    for (let col = 0; col < maxLen; col++) {
+      const ch = padded[row][col] || ' ';
+      if (ch === ' ') {
+        ascii.appendChild(document.createTextNode(' '));
+      } else {
+        const span = document.createElement('span');
+        span.className = 'ch';
+        span.textContent = ch;
+        ascii.appendChild(span);
+      }
+    }
+    if (row < padded.length - 1) ascii.appendChild(document.createTextNode('\n'));
+  }
+
+  const chars = ascii.querySelectorAll('.ch');
+  gsap.set(chars, { autoAlpha: 0 });
+
+  // Random staggered appear — chunks pop in across the art
+  gsap.to(chars, {
+    autoAlpha: 1,
+    duration: 0.05,
+    ease: "none",
+    stagger: { each: 0.002, from: "random" },
+    delay: 0.3,
+    onComplete: function() {
+      // Apply gradient-on-text for shine
+      ascii.style.background = "linear-gradient(110deg, #8B75FF 40%, #c4b5ff 50%, #8B75FF 60%)";
+      ascii.style.backgroundSize = "300% 100%";
+      ascii.style.backgroundPosition = "100% 0";
+      ascii.style.webkitBackgroundClip = "text";
+      ascii.style.backgroundClip = "text";
+      ascii.style.webkitTextFillColor = "transparent";
+      ascii.style.color = "transparent";
+
+      // Looping shine sweep — full pass from right to left
+      gsap.fromTo(ascii,
+        { backgroundPosition: "100% 0" },
+        { backgroundPosition: "0% 0", duration: 2, ease: "power1.inOut", repeat: -1, repeatDelay: 3 }
+      );
+    }
+  });
+})();
+
+// Disclaimer
 const disclaimer = document.getElementById('disclaimer');
 const disclaimerAccept = document.getElementById('disclaimer-accept');
 if (sessionStorage.getItem('disclaimer-accepted')) {
@@ -470,7 +376,7 @@ disclaimerAccept.addEventListener('click', () => {
   sessionStorage.setItem('disclaimer-accepted', '1');
 });
 
-// Tab switching
+// Tabs
 document.querySelectorAll('.how-to-tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const tab = btn.dataset.tab;
@@ -481,163 +387,21 @@ document.querySelectorAll('.how-to-tab-btn').forEach(btn => {
   });
 });
 
-// Minimal markdown to HTML renderer (no external deps)
-function renderMarkdown(md) {
-  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  const inline = s => esc(s)
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-  let raw = md.replace(/\r\n?/g, '\n');
-  if (raw.startsWith('---\n')) {
-    const end = raw.indexOf('\n---', 4);
-    if (end !== -1) raw = raw.slice(end + 4).replace(/^\n+/, '');
-  }
-  let out = '';
-  const lines = raw.split('\n');
-  let i = 0;
-  while (i < lines.length) {
-    const line = lines[i];
-    if (/^```(\w*)\s*$/.test(line)) {
-      let block = '';
-      for (i++; i < lines.length && !/^```\s*$/.test(lines[i]); i++) block += esc(lines[i]) + '\n';
-      i++;
-      out += '<pre><code>' + block + '</code></pre>';
-      continue;
+// Click to copy tab content
+document.querySelectorAll('.how-to-tab-panel code').forEach(code => {
+  code.addEventListener('click', async () => {
+    const text = code.textContent;
+    try { await navigator.clipboard.writeText(text); } catch(err) {
+      const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
     }
-    if (/^(#{1,3})\s+(.+)$/.test(line)) {
-      const l = RegExp.$1.length;
-      out += '<h' + l + '>' + inline(RegExp.$2) + '</h' + l + '>';
-      i++;
-      continue;
-    }
-    if (/^\|.+\|$/.test(line)) {
-      const rows = [];
-      while (i < lines.length && /^\|.+\|$/.test(lines[i])) {
-        if (!/^\|[-:\s|]+\|$/.test(lines[i])) {
-          rows.push(lines[i].split('|').slice(1, -1).map(c => c.trim()));
-        }
-        i++;
-      }
-      if (rows.length) {
-        out += '<table><thead><tr>';
-        rows[0].forEach(c => { out += '<th>' + inline(c) + '</th>'; });
-        out += '</tr></thead><tbody>';
-        for (let r = 1; r < rows.length; r++) {
-          out += '<tr>';
-          rows[r].forEach(c => { out += '<td>' + inline(c) + '</td>'; });
-          out += '</tr>';
-        }
-        out += '</tbody></table>';
-      }
-      continue;
-    }
-    if (/^>\s?(.*)$/.test(line)) {
-      let block = inline(RegExp.$1);
-      for (i++; i < lines.length && /^>\s?(.*)$/.test(lines[i]); i++) block += '\n' + inline(RegExp.$1);
-      out += '<blockquote>' + block.replace(/\n/g, '<br>') + '</blockquote>';
-      continue;
-    }
-    if (/^[-*]\s+(.+)$/.test(line)) {
-      out += '<ul>';
-      while (i < lines.length && /^[-*]\s+(.+)$/.test(lines[i])) {
-        out += '<li>' + inline(RegExp.$1) + '</li>';
-        i++;
-      }
-      out += '</ul>';
-      continue;
-    }
-    if (/^\d+\.\s+(.+)$/.test(line)) {
-      out += '<ol>';
-      while (i < lines.length && /^\d+\.\s+(.+)$/.test(lines[i])) {
-        out += '<li>' + inline(RegExp.$1) + '</li>';
-        i++;
-      }
-      out += '</ol>';
-      continue;
-    }
-    if (line.trim() === '') { i++; continue; }
-    out += '<p>' + inline(line) + '</p>';
-    i++;
-  }
-  return out;
-}
-
-// Copy URL on copy button click
-document.querySelectorAll('.copy-btn[data-url]').forEach(btn => {
-  btn.addEventListener('click', async (e) => {
-    e.stopPropagation();
-    const url = btn.dataset.url;
-    try { await navigator.clipboard.writeText(url); } catch(err) {
-      const t = document.createElement('textarea'); t.value = url; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
-    }
-    const orig = btn.innerHTML;
-    btn.classList.add('copied');
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
-    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 1500);
+    const orig = code.textContent;
+    code.textContent = 'Copied!';
+    code.classList.add('copied');
+    setTimeout(() => { code.textContent = orig; code.classList.remove('copied'); }, 1500);
   });
 });
 
-// Modal
-const modal = document.getElementById('modal');
-const modalTitle = document.getElementById('modal-title');
-const modalBody = document.getElementById('modal-body');
-const modalClose = document.getElementById('modal-close');
-const modalCopyBtn = document.getElementById('modal-copy-btn');
-const modalCopyLabel = document.getElementById('modal-copy-label');
 
-function openModal(title, path, skillUrl) {
-  modal.classList.add('open');
-  modal.setAttribute('aria-hidden', 'false');
-  modalTitle.textContent = title;
-  modalCopyBtn.dataset.url = skillUrl;
-  modalCopyLabel.textContent = skillUrl.replace(/^https?:\/\/[^/]+\//, '');
-  modalBody.innerHTML = '<p class="modal-loading">Loading...</p>';
-  modalBody.classList.remove('modal-error');
-
-  fetch(path)
-    .then(r => { if (!r.ok) throw new Error(r.statusText); return r.text(); })
-    .then(text => { modalBody.innerHTML = renderMarkdown(text); })
-    .catch(err => {
-      modalBody.classList.add('modal-error');
-      modalBody.innerHTML = '<p>Could not load skill: ' + ('' + err.message).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '.</p>';
-    });
-}
-
-function closeModal() {
-  modal.classList.remove('open');
-  modal.setAttribute('aria-hidden', 'true');
-}
-
-document.querySelectorAll('.skill').forEach(card => {
-  const copyBtn = card.querySelector('.copy-btn[data-url]');
-  const title = card.querySelector('.skill-name');
-  if (!copyBtn || !title) return;
-  card.addEventListener('click', (e) => {
-    if (e.target.closest('.copy-btn')) return;
-    const skillUrl = copyBtn.dataset.url;
-    const path = new URL(skillUrl).pathname.slice(1);
-    openModal(title.textContent, path, skillUrl);
-  });
-});
-
-modalCopyBtn.addEventListener('click', async (e) => {
-  e.stopPropagation();
-  const url = modalCopyBtn.dataset.url;
-  if (!url) return;
-  try { await navigator.clipboard.writeText(url); } catch(err) {
-    const t = document.createElement('textarea'); t.value = url; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
-  }
-  const orig = modalCopyBtn.innerHTML;
-  modalCopyBtn.classList.add('copied');
-  modalCopyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
-  setTimeout(() => { modalCopyBtn.innerHTML = orig; modalCopyBtn.classList.remove('copied'); }, 1500);
-});
-
-modalClose.addEventListener('click', closeModal);
-modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 </script>
 </body>
 </html>
