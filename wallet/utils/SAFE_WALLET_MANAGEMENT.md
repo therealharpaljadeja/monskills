@@ -208,7 +208,7 @@ Pass `CHAIN_ID` to select the network. Supported values: `143` (Monad mainnet), 
 
 ```bash
 # Install dependencies
-npm install --no-save viem
+npm install --no-save viem qrcode-terminal
 
 # Check for propose.mjs file in the same utils folder.
 
@@ -234,8 +234,16 @@ CHAIN_ID=$CHAIN_ID \
 
 🎉 Transaction appears in Safe UI queue!
 
+Scan QR code to approve on mobile:
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+█ ▄▄▄▄▄ █ QR  █
+█ █   █ █ here █
+█ ▀▀▀▀▀ █      █
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
 User can now:
-1. Open [safe url]
+1. Open [safe url] (or scan QR code above)
 2. See pending transaction (agent already signed 1/2)
 3. Sign with their wallet (2/2)
 4. Execute to deploy
