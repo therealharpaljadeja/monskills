@@ -2,10 +2,29 @@ import { createPublicClient, http, encodeFunctionData, hashTypedData, getAddress
 import { privateKeyToAccount } from 'viem/accounts';
 import qrcode from 'qrcode-terminal';
 
+// ----- Generic Safe transaction proposer -----
+//
+// Required env vars:
+//   CHAIN_ID       — 143 (mainnet) or 10143 (testnet)
+//   SAFE_ADDRESS   — checksummed Safe multisig address
+//   PRIVATE_KEY    — agent wallet private key
+//
+// Transaction mode (pick ONE):
+//
+//   A) Contract deployment (delegatecall into CreateCall):
+//      DEPLOYMENT_BYTECODE — raw creation bytecode
+//
+//   B) Arbitrary transaction (direct call to any contract):
+//      TX_TO    — target contract address
+//      TX_DATA  — encoded calldata (hex)
+//      TX_VALUE — value in wei (optional, defaults to "0")
+
 const NETWORKS = {
   143:   { rpcUrl: 'https://rpc.monad.xyz',         txService: 'https://api.safe.global/tx-service/monad/api/v1',         safePrefix: 'monad' },
   10143: { rpcUrl: 'https://testnet-rpc.monad.xyz',  txService: 'https://api.safe.global/tx-service/monad-testnet/api/v1', safePrefix: 'monad-testnet' },
 };
+
+const CREATE_CALL_ADDRESS = '0x9b35Af71d77eaf8d7e40252370304687390A1A52';
 
 const CHAIN_ID = Number(process.env.CHAIN_ID);
 const network = NETWORKS[CHAIN_ID];
@@ -15,10 +34,38 @@ if (!network) {
 }
 
 const SAFE_ADDRESS = getAddress(process.env.SAFE_ADDRESS);
-const CREATE_CALL_ADDRESS = '0x9b35Af71d77eaf8d7e40252370304687390A1A52';
+
+function buildTransaction() {
+  // Mode A: contract deployment via CreateCall
+  if (process.env.DEPLOYMENT_BYTECODE) {
+    const createCallData = encodeFunctionData({
+      abi: [{
+        name: 'performCreate',
+        type: 'function',
+        inputs: [{ name: 'value', type: 'uint256' }, { name: 'deploymentData', type: 'bytes' }],
+        outputs: [{ name: '', type: 'address' }],
+      }],
+      functionName: 'performCreate',
+      args: [0n, process.env.DEPLOYMENT_BYTECODE],
+    });
+    return { to: CREATE_CALL_ADDRESS, value: '0', data: createCallData, operation: 1 }; // DELEGATECALL
+  }
+
+  // Mode B: arbitrary contract call
+  if (process.env.TX_TO && process.env.TX_DATA) {
+    return {
+      to: getAddress(process.env.TX_TO),
+      value: process.env.TX_VALUE || '0',
+      data: process.env.TX_DATA,
+      operation: 0, // CALL
+    };
+  }
+
+  console.error('❌ Provide either DEPLOYMENT_BYTECODE (deploy) or TX_TO + TX_DATA (contract call).');
+  process.exit(1);
+}
 
 async function main() {
-  // Private key of agent wallet
   const account = privateKeyToAccount(process.env.PRIVATE_KEY);
   console.log(`✅ Agent address: ${account.address}`);
   console.log(`✅ Network: ${network.safePrefix} (chain ${CHAIN_ID})`);
@@ -35,26 +82,13 @@ async function main() {
 
   console.log(`✅ Safe nonce: ${nonce}`);
 
-  const deploymentBytecode = process.env.DEPLOYMENT_BYTECODE;
+  const { to, value, data, operation } = buildTransaction();
 
-  // Encode CreateCall: performCreate(0, deploymentBytecode)
-  const createCallData = encodeFunctionData({
-    abi: [{
-      name: 'performCreate',
-      type: 'function',
-      inputs: [{ name: 'value', type: 'uint256' }, { name: 'deploymentData', type: 'bytes' }],
-      outputs: [{ name: '', type: 'address' }],
-    }],
-    functionName: 'performCreate',
-    args: [0n, deploymentBytecode],
-  });
-
-  // Prepare Safe transaction data — DELEGATECALL into CreateCall
   const txData = {
-    to: CREATE_CALL_ADDRESS,
-    value: '0',
-    data: createCallData,
-    operation: 1, // DELEGATECALL
+    to,
+    value,
+    data,
+    operation,
     safeTxGas: '0',
     baseGas: '0',
     gasPrice: '0',
@@ -129,7 +163,7 @@ async function main() {
     console.log(`1. Open: ${safeUrl}`);
     console.log('2. See pending transaction (Agent already signed 1/2)');
     console.log('3. Sign with their wallet (2/2)');
-    console.log('4. Execute to deploy');
+    console.log('4. Execute');
   } else {
     const error = await response.text();
     console.error(`❌ API Error: ${response.status}`);
