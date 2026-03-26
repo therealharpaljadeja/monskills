@@ -1,5 +1,6 @@
 import { createPublicClient, http, encodeFunctionData, hashTypedData, getAddress } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
+import qrcode from 'qrcode-terminal';
 
 const NETWORKS = {
   143:   { rpcUrl: 'https://rpc.monad.xyz',         txService: 'https://api.safe.global/tx-service/monad/api/v1',         safePrefix: 'monad' },
@@ -115,12 +116,17 @@ async function main() {
   });
 
   if (response.ok) {
+    const safeUrl = `https://app.safe.global/transactions/queue?safe=${network.safePrefix}:${SAFE_ADDRESS}`;
     console.log('✅ Transaction proposed successfully!');
     console.log('');
     console.log('🎉 Transaction appears in Safe UI queue!');
     console.log('');
+    console.log('Scan QR code to approve on mobile:');
+    console.log('');
+    qrcode.generate(safeUrl, { small: true });
+    console.log('');
     console.log('User can now:');
-    console.log(`1. Open: https://app.safe.global/transactions/queue?safe=${network.safePrefix}:${SAFE_ADDRESS}`);
+    console.log(`1. Open: ${safeUrl}`);
     console.log('2. See pending transaction (Agent already signed 1/2)');
     console.log('3. Sign with their wallet (2/2)');
     console.log('4. Execute to deploy');
