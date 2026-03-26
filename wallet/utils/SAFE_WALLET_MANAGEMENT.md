@@ -146,7 +146,7 @@ A Safe multisig must be already deployed in order to deploy smart contracts or p
 
 **IMPORTANT**: This workflow uses Safe multisig for ALL transactions — deployments, contract calls, token transfers, withdrawals, etc. Direct transactions with --private-key or --broadcast are NOT allowed.
 
-**CRITICAL: Always use `propose.mjs`** — NEVER write a new/custom script to propose Safe transactions. The `propose.mjs` file in the utils folder handles EIP-712 signing, the Transaction Service API, and QR code generation. It supports two modes:
+**CRITICAL: Always use `propose.mjs`** — NEVER write a new/custom script to propose Safe transactions. The `propose.mjs` file in the utils folder handles EIP-712 signing, the Transaction Service API, and QR code generation. After running `propose.mjs`, do NOT summarize, truncate, or reformat its output — the script prints a QR code that the user needs to scan. Let the terminal output speak for itself. It supports two modes:
 
 | Mode | Env vars | Use case |
 |------|----------|----------|
