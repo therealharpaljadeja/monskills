@@ -140,24 +140,31 @@ echo "🌐 https://app.safe.global/home?safe=monad:$SAFE_ADDRESS"
 
 Once Safe is created save the multisig address with owners in multisig.json file in ~/.monskills/ folder, absolutely make sure that you have "testnet" and "mainnet" properties in the multisig.json file and are storing the multisig details respective to the network.
 
-## Deploying smart contracts using Safe multisig
+## Proposing transactions via Safe multisig
 
 A Safe multisig must be already deployed in order to deploy smart contracts or perform onchain actions.
 
-**IMPORTANT**: This workflow uses Safe multisig for ALL user application deployments. Direct deployment of smart contracts with --private-key or --broadcast is NOT allowed.
+**IMPORTANT**: This workflow uses Safe multisig for ALL transactions — deployments, contract calls, token transfers, withdrawals, etc. Direct transactions with --private-key or --broadcast are NOT allowed.
+
+**CRITICAL: Always use `propose.mjs`** — NEVER write a new/custom script to propose Safe transactions. The `propose.mjs` file in the utils folder handles EIP-712 signing, the Transaction Service API, and QR code generation. It supports two modes:
+
+| Mode | Env vars | Use case |
+|------|----------|----------|
+| Deploy | `DEPLOYMENT_BYTECODE` | Smart contract deployment via CreateCall delegatecall |
+| Call | `TX_TO` + `TX_DATA` (+ optional `TX_VALUE`) | Any contract call: withdraw, swap, transfer, approve, etc. |
+
+Common env vars for both modes: `CHAIN_ID`, `SAFE_ADDRESS`, `PRIVATE_KEY`.
 
 Approach:
 
-✅ Prepare deployment bytecode and encode CreateCall delegatecall
-✅ Post to Transaction Service API with Agent's EIP-712 signature
+✅ Prepare calldata (deployment bytecode OR encoded function call)
+✅ Post to Transaction Service API with Agent's EIP-712 signature via `propose.mjs`
 ✅ User sees transaction in Safe UI queue, signs (2/2), executes
+✅ QR code printed in terminal for mobile approval
 
-Why this works:
+---
 
-✅ Best UX: Transaction appears in user's Safe UI automatically
-✅ No manual bytecode copying needed
-✅ User just signs and executes in familiar UI
-✅ Transaction Service API works perfectly on Monad with EIP-712 signatures
+### Deploying smart contracts
 
 **CRITICAL**: Safe wallets cannot directly CREATE contracts from a normal CALL. To deploy through a Safe, delegatecall into Safe's CreateCall helper smart contract so the CREATE happens in the Safe's context (Safe becomes the deployer).
 
@@ -177,7 +184,7 @@ interface ICreateCall {
 }
 ```
 
-### 1. Prepare deployment bytecode
+#### 1. Prepare deployment bytecode
 
 Use forge script with --sender set to the Safe address:
 
@@ -189,7 +196,7 @@ forge script script/Deploy.s.sol:DeployScript \
 
 This simulates the deployment from the Safe wallet without broadcasting.
 
-### 2. Extract Deployment Bytecode
+#### 2. Extract Deployment Bytecode
 
 ```bash
 # Extract deployment bytecode
@@ -200,17 +207,11 @@ DEPLOYMENT_BYTECODE=$(jq -r '.transactions[0].transaction.input' \
 SAFE_ADDRESS=$(cast to-check-sum-address "<SAFE_ADDRESS>")
 ```
 
-### 3. Propose transaction to Safe Transaction Service
-
-Use this script to propose a deployment transaction to the Safe multisig. The agent signs with its private key (1/2), then the user signs and executes in the Safe UI (2/2).
-
-Pass `CHAIN_ID` to select the network. Supported values: `143` (Monad mainnet), `10143` (Monad testnet).
+#### 3. Propose deployment to Safe Transaction Service
 
 ```bash
 # Install dependencies
 npm install --no-save viem qrcode-terminal
-
-# Check for propose.mjs file in the same utils folder.
 
 # Run proposal — set CHAIN_ID to 143 (mainnet) or 10143 (testnet)
 CHAIN_ID=$CHAIN_ID \
@@ -221,14 +222,51 @@ CHAIN_ID=$CHAIN_ID \
   node propose.mjs
 ```
 
-### Example output:
+---
+
+### Calling contracts (withdraw, swap, transfer, approve, etc.)
+
+For any transaction that calls an existing contract function, encode the calldata and use `propose.mjs` in Call mode.
+
+#### 1. Encode calldata with `cast`
+
+```bash
+# Example: withdraw(uint256 amount)
+TX_DATA=$(cast calldata "withdraw(uint256)" 1000000000000000000)
+
+# Example: transfer(address to, uint256 amount)
+TX_DATA=$(cast calldata "transfer(address,uint256)" 0xRecipient 1000000000000000000)
+
+# Example: approve(address spender, uint256 amount)
+TX_DATA=$(cast calldata "approve(address,uint256)" 0xSpender 1000000000000000000)
+```
+
+#### 2. Propose contract call to Safe Transaction Service
+
+```bash
+npm install --no-save viem qrcode-terminal
+
+CHAIN_ID=$CHAIN_ID \
+  SAFE_ADDRESS=$SAFE_ADDRESS \
+  PRIVATE_KEY=$PRIVATE_KEY \
+  TX_TO=$TARGET_CONTRACT_ADDRESS \
+  TX_DATA=$TX_DATA \
+  TX_VALUE=0 \
+  node propose.mjs
+```
+
+Set `TX_VALUE` to the amount of native token (in wei) to send with the call, or omit for 0.
+
+---
+
+### Example output (both modes):
 
 ```
 ✅ Agent's address: 0x937d...
 ✅ Safe nonce: 0
 ✍️  Signing with EIP-712...
 ✅ Transaction hash: 0x0560...
-✅ Claude signed (1/2)
+✅ Agent signed (1/2)
 📤 Posting to Transaction Service API...
 ✅ Transaction proposed successfully!
 
@@ -246,7 +284,7 @@ User can now:
 1. Open [safe url] (or scan QR code above)
 2. See pending transaction (agent already signed 1/2)
 3. Sign with their wallet (2/2)
-4. Execute to deploy
+4. Execute
 ```
 
 Ask the user to approve the transaction on the multisig page and ask for the transaction hash.
