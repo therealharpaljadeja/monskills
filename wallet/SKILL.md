@@ -9,6 +9,8 @@ Any transaction other than deploying a Safe multisig must be proposed to the use
 
 For instructions on how to create and use a Safe multisig check out the SAFE_WALLET_MANAGEMENT.md file in utils folder.
 
+**When proposing transactions:** Always use `propose.mjs` from the utils folder — never write a custom script. After running `propose.mjs`, do NOT add your own summary, status message, or reformat the output. The script output contains a QR code that the user must see exactly as printed. Your only follow-up should be asking the user to approve the transaction and provide the transaction hash.
+
 **Security rules:**
 - NEVER ask for user's private key (critical violation)
 - Use the agent wallet (encrypted keystore at `~/.monskills/keystore`)
