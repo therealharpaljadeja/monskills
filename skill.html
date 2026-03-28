@@ -243,18 +243,22 @@ function loadSkill(id) {
 }
 
 // Copy URL
-copyBtn.addEventListener('click', async () => {
-  const params = new URLSearchParams(window.location.search);
-  const name = params.get('name');
-  if (!name) return;
-  const url = 'https://skills.devnads.com/' + name + '/SKILL.md';
-  try { await navigator.clipboard.writeText(url); } catch(err) {
-    const t = document.createElement('textarea'); t.value = url; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
-  }
-  const orig = copyBtn.innerHTML;
-  copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
-  setTimeout(() => { copyBtn.innerHTML = orig; }, 1500);
-});
+{
+  const origHTML = copyBtn.innerHTML;
+  let timer;
+  copyBtn.addEventListener('click', async () => {
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('name');
+    if (!name) return;
+    const url = 'https://skills.devnads.com/' + name + '/SKILL.md';
+    try { await navigator.clipboard.writeText(url); } catch(err) {
+      const t = document.createElement('textarea'); t.value = url; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+    }
+    clearTimeout(timer);
+    copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+    timer = setTimeout(() => { copyBtn.innerHTML = origHTML; }, 1500);
+  });
+}
 
 // Handle back/forward
 window.addEventListener('popstate', () => {
