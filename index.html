@@ -389,15 +389,16 @@ document.querySelectorAll('.how-to-tab-btn').forEach(btn => {
 
 // Click to copy tab content
 document.querySelectorAll('.how-to-tab-panel code').forEach(code => {
+  const orig = code.textContent;
+  let timer;
   code.addEventListener('click', async () => {
-    const text = code.textContent;
-    try { await navigator.clipboard.writeText(text); } catch(err) {
-      const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+    try { await navigator.clipboard.writeText(orig); } catch(err) {
+      const t = document.createElement('textarea'); t.value = orig; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
     }
-    const orig = code.textContent;
+    clearTimeout(timer);
     code.textContent = 'Copied!';
     code.classList.add('copied');
-    setTimeout(() => { code.textContent = orig; code.classList.remove('copied'); }, 1500);
+    timer = setTimeout(() => { code.textContent = orig; code.classList.remove('copied'); }, 1500);
   });
 });
 
