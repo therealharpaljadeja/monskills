@@ -53,6 +53,7 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - How gas pricing works on Monad vs Ethereum.
 - Monad charges on gas_limit, not gas used — incorrect limits cost users real money.
 - Different base fee controller: increases slowly, decreases quickly.
+- Opcode pricing differences: cold state access 3-4x more expensive, precompiles 2-5x more expensive.
 - Developer guidelines for setting gas limits, estimation, and frontend display.
 
 ### [Scaffold](/scaffold/SKILL.md)
