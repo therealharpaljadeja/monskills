@@ -18,6 +18,7 @@ This file will guide to the right skill with the latest knowledge about Monad an
 | Writing smart contracts | `addresses/` |
 | Agent wallet management, deploy smart contracts or perform onchain actions | `wallet/` |
 | Adding wallet connect to a frontend | `wallet-integration/` |
+| Understanding gas pricing on Monad | `gas/` |
 | Deploying a web app to Vercel (no CLI, no auth) | `vercel-deploy/` |
 
 ## Skills
@@ -47,6 +48,12 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - Deploy to Vercel without installing the CLI or authenticating.
 - Uses the Vercel claimable deploy endpoint.
 - Returns a preview URL and a claim URL for the user.
+
+### [Gas](/gas/SKILL.md)
+- How gas pricing works on Monad vs Ethereum.
+- Monad charges on gas_limit, not gas used — incorrect limits cost users real money.
+- Different base fee controller: increases slowly, decreases quickly.
+- Developer guidelines for setting gas limits, estimation, and frontend display.
 
 ### [Scaffold](/scaffold/SKILL.md)
 - End-to-end guide to take an idea from zero to production.
