@@ -9,13 +9,13 @@ Monad is Ethereum-compatible but its architecture introduces behaviors that deve
 
 | I'm dealing with... | Fetch |
 |----------------------|-------|
-| Newly funded accounts can't send transactions, funding delays | [async-execution.md](references/async-execution.md) |
-| Whether existing Solidity contracts need changes for Monad | [parallel-execution.md](references/parallel-execution.md) |
-| Choosing between `latest`, `safe`, `finalized` block tags | [block-states.md](references/block-states.md) |
-| Transaction reverts due to low balance, 10 MON floor, emptying transactions | [reserve-balance.md](references/reserve-balance.md) |
-| Smart wallet delegation, EIP-7702, session keys, gas sponsorship | [eip-7702.md](references/eip-7702.md) |
-| Subscribing to events, WebSocket feeds, high-throughput data ingestion | [realtime-data.md](references/realtime-data.md) |
-| Block lifecycle events, speculative data, BLOCK_START/QC/FINALIZED | [execution-events.md](references/execution-events.md) |
+| Newly funded accounts can't send transactions, funding delays | [async-execution.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/concepts/references/async-execution.md) |
+| Whether existing Solidity contracts need changes for Monad | [parallel-execution.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/concepts/references/parallel-execution.md) |
+| Choosing between `latest`, `safe`, `finalized` block tags | [block-states.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/concepts/references/block-states.md) |
+| Transaction reverts due to low balance, 10 MON floor, emptying transactions | [reserve-balance.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/concepts/references/reserve-balance.md) |
+| Smart wallet delegation, EIP-7702, session keys, gas sponsorship | [eip-7702.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/concepts/references/eip-7702.md) |
+| Subscribing to events, WebSocket feeds, high-throughput data ingestion | [realtime-data.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/concepts/references/realtime-data.md) |
+| Block lifecycle events, speculative data, BLOCK_START/QC/FINALIZED | [execution-events.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/concepts/references/execution-events.md) |
 
 ## Quick Summary
 
