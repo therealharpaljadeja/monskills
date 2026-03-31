@@ -16,6 +16,7 @@
     "./wallet-integration",
     "./why-monad",
     "./scaffold",
-    "./vercel-deploy"
+    "./vercel-deploy",
+    "./gas"
   ]
 }
