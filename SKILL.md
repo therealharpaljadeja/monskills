@@ -20,6 +20,7 @@ This file will guide to the right skill with the latest knowledge about Monad an
 | Agent wallet management, deploy smart contracts or perform onchain actions | `wallet/` |
 | Adding wallet connect to a frontend | `wallet-integration/` |
 | Understanding gas pricing on Monad | `gas/` |
+| Checking if a tooling/infra provider supports Monad | `tooling-and-infra/` |
 | Deploying a web app to Vercel (no CLI, no auth) | `vercel-deploy/` |
 
 ## Skills
@@ -62,6 +63,11 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - Different base fee controller: increases slowly, decreases quickly.
 - Opcode pricing differences: cold state access 3-4x more expensive, precompiles 2-5x more expensive.
 - Developer guidelines for setting gas limits, estimation, and frontend display.
+
+### [Tooling & Infra](/tooling-and-infra/SKILL.md)
+- Directory of tooling and infrastructure providers that support Monad.
+- Covers RPC providers, block explorers, oracles, bridges, indexers, wallets, onramps, custody, analytics, toolkits, and wallet infrastructure.
+- Quickly check if a specific provider supports Monad mainnet, testnet, or both.
 
 ### [Scaffold](/scaffold/SKILL.md)
 - End-to-end guide to take an idea from zero to production.

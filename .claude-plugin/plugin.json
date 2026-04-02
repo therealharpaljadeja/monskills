@@ -18,6 +18,7 @@
     "./concepts",
     "./scaffold",
     "./vercel-deploy",
-    "./gas"
+    "./gas",
+    "./tooling-and-infra"
   ]
 }
