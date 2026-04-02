@@ -10,6 +10,9 @@ const VALID_SKILLS = [
   "wallet",
   "wallet-integration",
   "vercel-deploy",
+  "gas",
+  "concepts",
+  "tooling-and-infra",
 ];
 
 export default async function handler(req, res) {
