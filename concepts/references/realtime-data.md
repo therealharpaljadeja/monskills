@@ -4,7 +4,7 @@ Monad's high throughput (~10,000 tps) makes traditional JSON-RPC polling impract
 
 ### 1. Geth-Compatible WebSocket Events
 - Standard `eth_subscribe` with `newHeads` and `logs`.
-- Data publishes at **Voted** state.
+- Data publishes at **Proposed** state.
 - Available via third-party RPC providers (Alchemy, QuickNode, etc.).
 - Best for: apps migrating from Ethereum with minimal changes.
 
