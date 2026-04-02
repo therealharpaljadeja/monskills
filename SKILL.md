@@ -59,3 +59,4 @@ This file will guide to the right skill with the latest knowledge about Monad an
 ### [Scaffold](/scaffold/SKILL.md)
 - End-to-end guide to take an idea from zero to production.
 - Project structure, what to put onchain vs offchain, OpenZeppelin contracts.
+- After deploying smart contracts, always verify them using the verification API.
