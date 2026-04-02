@@ -302,3 +302,7 @@ cast receipt <TRANSACTION_HASH> --rpc-url https://testnet-rpc.monad.xyz
 ```
 
 Look for the `contractAddress` field in the receipt.
+
+### 5. Verify Smart Contract
+
+**After every smart contract deployment, you MUST verify the contract.** Do not skip this step. Refer to the **Verification (All Explorers)** section in `scaffold/SKILL.md` for full instructions. Use the verification API (`https://agents.devnads.com/v1/verify`) — it verifies on all 3 explorers (MonadVision, Socialscan, Monadscan) with one call.
