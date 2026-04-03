@@ -18,17 +18,17 @@ Each category has a reference file with the full provider list, network support,
 
 | Category | Reference File | What it covers |
 |----------|---------------|----------------|
-| Analytics | [references/analytics.md](references/analytics.md) | On-chain monitoring, portfolio tracking, DeFi analytics, dashboards |
-| Block Explorers | [references/block-explorers.md](references/block-explorers.md) | Transaction explorers, contract verification, UserOp explorers |
-| Cross-Chain | [references/cross-chain.md](references/cross-chain.md) | Bridges, bridge aggregators, liquidity layers, AMBs, chain abstraction |
-| Custody | [references/custody.md](references/custody.md) | Institutional-grade custody solutions |
-| Indexers | [references/indexers.md](references/indexers.md) | Common data APIs and indexing frameworks (subgraphs, data pipelines) |
-| Onramps | [references/onramps.md](references/onramps.md) | Fiat-to-crypto conversion, payment gateways |
-| Oracles | [references/oracles.md](references/oracles.md) | Price feeds, VRF, data feeds |
-| RPC Providers | [references/rpc-providers.md](references/rpc-providers.md) | RPC endpoints for interacting with Monad |
-| Toolkits | [references/toolkits.md](references/toolkits.md) | Development frameworks (Foundry, Hardhat) |
-| Wallets | [references/wallets.md](references/wallets.md) | Software wallets, hardware wallets, institutional wallets, multisig wallets |
-| Wallet Infrastructure | [references/wallet-infra.md](references/wallet-infra.md) | Embedded wallets, account abstraction, smart accounts |
+| Analytics | [analytics.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/analytics.md) | On-chain monitoring, portfolio tracking, DeFi analytics, dashboards |
+| Block Explorers | [block-explorers.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/block-explorers.md) | Transaction explorers, contract verification, UserOp explorers |
+| Cross-Chain | [cross-chain.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/cross-chain.md) | Bridges, bridge aggregators, liquidity layers, AMBs, chain abstraction |
+| Custody | [custody.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/custody.md) | Institutional-grade custody solutions |
+| Indexers | [indexers.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/indexers.md) | Common data APIs and indexing frameworks (subgraphs, data pipelines) |
+| Onramps | [onramps.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/onramps.md) | Fiat-to-crypto conversion, payment gateways |
+| Oracles | [oracles.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/oracles.md) | Price feeds, VRF, data feeds |
+| RPC Providers | [rpc-providers.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/rpc-providers.md) | RPC endpoints for interacting with Monad |
+| Toolkits | [toolkits.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/toolkits.md) | Development frameworks (Foundry, Hardhat) |
+| Wallets | [wallets.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/wallets.md) | Software wallets, hardware wallets, institutional wallets, multisig wallets |
+| Wallet Infrastructure | [wallet-infra.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/wallet-infra.md) | Embedded wallets, account abstraction, smart accounts |
 
 ## Quick lookup: Provider to category
 
