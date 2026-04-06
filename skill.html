@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MONSKILLS</title>
+<link rel="stylesheet" href="shared.css">
 <style>
 :root {
   --bg: #0E091C;
@@ -40,6 +41,11 @@ a:hover { text-decoration: underline; }
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 .back-link {
   color: var(--dim);
@@ -172,30 +178,88 @@ a:hover { text-decoration: underline; }
 
 <div class="header">
   <div class="header-left">
-    <a href="/" class="back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Back</a>
-    <span class="skill-title" id="skill-title">Skills</span>
+    <a href="/" class="back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> <span data-i18n="nav.back">Back</span></a>
+    <span class="skill-title" id="skill-title" data-i18n="nav.skills">Skills</span>
   </div>
-  <button class="copy-btn" id="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> <span id="copy-label">Copy URL</span></button>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+    </div>
+    <button class="copy-btn" id="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> <span id="copy-label">Copy URL</span></button>
+  </div>
 </div>
 
 <div class="main">
   <nav class="sidebar" id="sidebar"></nav>
   <div class="content" id="content">
-    <p class="loading">Select a skill to view its documentation.</p>
+    <p class="loading" data-i18n="content.select">Select a skill to view its documentation.</p>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/i18next@24.2.2/dist/umd/i18next.min.js" integrity="sha384-nW1LQRNjrYL2qBbowzwcZaiLSoaUs+l+DqFm+VVWl9V7mHL5/MQwezV0KsgR808a" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/i18next-browser-languagedetector@8.0.4/dist/umd/i18nextBrowserLanguageDetector.min.js" integrity="sha384-a9Li6d3CxZG58fK5pVKru4dQXhG/frlGpBJVqkuDJIKF6GNFhNnVS8uxUQhqEKW6" crossorigin="anonymous"></script>
+<script src="i18n.js"></script>
 <script>
-const SKILLS = [
-  { id: 'scaffold', name: 'Scaffold', desc: 'End-to-end guide from idea to production. Project structure, onchain decisions, OpenZeppelin contracts.' },
-  { id: 'why-monad', name: 'Why Monad', desc: '10,000 tps, 400ms block time, 800ms finality, and full Ethereum compatibility.' },
-  { id: 'concepts', name: 'Concepts', desc: 'Monad architecture concepts that affect app development. Async execution, block states, reserve balance, EIP-7702, real-time data.' },
-  { id: 'addresses', name: 'Addresses', desc: 'Smart contract addresses for well known protocols on Monad. Testnet and mainnet.' },
-  { id: 'wallet', name: 'Wallet', desc: 'Agent wallet management, Safe multisig creation, and deploying contracts via Safe.' },
-  { id: 'wallet-integration', name: 'Wallet Integration', desc: 'Integrate wallet connection into a Next.js app using RainbowKit with Wagmi and viem.' },
-  { id: 'vercel-deploy', name: 'Vercel Deploy', desc: 'Deploy to Vercel without CLI or auth. Returns a preview URL and claim URL.' },
-  { id: 'gas', name: 'Gas', desc: 'How gas pricing works on Monad vs Ethereum. Opcode pricing, gas limits, and developer guidelines.' },
-  { id: 'tooling-and-infra', name: 'Tooling & Infra', desc: 'Directory of tooling and infrastructure providers that support Monad mainnet and testnet.' }
+// Page-specific translations
+i18next.addResourceBundle('en', 'translation', {
+  'nav.back': 'Back',
+  'nav.skills': 'Skills',
+  'content.select': 'Select a skill to view its documentation.',
+  'content.loading': 'Loading...',
+  'content.error': 'Could not load skill: {{message}}.',
+  'copy.label': 'Copy URL',
+  'skill.scaffold.name': 'Scaffold',
+  'skill.scaffold.desc': 'End-to-end guide from idea to production. Project structure, onchain decisions, OpenZeppelin contracts.',
+  'skill.why-monad.name': 'Why Monad',
+  'skill.why-monad.desc': '10,000 tps, 400ms block time, 800ms finality, and full Ethereum compatibility.',
+  'skill.concepts.name': 'Concepts',
+  'skill.concepts.desc': 'Monad architecture concepts that affect app development. Async execution, block states, reserve balance, EIP-7702, real-time data.',
+  'skill.addresses.name': 'Addresses',
+  'skill.addresses.desc': 'Smart contract addresses for well known protocols on Monad. Testnet and mainnet.',
+  'skill.wallet.name': 'Wallet',
+  'skill.wallet.desc': 'Agent wallet management, Safe multisig creation, and deploying contracts via Safe.',
+  'skill.wallet-integration.name': 'Wallet Integration',
+  'skill.wallet-integration.desc': 'Integrate wallet connection into a Next.js app using RainbowKit with Wagmi and viem.',
+  'skill.vercel-deploy.name': 'Vercel Deploy',
+  'skill.vercel-deploy.desc': 'Deploy to Vercel without CLI or auth. Returns a preview URL and claim URL.',
+  'skill.gas.name': 'Gas',
+  'skill.gas.desc': 'How gas pricing works on Monad vs Ethereum. Opcode pricing, gas limits, and developer guidelines.',
+  'skill.tooling-and-infra.name': 'Tooling & Infra',
+  'skill.tooling-and-infra.desc': 'Directory of tooling and infrastructure providers that support Monad mainnet and testnet.'
+}, true, true);
+
+i18next.addResourceBundle('zh', 'translation', {
+  'nav.back': '返回',
+  'nav.skills': '技能',
+  'content.select': '选择一个技能查看文档。',
+  'content.loading': '加载中...',
+  'content.error': '无法加载技能：{{message}}。',
+  'copy.label': '复制链接',
+  'skill.scaffold.name': '脚手架',
+  'skill.scaffold.desc': '从创意到生产的端到端指南。项目结构、链上决策、OpenZeppelin 合约。',
+  'skill.why-monad.name': '为什么选择 Monad',
+  'skill.why-monad.desc': '10,000 TPS、400ms 出块时间、800ms 最终确认，完全兼容以太坊。',
+  'skill.concepts.name': '核心概念',
+  'skill.concepts.desc': '影响应用开发的 Monad 架构概念。异步执行、区块状态、预留余额、EIP-7702、实时数据。',
+  'skill.addresses.name': '合约地址',
+  'skill.addresses.desc': 'Monad 上知名协议的智能合约地址。测试网和主网。',
+  'skill.wallet.name': '钱包',
+  'skill.wallet.desc': 'Agent 钱包管理、Safe 多签创建、通过 Safe 部署合约。',
+  'skill.wallet-integration.name': '钱包集成',
+  'skill.wallet-integration.desc': '使用 RainbowKit、Wagmi 和 viem 在 Next.js 应用中集成钱包连接。',
+  'skill.vercel-deploy.name': 'Vercel 部署',
+  'skill.vercel-deploy.desc': '无需 CLI 或认证即可部署到 Vercel。返回预览链接和认领链接。',
+  'skill.gas.name': 'Gas 费用',
+  'skill.gas.desc': 'Monad 与以太坊的 Gas 定价机制对比。操作码定价、Gas 限制和开发者指南。',
+  'skill.tooling-and-infra.name': '工具与基础设施',
+  'skill.tooling-and-infra.desc': '支持 Monad 主网和测试网的工具和基础设施提供商目录。'
+}, true, true);
+</script>
+<script>
+var SKILL_IDS = [
+  'scaffold', 'why-monad', 'concepts', 'addresses', 'wallet',
+  'wallet-integration', 'vercel-deploy', 'gas', 'tooling-and-infra'
 ];
 
 const sidebar = document.getElementById('sidebar');
@@ -203,82 +267,6 @@ const content = document.getElementById('content');
 const titleEl = document.getElementById('skill-title');
 const copyBtn = document.getElementById('copy-btn');
 const copyLabel = document.getElementById('copy-label');
-
-// Build sidebar
-SKILLS.forEach(skill => {
-  const item = document.createElement('a');
-  item.className = 'sidebar-item';
-  item.href = 'skill.html?name=' + skill.id;
-  item.dataset.skill = skill.id;
-  item.innerHTML = '<div class="sidebar-item-name">' + skill.name + '</div><div class="sidebar-item-desc">' + skill.desc + '</div>';
-  item.addEventListener('click', (e) => {
-    e.preventDefault();
-    loadSkill(skill.id);
-    history.pushState(null, '', 'skill.html?name=' + skill.id);
-  });
-  sidebar.appendChild(item);
-});
-
-function loadSkill(id) {
-  const skill = SKILLS.find(s => s.id === id);
-  if (!skill) return;
-
-  const skillUrl = 'https://skills.devnads.com/' + id + '/SKILL.md';
-
-  // Update header
-  document.title = skill.name + ' — MONSKILLS';
-  titleEl.textContent = skill.name;
-  copyLabel.textContent = id + '/SKILL.md';
-
-  // Update active sidebar item
-  document.querySelectorAll('.sidebar-item').forEach(el => {
-    el.classList.toggle('active', el.dataset.skill === id);
-  });
-
-  // Load content
-  content.innerHTML = '<p class="loading">Loading...</p>';
-  fetch(id + '/SKILL.md')
-    .then(r => { if (!r.ok) throw new Error(r.statusText); return r.text(); })
-    .then(text => { content.innerHTML = renderMarkdown(text); content.scrollTop = 0; })
-    .catch(err => {
-      content.innerHTML = '<p class="error">Could not load skill: ' + escHtml(err.message) + '.</p>';
-    });
-}
-
-// Copy URL
-{
-  const origHTML = copyBtn.innerHTML;
-  let timer;
-  copyBtn.addEventListener('click', async () => {
-    const params = new URLSearchParams(window.location.search);
-    const name = params.get('name');
-    if (!name) return;
-    const url = 'https://skills.devnads.com/' + name + '/SKILL.md';
-    try { await navigator.clipboard.writeText(url); } catch(err) {
-      const t = document.createElement('textarea'); t.value = url; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
-    }
-    clearTimeout(timer);
-    copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
-    timer = setTimeout(() => { copyBtn.innerHTML = origHTML; }, 1500);
-  });
-}
-
-// Handle back/forward
-window.addEventListener('popstate', () => {
-  const params = new URLSearchParams(window.location.search);
-  const name = params.get('name');
-  if (name && SKILLS.find(s => s.id === name)) loadSkill(name);
-});
-
-// Load initial skill from URL or default to first
-const params = new URLSearchParams(window.location.search);
-const initial = params.get('name');
-if (initial && SKILLS.find(s => s.id === initial)) {
-  loadSkill(initial);
-} else {
-  loadSkill(SKILLS[0].id);
-  history.replaceState(null, '', 'skill.html?name=' + SKILLS[0].id);
-}
 
 function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
@@ -288,7 +276,10 @@ function renderMarkdown(md) {
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, url) => {
+      const safeUrl = /^https?:\/\//.test(url) || url.startsWith('/') || url.startsWith('./') || url.startsWith('#') ? url : '#';
+      return '<a href="' + safeUrl + '" target="_blank" rel="noopener">' + text + '</a>';
+    });
   let raw = md.replace(/\r\n?/g, '\n');
   if (raw.startsWith('---\n')) {
     const end = raw.indexOf('\n---', 4);
@@ -363,6 +354,103 @@ function renderMarkdown(md) {
   }
   return out;
 }
+
+function buildSidebar() {
+  sidebar.innerHTML = '';
+  SKILL_IDS.forEach(function(id) {
+    var item = document.createElement('a');
+    item.className = 'sidebar-item';
+    item.href = 'skill.html?name=' + id;
+    item.dataset.skill = id;
+    var name = i18next.t('skill.' + id + '.name');
+    var desc = i18next.t('skill.' + id + '.desc');
+    item.innerHTML = '<div class="sidebar-item-name">' + escHtml(name) + '</div><div class="sidebar-item-desc">' + escHtml(desc) + '</div>';
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
+      loadSkill(id);
+      history.pushState(null, '', 'skill.html?name=' + id);
+    });
+    sidebar.appendChild(item);
+  });
+  var active = new URLSearchParams(window.location.search).get('name');
+  if (active) {
+    document.querySelectorAll('.sidebar-item').forEach(function(el) {
+      el.classList.toggle('active', el.dataset.skill === active);
+    });
+  }
+}
+buildSidebar();
+
+function loadSkill(id) {
+  if (SKILL_IDS.indexOf(id) === -1) return;
+
+  var name = i18next.t('skill.' + id + '.name');
+  document.title = name + ' \u2014 MONSKILLS';
+  titleEl.textContent = name;
+  copyLabel.textContent = id + '/SKILL.md';
+
+  document.querySelectorAll('.sidebar-item').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.skill === id);
+  });
+
+  content.innerHTML = '<p class="loading">' + escHtml(i18next.t('content.loading')) + '</p>';
+  var lang = getLang();
+  var mdFile = lang === 'zh' ? id + '/SKILL.zh.md' : id + '/SKILL.md';
+  fetch(mdFile)
+    .then(function(r) {
+      if (!r.ok && lang === 'zh') return fetch(id + '/SKILL.md');
+      if (!r.ok) throw new Error(r.statusText);
+      return r;
+    })
+    .then(function(r) { if (!r.ok) throw new Error(r.statusText); return r.text(); })
+    .then(function(text) { content.innerHTML = renderMarkdown(text); content.scrollTop = 0; })
+    .catch(function(err) {
+      content.innerHTML = '<p class="error">' + i18next.t('content.error', { message: err.message }) + '</p>';
+    });
+}
+
+// Copy URL
+(function() {
+  var origHTML = copyBtn.innerHTML;
+  var timer;
+  copyBtn.addEventListener('click', function() {
+    var curParams = new URLSearchParams(window.location.search);
+    var name = curParams.get('name');
+    if (!name) return;
+    var url = 'https://skills.devnads.com/' + name + '/SKILL.md';
+    try { navigator.clipboard.writeText(url); } catch(err) {
+      var t = document.createElement('textarea'); t.value = url; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+    }
+    clearTimeout(timer);
+    copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> ' + escHtml(i18next.t('copy.copied'));
+    timer = setTimeout(function() { copyBtn.innerHTML = origHTML; }, 1500);
+  });
+})();
+
+// Initialize language switcher with page-specific reload behavior
+initLangSwitcher(function() {
+  buildSidebar();
+  var curName = new URLSearchParams(window.location.search).get('name');
+  if (curName) loadSkill(curName);
+});
+
+// Handle back/forward
+window.addEventListener('popstate', function() {
+  var curParams = new URLSearchParams(window.location.search);
+  var name = curParams.get('name');
+  if (name && SKILL_IDS.indexOf(name) !== -1) loadSkill(name);
+});
+
+// Load initial skill from URL or default to first
+var params = new URLSearchParams(window.location.search);
+var initial = params.get('name');
+if (initial && SKILL_IDS.indexOf(initial) !== -1) {
+  loadSkill(initial);
+} else {
+  loadSkill(SKILL_IDS[0]);
+  history.replaceState(null, '', 'skill.html?name=' + SKILL_IDS[0]);
+}
+
 </script>
 </body>
 </html>

@@ -1,0 +1,22 @@
+/* Language switcher — shared across pages */
+.lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.lang-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--dim);
+  font-family: inherit;
+  font-size: 12px;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.lang-btn:hover { color: var(--fg); border-color: var(--fg); }
+.lang-btn.active {
+  color: var(--accent);
+  border-color: var(--accent);
+}
