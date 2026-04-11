@@ -22,14 +22,29 @@ export default async function handler(req, res) {
     return res.status(404).send("Skill not found");
   }
 
+  const lang = req.query.lang === "zh" ? "zh" : null;
+
   let content;
   try {
+    const filename = lang ? "SKILL.zh.md" : "SKILL.md";
     const filePath = skill === "monskill"
-      ? join(process.cwd(), "SKILL.md")
-      : join(process.cwd(), skill, "SKILL.md");
+      ? join(process.cwd(), filename)
+      : join(process.cwd(), skill, filename);
     content = readFileSync(filePath, "utf-8");
   } catch {
-    return res.status(404).send("Skill not found");
+    // Fallback to English if Chinese version not found
+    if (lang) {
+      try {
+        const fallback = skill === "monskill"
+          ? join(process.cwd(), "SKILL.md")
+          : join(process.cwd(), skill, "SKILL.md");
+        content = readFileSync(fallback, "utf-8");
+      } catch {
+        return res.status(404).send("Skill not found");
+      }
+    } else {
+      return res.status(404).send("Skill not found");
+    }
   }
 
   // Fire-and-forget: log the download to Neon
