@@ -18,17 +18,17 @@ description: Monad 工具和基础设施提供商支持目录。当开发者询�
 
 | 类别 | 参考文件 | 涵盖内容 |
 |------|---------|---------|
-| 分析工具 | [analytics.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/analytics.md) | 链上监控、投资组合追踪、DeFi 分析、仪表盘 |
-| 区块浏览器 | [block-explorers.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/block-explorers.md) | 交易浏览器、合约验证、UserOp 浏览器 |
-| 跨链 | [cross-chain.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/cross-chain.md) | 跨链桥、跨链桥聚合器、流动性层、AMB、链抽象 |
-| 托管 | [custody.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/custody.md) | 机构级托管方案 |
-| 索引器 | [indexers.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/indexers.md) | 通用数据 API 和索引框架（子图、数据管道） |
-| 法币入金 | [onramps.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/onramps.md) | 法币转加密货币、支付网关 |
-| 预言机 | [oracles.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/oracles.md) | 价格数据源、VRF、数据馈送 |
-| RPC 提供商 | [rpc-providers.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/rpc-providers.md) | 与 Monad 交互的 RPC 端点 |
-| 开发工具包 | [toolkits.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/toolkits.md) | 开发框架（Foundry、Hardhat） |
-| 钱包 | [wallets.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/wallets.md) | 软件钱包、硬件钱包、机构钱包、多签钱包 |
-| 钱包基础设施 | [wallet-infra.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/wallet-infra.md) | 嵌入式钱包、账户抽象、智能账户 |
+| 分析工具 | [analytics.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/analytics.zh.md) | 链上监控、投资组合追踪、DeFi 分析、仪表盘 |
+| 区块浏览器 | [block-explorers.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/block-explorers.zh.md) | 交易浏览器、合约验证、UserOp 浏览器 |
+| 跨链 | [cross-chain.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/cross-chain.zh.md) | 跨链桥、跨链桥聚合器、流动性层、AMB、链抽象 |
+| 托管 | [custody.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/custody.zh.md) | 机构级托管方案 |
+| 索引器 | [indexers.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/indexers.zh.md) | 通用数据 API 和索引框架（子图、数据管道） |
+| 法币入金 | [onramps.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/onramps.zh.md) | 法币转加密货币、支付网关 |
+| 预言机 | [oracles.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/oracles.zh.md) | 价格数据源、VRF、数据馈送 |
+| RPC 提供商 | [rpc-providers.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/rpc-providers.zh.md) | 与 Monad 交互的 RPC 端点 |
+| 开发工具包 | [toolkits.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/toolkits.zh.md) | 开发框架（Foundry、Hardhat） |
+| 钱包 | [wallets.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/wallets.zh.md) | 软件钱包、硬件钱包、机构钱包、多签钱包 |
+| 钱包基础设施 | [wallet-infra.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/tooling-and-infra/references/wallet-infra.zh.md) | 嵌入式钱包、账户抽象、智能账户 |
 
 ## 快速查询：提供商对应类别
 
