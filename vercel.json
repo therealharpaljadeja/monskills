@@ -7,7 +7,7 @@
   ],
   "functions": {
     "api/skill.js": {
-      "includeFiles": "{SKILL.md,*/SKILL.md,*/SKILL.zh.md,*/references/*.md,*/references/*.zh.md,wallet/utils/*.zh.md}"
+      "includeFiles": "{SKILL.md,*/SKILL.md,*/SKILL.zh.md,*/references/*.md,*/references/*.zh.md}"
     }
   },
   "headers": [
