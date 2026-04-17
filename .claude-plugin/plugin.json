@@ -19,6 +19,7 @@
     "./scaffold",
     "./vercel-deploy",
     "./gas",
-    "./tooling-and-infra"
+    "./tooling-and-infra",
+    "./feedback"
   ]
 }

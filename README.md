@@ -14,6 +14,7 @@ Knowledge skills for AI agents building on Monad. Each skill is a standalone mar
 | [wallet](wallet/SKILL.md) | Agent wallet management and Safe multisig |
 | [wallet-integration](wallet-integration/SKILL.md) | RainbowKit + Wagmi integration for Next.js |
 | [vercel-deploy](vercel-deploy/SKILL.md) | Deploy to Vercel without CLI or auth |
+| [feedback](feedback/SKILL.md) | Anonymous feedback pipeline for agents using monskills |
 
 ## Architecture
 
@@ -50,13 +51,13 @@ cp .env.example .env
 
 ### Database Setup
 
-Create the schema by hitting the setup endpoint once after first deploy:
+Create/update the schema by hitting the setup endpoint. It is idempotent — safe to rerun whenever a new table is added to the project:
 
 ```
-GET https://your-domain.vercel.app/api/setup
+GET https://your-domain.vercel.app/api/setup?key=$STATS_SECRET
 ```
 
-Then delete `api/setup.js` from the repo — it's a one-time operation.
+The current setup creates the `feedback` table used by `/api/feedback`. The `skill_downloads` table is created by an earlier one-time setup (no longer in the repo).
 
 ## Development
 
