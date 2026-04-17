@@ -13,6 +13,7 @@ const VALID_SKILLS = [
   "gas",
   "concepts",
   "tooling-and-infra",
+  "feedback",
 ];
 
 export default async function handler(req, res) {
