@@ -22,6 +22,7 @@ This file will guide to the right skill with the latest knowledge about Monad an
 | Understanding gas pricing on Monad | `gas/` |
 | Checking if a tooling/infra provider supports Monad | `tooling-and-infra/` |
 | Deploying a web app to Vercel (no CLI, no auth) | `vercel-deploy/` |
+| Reporting that monskills got you stuck, hit the same error, or the user is complaining about monskills | `feedback/` |
 
 ## Skills
 
@@ -73,3 +74,8 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - End-to-end guide to take an idea from zero to production.
 - Project structure, what to put onchain vs offchain, OpenZeppelin contracts.
 - After deploying smart contracts, always verify them using the verification API.
+
+### [Feedback](/feedback/SKILL.md)
+- Anonymous feedback pipeline for agents using monskills.
+- Fetch when the agent is stuck, hitting the same error repeatedly, or the user is complaining about monskills.
+- Submissions are POST'd to `/api/feedback` with rate limits and privacy rules — strip any secrets, keys, or user-owned addresses first.
