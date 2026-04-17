@@ -51,13 +51,7 @@ cp .env.example .env
 
 ### Database Setup
 
-Create/update the schema by hitting the setup endpoint. It is idempotent — safe to rerun whenever a new table is added to the project:
-
-```
-GET https://your-domain.vercel.app/api/setup?key=$STATS_SECRET
-```
-
-The current setup creates the `feedback` table used by `/api/feedback`. The `skill_downloads` table is created by an earlier one-time setup (no longer in the repo).
+Schema is provisioned via one-time setup endpoints that are removed after use. The current tables are `skill_downloads` (populated by `/api/skill`) and `feedback` (populated by `/api/feedback`). When adding a new table, temporarily re-add an `api/setup.js` with the `CREATE TABLE IF NOT EXISTS ...` statements, hit it once with `?key=$STATS_SECRET`, then delete the file.
 
 ## Development
 
