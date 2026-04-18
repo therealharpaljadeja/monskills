@@ -114,6 +114,7 @@ h2 {
 }
 .how-to-tab-panel {
   display: none;
+  margin-top: 0.75rem;
 }
 .how-to-tab-panel.active { display: block; }
 .how-to-tab-panel .tab-desc {
@@ -121,6 +122,10 @@ h2 {
   color: var(--dim);
   margin-bottom: 0.35rem;
   line-height: 1.4;
+  text-align: left;
+}
+.how-to-tab-panel code + .tab-desc {
+  margin-top: 0.75rem;
 }
 .how-to-tab-panel code {
   display: block;
@@ -284,10 +289,17 @@ h2 {
 <div class="how-to-tabs">
   <div class="how-to-tab-nav">
     <button class="how-to-tab-btn active" data-tab="skills" data-i18n="tabs.allAgents">All Agents</button>
+    <button class="how-to-tab-btn" data-tab="plugin" data-i18n="tabs.claudeCode">Claude Code</button>
     <button class="how-to-tab-btn" data-tab="agent" data-i18n="tabs.tellAgent">Tell your Agent</button>
   </div>
   <div class="how-to-tab-panel active" data-tab="skills">
     <code>npx skills add therealharpaljadeja/monskills</code>
+  </div>
+  <div class="how-to-tab-panel" data-tab="plugin">
+    <p class="tab-desc" data-i18n="plugin.step1">1. Add the marketplace</p>
+    <code>/plugin marketplace add therealharpaljadeja/monskills</code>
+    <p class="tab-desc" data-i18n="plugin.step2">2. Install the plugin</p>
+    <code>/plugin install monskills@monskills</code>
   </div>
   <div class="how-to-tab-panel" data-tab="agent">
     <code data-i18n="agentPrompt">"Read skills.devnads.com and build me an NFT minting app on Monad"</code>
@@ -328,7 +340,10 @@ h2 {
 i18next.addResourceBundle('en', 'translation', {
   tagline: 'Skills for developing apps on Monad. Assists LLM with frontend, smart contract deployment, and deploying to production.',
   'tabs.allAgents': 'All Agents',
+  'tabs.claudeCode': 'Claude Code',
   'tabs.tellAgent': 'Tell your Agent',
+  'plugin.step1': '1. Add the marketplace',
+  'plugin.step2': '2. Install the plugin',
   'providers.label': 'Works with',
   'footer.license': 'MIT License',
   'footer.browse': 'Browse Skills',
@@ -343,7 +358,10 @@ i18next.addResourceBundle('en', 'translation', {
 i18next.addResourceBundle('zh', 'translation', {
   tagline: '在 Monad 上开发应用的技能包。协助 LLM 完成前端开发、智能合约部署和生产环境上线。',
   'tabs.allAgents': '所有 Agent',
+  'tabs.claudeCode': 'Claude Code',
   'tabs.tellAgent': '告诉你的 Agent',
+  'plugin.step1': '1. 添加插件市场',
+  'plugin.step2': '2. 安装插件',
   'providers.label': '兼容平台',
   'footer.license': 'MIT 许可证',
   'footer.browse': '浏览技能',
