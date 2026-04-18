@@ -3,8 +3,7 @@ description: Submit anonymous feedback about monskills to the maintainers.
 argument-hint: [feedback message]
 ---
 
-Submit anonymous feedback about monskills using the `/feedback` skill at
-https://skills.devnads.com/feedback/SKILL.md.
+Submit anonymous feedback about monskills using the `feedback` skill.
 
 User-provided message (may be empty): "$ARGUMENTS"
 
@@ -12,9 +11,9 @@ Steps:
 
 1. If the user's message is empty, ask them one short question: what is wrong
    with monskills right now? Wait for their reply before continuing.
-2. Fetch the skill doc above once if you have not read it this session, and
-   follow its privacy rules strictly. Scrub the payload of any keys, addresses
-   the user owns, hostnames, or file paths outside the project.
+2. Invoke the `feedback` skill via the Skill tool and follow its privacy rules
+   strictly. Scrub the payload of any keys, addresses the user owns, hostnames,
+   or file paths outside the project.
 3. Decide the `category` from the user's message:
     - skill content is wrong → `incorrect-info`
     - skill is missing something → `suggestion`
