@@ -14,6 +14,7 @@ This skill covers initializing a HyperIndex indexer locally and deploying/managi
 - The user wants to inspect, promote, restart, or delete an existing deployment.
 - The user wants to manage indexer environment variables or IP allowlists.
 - The user wants to debug an indexer that is failing to deploy or sync.
+- The user wants the GraphQL API URL for an indexer (e.g. to point a frontend or curl at it).
 
 ## Initialize a new indexer
 
@@ -29,7 +30,7 @@ pnpx envio@3.0.0-alpha.21 init contract-import explorer \
   -b monad \
   -c <CONTRACT_ADDRESS> \
   -n <CONTRACT_NAME> \
-  typescript \
+  -l typescript \
   -d ./ -o ./ \
   --all-events --single-contract --api-token ""
 ```
@@ -42,7 +43,7 @@ pnpx envio@3.0.0-alpha.21 init contract-import explorer \
   -b monad-testnet \
   -c <CONTRACT_ADDRESS> \
   -n <CONTRACT_NAME> \
-  typescript \
+  -l typescript \
   -d ./ -o ./ \
   --all-events --single-contract --api-token ""
 ```
@@ -53,6 +54,7 @@ pnpx envio@3.0.0-alpha.21 init contract-import explorer \
 - `--all-events` imports every event in the ABI. Narrow this later by editing `config.yaml` if the user wants only specific events.
 - `--single-contract` scaffolds for one contract. Re-run the command for additional contracts, or edit the config by hand.
 - `--api-token ""` is intentional — leave it empty.
+- `-l typescript` is a flag, not a positional — the envio CLI rejects `typescript` as a bare positional arg.
 - The version is pinned to `envio@3.0.0-alpha.21` (use exactly this).
 
 After init, the `indexer/` folder will contain `config.yaml`, `schema.graphql`, and handler stubs. The user edits the handlers to decide what gets stored in the database. Once the code is ready and pushed to GitHub, deploy to Envio Cloud (see below).

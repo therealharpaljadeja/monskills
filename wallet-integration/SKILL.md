@@ -19,6 +19,14 @@ If the user has provided the project ID then store it as `NEXT_PUBLIC_WALLETCONN
 npm install @rainbow-me/rainbowkit wagmi viem@2.x @tanstack/react-query
 ```
 
+### Bump tsconfig target to ES2020
+
+`create-next-app` generates `"target": "ES2017"`, which rejects BigInt literals (`0n`, `1n`). viem and wagmi use BigInts for amounts, gas, and event args throughout — without this bump you'll hit `TS2737: BigInt literals are not available when targeting lower than ES2020` on the first `useReadContract` / `getLogs`. Patch it before writing any onchain code:
+
+```bash
+jq '.compilerOptions.target = "ES2020"' tsconfig.json > tsconfig.tmp && mv tsconfig.tmp tsconfig.json
+```
+
 ## Setup
 
 ### 1. Configure RainbowKit

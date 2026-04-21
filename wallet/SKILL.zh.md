@@ -9,7 +9,7 @@ description: 使用 Agent 钱包在 Monad 测试网或主网上发送交易，�
 
 有关如何创建和使用 Safe 多签的说明，请查看 utils 文件夹中的 SAFE_WALLET_MANAGEMENT.zh.md 文件。
 
-**提交交易时：** 始终使用 utils 文件夹中的 `propose.mjs` — 切勿编写自定义脚本。运行 `propose.mjs` 后，不要添加自己的总结、状态消息或重新格式化输出。脚本输出包含用户必须看到的二维码，需要保持原样打印。你唯一需要做的后续操作是请用户批准交易并提供交易哈希。
+**提交交易时：** 始终调用 utils 文件夹中的 `propose.sh` 包装脚本（它会使用缓存的依赖来启动 `propose.mjs`）— 切勿编写自定义脚本。运行后，不要添加自己的总结、状态消息或重新格式化输出。脚本输出包含用户必须看到的二维码，需要保持原样打印。你唯一需要做的后续操作是请用户批准交易并提供交易哈希。
 
 **安全规则：**
 - 绝不要求用户提供私钥（严重违规）
@@ -55,10 +55,10 @@ cast wallet list --dir ~/.monskills/keystore
 
 ## 解密私钥用于脚本
 
-当脚本需要私钥时（例如作为环境变量），即时解密：
+当脚本需要私钥时（例如作为环境变量），即时解密。`cast wallet decrypt-keystore` 会输出 `<uuid>'s private key is: 0x...`，需要通过 `awk '{print $NF}'` 提取出十六进制私钥，否则 Foundry 命令会因前缀无法解析而报错 "Failed to decode private key"：
 
 ```bash
-cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore <KEYSTORE_FILENAME> --unsafe-password ""
+cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore <KEYSTORE_FILENAME> --unsafe-password "" | awk '{print $NF}'
 ```
 
 将 `<KEYSTORE_FILENAME>` 替换为 `~/.monskills/keystore/` 中密钥存储文件的文件名（不包含目录路径）。

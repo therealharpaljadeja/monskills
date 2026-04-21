@@ -1,6 +1,6 @@
 {
   "name": "monskills",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Skills for developing apps on Monad. Assists LLM with frontend, smart contract deployment, and deploying to production",
   "author": {
     "name": "Harpalsinh Jadeja",

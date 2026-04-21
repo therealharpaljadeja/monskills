@@ -15,8 +15,26 @@ description: End to end guide to take an idea build an app to production, if you
 [ ] - Verify smart contracts post deployment — use the verification API to verify on all explorers with one call.
 [ ] - (If the app needs historical/queryable onchain data) Initialize an indexer — fetch `indexer/` skill. The indexer is initialized in an `indexer/` folder after the contract is deployed AND verified.
 [ ] - Build frontend using the deployed contract addresses. Use Wagmi, Next.js and Shadcn if user has no preferences
+[ ] - **Apply known gotchas** (see section below) — bump `tsconfig.json` target to ES2020 right after `create-next-app`, etc.
 [ ] - Commit all changes to git (`git add -A && git commit`)
 [ ] - Deploy frontend to Vercel — fetch `vercel-deploy/` skill, then run the deploy script (`bash deploy.sh web/`)
+
+## Known gotchas — apply up front
+
+These are well-known paper-cuts you will hit mid-build if you skip them. Patch them when you scaffold, not after the typechecker screams.
+
+### Next.js default tsconfig target is too low for viem/wagmi
+
+`create-next-app` generates `"target": "ES2017"`. viem, wagmi, and most onchain code use BigInt literals (`0n`, `1n`) everywhere — amounts, gas, event args, block numbers — so a fresh Next.js project fails typechecking with `TS2737: BigInt literals are not available when targeting lower than ES2020` the moment you `useReadContract` or `getLogs`.
+
+Bump the target immediately after running `npx create-next-app`:
+
+```bash
+cd web
+jq '.compilerOptions.target = "ES2020"' tsconfig.json > tsconfig.tmp && mv tsconfig.tmp tsconfig.json
+```
+
+(If `jq` isn't available, open `tsconfig.json` and change `"target": "ES2017"` to `"target": "ES2020"`.)
 
 ## Scaffolding
 
@@ -58,7 +76,10 @@ For example: Don't rebuild ERC20, ERC721 and other well known token types from s
 All Openzeppelin smart contracts can be found here: https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts and you can use the below command to install it (Foundry should be already installed).
 
 ```bash
-forge install OpenZeppelin/openzeppelin-contracts
+# --no-git avoids adding the dep as a git submodule — required when the contracts/
+# folder is not (yet) its own git repo, which is the default in monskills scaffolds
+# because the outer project directory owns the git history.
+forge install --no-git OpenZeppelin/openzeppelin-contracts
 ```
 
 ## Use Wagmi in Frontend

@@ -25,32 +25,78 @@ fi
 CACHE_DIR="${HOME}/.cache/monskills"
 ENVIO_INSTALL_CACHE="${CACHE_DIR}/envio-install.status"
 GH_INSTALL_CACHE="${CACHE_DIR}/gh-install.status"
-INSTALL_TTL=86400
+DEBUG_LOG="${CACHE_DIR}/hook-debug.log"
+# Claude Code runs hooks with a stripped PATH that excludes node-version-manager
+# bin dirs (nvm, pnpm, volta, etc). "ok" is cached for 24h; "missing" for only
+# 60s so a failed probe under stripped PATH doesn't stick if the user later
+# runs the hook from an interactive shell.
+INSTALL_TTL_OK=86400
+INSTALL_TTL_MISSING=60
 
 mkdir -p "$CACHE_DIR" 2>/dev/null || true
 
-# --- Generic install check, cached for INSTALL_TTL seconds ---
+# --- Augment PATH with common node-version-manager bin dirs ---
+# Claude Code starts hooks with a minimal PATH. Add the places users commonly
+# install global CLIs so `command -v envio-cloud` / `command -v gh` work.
+augment_path() {
+  local extra="$HOME/.local/bin:$HOME/.volta/bin:$HOME/.pnpm/bin:$HOME/.bun/bin:/opt/homebrew/bin:/usr/local/bin"
+
+  # Current nvm symlink (some setups use ~/.nvm/current, others ~/nvm/current)
+  for d in "$HOME/.nvm/current/bin" "$HOME/nvm/current/bin"; do
+    [ -d "$d" ] && extra="$d:$extra"
+  done
+
+  # Every installed nvm node version (newest first wins)
+  if [ -d "$HOME/.nvm/versions/node" ]; then
+    for d in "$HOME/.nvm/versions/node"/*/bin; do
+      [ -d "$d" ] && extra="$d:$extra"
+    done
+  fi
+
+  export PATH="$extra:$PATH"
+}
+
+augment_path
+
+# --- Generic install check, cached with split TTLs ---
 # args: <binary-name> <cache-file>
 check_install() {
   local bin="$1"
   local cache="$2"
   if [ -f "$cache" ]; then
-    local mtime now age
+    local mtime now age cached
     mtime=$(stat -f %m "$cache" 2>/dev/null || stat -c %Y "$cache" 2>/dev/null || echo 0)
     now=$(date +%s)
     age=$((now - mtime))
-    if [ "$age" -lt "$INSTALL_TTL" ]; then
-      cat "$cache"
+    cached=$(cat "$cache" 2>/dev/null)
+    if [ "$cached" = "ok" ] && [ "$age" -lt "$INSTALL_TTL_OK" ]; then
+      printf 'ok'
+      return
+    fi
+    if [ "$cached" = "missing" ] && [ "$age" -lt "$INSTALL_TTL_MISSING" ]; then
+      printf 'missing'
       return
     fi
   fi
   if command -v "$bin" >/dev/null 2>&1; then
     printf 'ok' > "$cache" 2>/dev/null
     printf 'ok'
-  else
-    printf 'missing' > "$cache" 2>/dev/null
-    printf 'missing'
+    return
   fi
+  # Last-chance fallback: re-probe inside a shell that has sourced the user's
+  # nvm / rc files. Catches setups where the binary lives under an nvm version
+  # dir that augment_path didn't guess (e.g. a custom NVM_DIR).
+  if bash -c '
+    [ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh" >/dev/null 2>&1
+    [ -s "$HOME/.bashrc" ] && . "$HOME/.bashrc" >/dev/null 2>&1
+    command -v '"$bin"' >/dev/null 2>&1
+  ' 2>/dev/null; then
+    printf 'ok' > "$cache" 2>/dev/null
+    printf 'ok'
+    return
+  fi
+  printf 'missing' > "$cache" 2>/dev/null
+  printf 'missing'
 }
 
 check_envio_install() { check_install envio-cloud "$ENVIO_INSTALL_CACHE"; }
@@ -72,6 +118,12 @@ check_gh_auth() {
   else
     printf 'logged-out'
   fi
+}
+
+# --- Debug log (writes to ~/.cache/monskills/hook-debug.log, never stdout) ---
+debug_log() {
+  local msg="$1"
+  printf '[%s] %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$msg" >> "$DEBUG_LOG" 2>/dev/null
 }
 
 # --- Extract tool_input.command from PreToolUse stdin ---
@@ -167,6 +219,7 @@ If any item is missing, ask the user to run the suggested command — never run 
 
 emit_deny() {
   local reason="$1"
+  debug_log "DENY: $reason | PATH=$PATH"
   printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":%s}}\n' "$(json_string "$reason")"
 }
 
