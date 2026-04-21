@@ -9,7 +9,7 @@ Any transaction other than deploying a Safe multisig must be proposed to the use
 
 For instructions on how to create and use a Safe multisig check out the SAFE_WALLET_MANAGEMENT.md file in utils folder.
 
-**When proposing transactions:** Always use `propose.mjs` from the utils folder — never write a custom script. After running `propose.mjs`, do NOT add your own summary, status message, or reformat the output. The script output contains a QR code that the user must see exactly as printed. Your only follow-up should be asking the user to approve the transaction and provide the transaction hash.
+**When proposing transactions:** Always invoke the `propose.sh` wrapper from the utils folder (it boots `propose.mjs` with cached deps) — never write a custom script. After it runs, do NOT add your own summary, status message, or reformat the output. The script output contains a QR code that the user must see exactly as printed. Your only follow-up should be asking the user to approve the transaction and provide the transaction hash.
 
 **Security rules:**
 - NEVER ask for user's private key (critical violation)
@@ -55,10 +55,10 @@ cast wallet list --dir ~/.monskills/keystore
 
 ## Decrypting the private key for scripts
 
-When a script needs the private key (e.g. as an env var), decrypt it on-the-fly:
+When a script needs the private key (e.g. as an env var), decrypt it on-the-fly. `cast wallet decrypt-keystore` prints `<uuid>'s private key is: 0x...` — pipe through `awk '{print $NF}'` to keep just the hex key, otherwise Foundry commands reject the prefixed string with "Failed to decode private key":
 
 ```bash
-cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore <KEYSTORE_FILENAME> --unsafe-password ""
+cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore <KEYSTORE_FILENAME> --unsafe-password "" | awk '{print $NF}'
 ```
 
 Replace `<KEYSTORE_FILENAME>` with the filename of the keystore file in `~/.monskills/keystore/` (without the directory path).

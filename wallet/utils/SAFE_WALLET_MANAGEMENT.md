@@ -111,10 +111,12 @@ while [ "$(cast balance $AGENT_WALLET_ADDRESS --rpc-url https://testnet-rpc.mona
 done
 
 # Deploy Safe with CREATE2 (standard SafeProxyFactory)
-# Decrypt private key on-the-fly from encrypted keystore
+# Decrypt private key on-the-fly from encrypted keystore.
+# `cast wallet decrypt-keystore` prints "<uuid>'s private key is: 0x...";
+# awk '{print $NF}' strips everything except the hex key.
 OWNER_1=$OWNER_1 OWNER_2=$OWNER_2 OWNER_3=$CLAUDE_ADDRESS \
   forge script DeploySafeCREATE2.sol:DeploySafeCREATE2 \
-    --private-key $(cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore $KEYSTORE_FILENAME --unsafe-password "") \
+    --private-key $(cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore $KEYSTORE_FILENAME --unsafe-password "" | awk '{print $NF}') \
     --rpc-url https://testnet-rpc.monad.xyz \
     --broadcast
 
@@ -129,10 +131,11 @@ echo "🌐 https://app.safe.global/home?safe=monad-testnet:$SAFE_ADDRESS"
 cast balance $AGENT_WALLET_ADDRESS --rpc-url https://rpc.monad.xyz
 
 # Deploy Safe with CREATE2 (standard SafeProxyFactory)
-# Decrypt private key on-the-fly from encrypted keystore
+# Decrypt private key on-the-fly from encrypted keystore (awk strips the
+# "<uuid>'s private key is:" prefix that cast prints).
 OWNER_1=$OWNER_1 OWNER_2=$OWNER_2 OWNER_3=$CLAUDE_ADDRESS \
   forge script DeploySafeCREATE2.sol:DeploySafeCREATE2 \
-    --private-key $(cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore $KEYSTORE_FILENAME --unsafe-password "") \
+    --private-key $(cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore $KEYSTORE_FILENAME --unsafe-password "" | awk '{print $NF}') \
     --rpc-url https://rpc.monad.xyz \
     --broadcast
 
@@ -211,18 +214,24 @@ SAFE_ADDRESS=$(cast to-check-sum-address "<SAFE_ADDRESS>")
 
 #### 3. Propose deployment to Safe Transaction Service
 
-```bash
-# Install dependencies
-npm install --no-save viem qrcode-terminal
+Invoke the `propose.sh` wrapper alongside `propose.mjs` in this folder — it
+bootstraps a dependency cache at `~/.monskills/propose-deps/` the first time it
+runs (one-time `npm install` of `viem` + `qrcode-terminal`), then executes the
+proposer. Do NOT copy `propose.mjs` into the project dir or run
+`npm install --no-save viem` — Node will fail to resolve viem against the
+script's own directory.
 
-# Run proposal — set CHAIN_ID to 143 (mainnet) or 10143 (testnet)
-# Decrypt private key on-the-fly from encrypted keystore
+```bash
+# Run proposal — set CHAIN_ID to 143 (mainnet) or 10143 (testnet).
+# SCRIPT_DIR is the absolute path to this `utils/` folder inside the monskills
+# plugin (the one containing propose.sh and propose.mjs).
+# awk '{print $NF}' strips cast's "<uuid>'s private key is:" prefix.
 CHAIN_ID=$CHAIN_ID \
   SAFE_ADDRESS=$SAFE_ADDRESS \
-  PRIVATE_KEY=$(cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore $KEYSTORE_FILENAME --unsafe-password "") \
+  PRIVATE_KEY=$(cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore $KEYSTORE_FILENAME --unsafe-password "" | awk '{print $NF}') \
   DEPLOYMENT_BYTECODE=$(jq -r '.transactions[0].transaction.input' \
     broadcast/Deploy.s.sol/$CHAIN_ID/dry-run/run-latest.json) \
-  node propose.mjs
+  bash "$SCRIPT_DIR/propose.sh"
 ```
 
 ---
@@ -246,16 +255,17 @@ TX_DATA=$(cast calldata "approve(address,uint256)" 0xSpender 1000000000000000000
 
 #### 2. Propose contract call to Safe Transaction Service
 
-```bash
-npm install --no-save viem qrcode-terminal
+Use `propose.sh` (same wrapper as above). `SCRIPT_DIR` is the absolute path to
+this `utils/` folder.
 
+```bash
 CHAIN_ID=$CHAIN_ID \
   SAFE_ADDRESS=$SAFE_ADDRESS \
   PRIVATE_KEY=$PRIVATE_KEY \
   TX_TO=$TARGET_CONTRACT_ADDRESS \
   TX_DATA=$TX_DATA \
   TX_VALUE=0 \
-  node propose.mjs
+  bash "$SCRIPT_DIR/propose.sh"
 ```
 
 Set `TX_VALUE` to the amount of native token (in wei) to send with the call, or omit for 0.

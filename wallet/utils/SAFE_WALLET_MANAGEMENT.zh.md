@@ -111,10 +111,12 @@ while [ "$(cast balance $AGENT_WALLET_ADDRESS --rpc-url https://testnet-rpc.mona
 done
 
 # 使用 CREATE2 部署 Safe（标准 SafeProxyFactory）
-# 从加密密钥存储中即时解密私钥
+# 从加密密钥存储中即时解密私钥。
+# `cast wallet decrypt-keystore` 会输出 "<uuid>'s private key is: 0x..."，
+# 用 awk '{print $NF}' 只保留最后的十六进制私钥。
 OWNER_1=$OWNER_1 OWNER_2=$OWNER_2 OWNER_3=$CLAUDE_ADDRESS \
   forge script DeploySafeCREATE2.sol:DeploySafeCREATE2 \
-    --private-key $(cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore $KEYSTORE_FILENAME --unsafe-password "") \
+    --private-key $(cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore $KEYSTORE_FILENAME --unsafe-password "" | awk '{print $NF}') \
     --rpc-url https://testnet-rpc.monad.xyz \
     --broadcast
 
@@ -129,10 +131,10 @@ echo "🌐 https://app.safe.global/home?safe=monad-testnet:$SAFE_ADDRESS"
 cast balance $AGENT_WALLET_ADDRESS --rpc-url https://rpc.monad.xyz
 
 # 使用 CREATE2 部署 Safe（标准 SafeProxyFactory）
-# 从加密密钥存储中即时解密私钥
+# 从加密密钥存储中即时解密私钥（awk 去掉 "<uuid>'s private key is:" 前缀）。
 OWNER_1=$OWNER_1 OWNER_2=$OWNER_2 OWNER_3=$CLAUDE_ADDRESS \
   forge script DeploySafeCREATE2.sol:DeploySafeCREATE2 \
-    --private-key $(cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore $KEYSTORE_FILENAME --unsafe-password "") \
+    --private-key $(cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore $KEYSTORE_FILENAME --unsafe-password "" | awk '{print $NF}') \
     --rpc-url https://rpc.monad.xyz \
     --broadcast
 
@@ -211,18 +213,18 @@ SAFE_ADDRESS=$(cast to-check-sum-address "<SAFE_ADDRESS>")
 
 #### 3. 向 Safe 交易服务提交交易
 
-```bash
-# 安装依赖
-npm install --no-save viem qrcode-terminal
+使用 `utils/` 文件夹中的 `propose.sh` 包装脚本调用 `propose.mjs` — 它会在首次运行时在 `~/.monskills/propose-deps/` 中自动安装 `viem` 和 `qrcode-terminal`（一次性缓存）。请勿把 `propose.mjs` 复制到项目目录，也不要再运行 `npm install --no-save viem` — Node 无法在脚本自身目录之外解析 viem 依赖。
 
-# 运行提交 — 将 CHAIN_ID 设置为 143（主网）或 10143（测试网）
-# 从加密密钥存储中即时解密私钥
+```bash
+# 运行提交 — 将 CHAIN_ID 设置为 143（主网）或 10143（测试网）。
+# SCRIPT_DIR 是 monskills 插件中本 utils/ 文件夹的绝对路径（包含 propose.sh 和 propose.mjs）。
+# awk '{print $NF}' 用于去掉 cast 输出中的 "<uuid>'s private key is:" 前缀。
 CHAIN_ID=$CHAIN_ID \
   SAFE_ADDRESS=$SAFE_ADDRESS \
-  PRIVATE_KEY=$(cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore $KEYSTORE_FILENAME --unsafe-password "") \
+  PRIVATE_KEY=$(cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore $KEYSTORE_FILENAME --unsafe-password "" | awk '{print $NF}') \
   DEPLOYMENT_BYTECODE=$(jq -r '.transactions[0].transaction.input' \
     broadcast/Deploy.s.sol/$CHAIN_ID/dry-run/run-latest.json) \
-  node propose.mjs
+  bash "$SCRIPT_DIR/propose.sh"
 ```
 
 ---
@@ -246,16 +248,16 @@ TX_DATA=$(cast calldata "approve(address,uint256)" 0xSpender 1000000000000000000
 
 #### 2. 向 Safe 交易服务提交合约调用
 
-```bash
-npm install --no-save viem qrcode-terminal
+继续使用 `propose.sh` 包装脚本。`SCRIPT_DIR` 为本 `utils/` 文件夹的绝对路径。
 
+```bash
 CHAIN_ID=$CHAIN_ID \
   SAFE_ADDRESS=$SAFE_ADDRESS \
   PRIVATE_KEY=$PRIVATE_KEY \
   TX_TO=$TARGET_CONTRACT_ADDRESS \
   TX_DATA=$TX_DATA \
   TX_VALUE=0 \
-  node propose.mjs
+  bash "$SCRIPT_DIR/propose.sh"
 ```
 
 将 `TX_VALUE` 设置为随调用发送的原生代币数量（单位为 wei），或省略则默认为 0。
