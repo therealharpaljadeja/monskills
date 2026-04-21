@@ -226,7 +226,9 @@ i18next.addResourceBundle('en', 'translation', {
   'skill.gas.name': 'Gas',
   'skill.gas.desc': 'How gas pricing works on Monad vs Ethereum. Opcode pricing, gas limits, and developer guidelines.',
   'skill.tooling-and-infra.name': 'Tooling & Infra',
-  'skill.tooling-and-infra.desc': 'Directory of tooling and infrastructure providers that support Monad mainnet and testnet.'
+  'skill.tooling-and-infra.desc': 'Directory of tooling and infrastructure providers that support Monad mainnet and testnet.',
+  'skill.indexer.name': 'Indexer',
+  'skill.indexer.desc': 'Deploy and manage HyperIndex indexers on Envio Cloud. First deploy, debugging, env rotation, IP allowlisting.'
 }, true, true);
 
 i18next.addResourceBundle('zh', 'translation', {
@@ -253,13 +255,15 @@ i18next.addResourceBundle('zh', 'translation', {
   'skill.gas.name': 'Gas 费用',
   'skill.gas.desc': 'Monad 与以太坊的 Gas 定价机制对比。操作码定价、Gas 限制和开发者指南。',
   'skill.tooling-and-infra.name': '工具与基础设施',
-  'skill.tooling-and-infra.desc': '支持 Monad 主网和测试网的工具和基础设施提供商目录。'
+  'skill.tooling-and-infra.desc': '支持 Monad 主网和测试网的工具和基础设施提供商目录。',
+  'skill.indexer.name': '索引器',
+  'skill.indexer.desc': '通过 Envio Cloud 部署和管理 HyperIndex 索引器。首次部署、调试、环境变量轮换、IP 白名单。'
 }, true, true);
 </script>
 <script>
 var SKILL_IDS = [
   'scaffold', 'why-monad', 'concepts', 'addresses', 'wallet',
-  'wallet-integration', 'vercel-deploy', 'gas', 'tooling-and-infra'
+  'wallet-integration', 'vercel-deploy', 'gas', 'tooling-and-infra', 'indexer'
 ];
 
 const sidebar = document.getElementById('sidebar');

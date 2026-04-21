@@ -20,6 +20,8 @@
     "./vercel-deploy",
     "./gas",
     "./tooling-and-infra",
-    "./feedback"
-  ]
+    "./feedback",
+    "./indexer"
+  ],
+  "hooks": "./hooks/hooks.json"
 }

@@ -13,6 +13,7 @@ description: End to end guide to take an idea build an app to production, if you
 [ ] - Build smart contracts
 [ ] - Deploy smart contracts — fetch `wallet/` skill, then deploy using the agent wallet and Safe multisig. **This must happen before building the frontend** because the frontend needs the deployed contract addresses.
 [ ] - Verify smart contracts post deployment — use the verification API to verify on all explorers with one call.
+[ ] - (If the app needs historical/queryable onchain data) Initialize an indexer — fetch `indexer/` skill. The indexer is initialized in an `indexer/` folder after the contract is deployed AND verified.
 [ ] - Build frontend using the deployed contract addresses. Use Wagmi, Next.js and Shadcn if user has no preferences
 [ ] - Commit all changes to git (`git add -A && git commit`)
 [ ] - Deploy frontend to Vercel — fetch `vercel-deploy/` skill, then run the deploy script (`bash deploy.sh web/`)
@@ -25,6 +26,7 @@ Before jumping into writing code, use plan mode to plan the architecture of the 
 | --- | --- |
 | web/ | Web app frontend, backend routes also in case of [Next.js](https://nextjs.org/docs/app/getting-started/installation) or similar app (if the user does not have a preference go with [Next.js](https://nextjs.org/docs/app/getting-started/installation) and [shadcn](https://ui.shadcn.com/docs/installation) components) |
 | contracts/ | Smart contracts (could be a [Foundry project](https://www.getfoundry.sh/introduction/getting-started), if the user does not have a preference use [Foundry](https://www.getfoundry.sh/introduction/getting-started)) |
+| indexer/ | (Optional) HyperIndex indexer for querying historical onchain events. Created via `indexer/` skill after the contract is deployed and verified. |
 
 ## Decide what to put onchain
 
@@ -169,4 +171,5 @@ Fetch the `vercel-deploy/` skill for deployment instructions. It deploys to Verc
 | Writing smart contracts | `addresses/` |
 | Agent wallet management, deploy smart contracts or perform onchain actions | `wallet/` |
 | Adding wallet connect to a frontend | `wallet-integration/` |
+| Deploying or managing a HyperIndex indexer on Envio Cloud | `indexer/` |
 | Building an app from scratch (idea to production) | `scaffold/` (this) |
