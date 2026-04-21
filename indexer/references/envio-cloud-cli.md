@@ -71,12 +71,68 @@ A deployment is a specific commit of an indexer. Commands take `<indexer>` and `
 
 | Command | Purpose |
 |---|---|
-| `envio-cloud deployment status <indexer> <commit> [<org>]` | Build/sync status of a deployment. |
+| `envio-cloud deployment status <indexer> <commit> [<org>]` | Build/sync status of a deployment. Pass `--watch-till-synced` to stream status until all chains hit 100%. |
 | `envio-cloud deployment metrics <indexer> <commit> [<org>]` | Runtime metrics (events/sec, lag, memory). |
 | `envio-cloud deployment logs <indexer> <commit> [<org>]` | Runtime logs. First place to look when something misbehaves. |
 | `envio-cloud deployment promote <indexer> <commit> [<org>]` | Promote a deployment to serve production traffic. |
 | `envio-cloud deployment restart <indexer> <commit> [<org>]` | Restart the running deployment. |
 | `envio-cloud deployment delete <indexer> <commit> [<org>]` | Delete a deployment. |
+| `envio-cloud deployment endpoint <indexer> <commit> <org>` | Print the GraphQL URL the frontend queries (see below). |
+
+### GraphQL endpoint URL — what the frontend talks to
+
+```bash
+envio-cloud deployment endpoint <indexer-name> <commit-hash> <organisation-id> [flags]
+```
+
+Alias: `envio-cloud deployment ep`.
+
+**This is the URL the frontend queries.** After a deployment is healthy, this command prints the GraphQL endpoint that any GraphQL client — Apollo, urql, graphql-request, `fetch`, or a raw `curl` — uses to read the indexed data and render it in the UI. The indexer is useless to the frontend until this URL is wired in.
+
+If the project has a frontend, Claude wires this up automatically (see the "Get the GraphQL endpoint URL" recipe in `envio-cloud-workflows.md`) — resolve the URL, write it to `web/.env.local` as `NEXT_PUBLIC_INDEXER_URL`, and point the GraphQL client at `process.env.NEXT_PUBLIC_INDEXER_URL`. Don't hand the raw URL to the user to paste themselves.
+
+Usage examples:
+
+```bash
+# Bare URL — ideal for copying into a .env file
+envio-cloud deployment endpoint myindexer abc1234 myorg
+
+# Pipe directly into a smoke-test query
+curl "$(envio-cloud deployment endpoint myindexer abc1234 myorg)" \
+  -H 'Content-Type: application/json' \
+  -d '{"query": "{ _meta { block { number } } }"}'
+
+# Machine-readable (for scripts that need more than the URL)
+envio-cloud deployment endpoint myindexer abc1234 myorg -o json
+```
+
+Frontend wiring example (Next.js + fetch):
+
+```ts
+// .env.local
+// NEXT_PUBLIC_INDEXER_URL=<paste the URL printed by `envio-cloud deployment endpoint`>
+
+const res = await fetch(process.env.NEXT_PUBLIC_INDEXER_URL!, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ query: `{ transfers(first: 10) { id from to value } }` }),
+});
+const { data } = await res.json();
+```
+
+Flags:
+
+| Flag | Purpose |
+|---|---|
+| `--cluster <name>` | Override the resolved cluster. Valid values: `hyper`, `hypertierchicago`, `ip-projects`, `prodaws`, `staging`. Only set this if the user explicitly asked for a non-default cluster. |
+| `-o json` | Structured output instead of the bare URL. |
+| `-q` | Suppress informational messages (global flag). Use this when piping the URL into another command. |
+
+Notes:
+- The URL is **computed locally** from deployment parameters; only the cluster is resolved via the API. Fast, but still requires authentication to resolve cluster.
+- `<commit-hash>` is the same short SHA returned by `indexer add` / shown in `deployment status`. Use the promoted/healthy commit — that's what serves traffic.
+- You can only view endpoints for orgs you are a member of (exit 1 otherwise).
+- Use the URL exactly as printed when writing it into env files or client configs. Don't rewrite it, add a trailing slash, or strip query parts.
 
 ## Environment variables
 
