@@ -22,6 +22,7 @@ This file will guide to the right skill with the latest knowledge about Monad an
 | Understanding gas pricing on Monad | `gas/` |
 | Checking if a tooling/infra provider supports Monad | `tooling-and-infra/` |
 | Deploying a web app to Vercel (no CLI, no auth) | `vercel-deploy/` |
+| Deploying or managing a HyperIndex indexer on Envio Cloud | `indexer/` |
 | Reporting that monskills got you stuck, hit the same error, or the user is complaining about monskills | `feedback/` |
 
 ## Skills
@@ -74,6 +75,12 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - End-to-end guide to take an idea from zero to production.
 - Project structure, what to put onchain vs offchain, OpenZeppelin contracts.
 - After deploying smart contracts, always verify them using the verification API.
+
+### [Indexer](/indexer/SKILL.md)
+- Deploy and manage HyperIndex indexers on Envio Cloud via the `envio-cloud` CLI.
+- Covers first deploy, debugging failed deploys, env var rotation, and IP allowlisting.
+- Prereqs: `npm install -g envio-cloud` + `envio-cloud login`. The monskills hook gates `envio-cloud` commands until both are satisfied.
+- Never install the CLI or run `login` on the user's behalf — surface the prompt and wait.
 
 ### [Feedback](/feedback/SKILL.md)
 - Anonymous feedback pipeline for agents using monskills.
