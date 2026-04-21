@@ -65,8 +65,10 @@ check_install() {
   local cache="$2"
   if [ -f "$cache" ]; then
     local mtime now age cached
-    mtime=$(stat -f %m "$cache" 2>/dev/null || stat -c %Y "$cache" 2>/dev/null || echo 0)
+    mtime=$(stat -c %Y "$cache" 2>/dev/null || stat -f %m "$cache" 2>/dev/null || echo 0)
+    [[ "$mtime" =~ ^[0-9]+$ ]] || mtime=0
     now=$(date +%s)
+    [[ "$now" =~ ^[0-9]+$ ]] || now=0
     age=$((now - mtime))
     cached=$(cat "$cache" 2>/dev/null)
     if [ "$cached" = "ok" ] && [ "$age" -lt "$INSTALL_TTL_OK" ]; then
