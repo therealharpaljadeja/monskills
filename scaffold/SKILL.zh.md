@@ -16,8 +16,26 @@ description: 从零到生产环境的端到端应用构建指南，如果你从�
 [ ] - 部署智能合约 — 获取 `wallet/` 技能，然后使用代理钱包和 Safe 多签进行部署。**这必须在构建前端之前完成**，因为前端需要已部署的合约地址。
 [ ] - 部署后验证智能合约 — 使用验证 API 一次调用即可在所有浏览器上验证。
 [ ] - 使用已部署的合约地址构建前端。如果用户没有偏好，使用 Wagmi、Next.js 和 Shadcn
+[ ] - **应用已知坑点**（见下文"已知坑点"章节）— 例如在 `create-next-app` 之后立即把 `tsconfig.json` 的 target 升级到 ES2020。
 [ ] - 将所有更改提交到 git (`git add -A && git commit`)
 [ ] - 将前端部署到 Vercel — 获取 `vercel-deploy/` 技能，然后运行部署脚本 (`bash deploy.sh web/`)
+
+## 已知坑点 — 提前处理
+
+这些是中途一定会踩的小坑，脚手架阶段就顺手修掉，别等到类型检查报错。
+
+### Next.js 默认 tsconfig target 过低，无法使用 BigInt
+
+`create-next-app` 生成的 `tsconfig.json` 默认是 `"target": "ES2017"`。viem、wagmi 以及绝大多数链上代码都大量使用 BigInt 字面量（`0n`、`1n`）表示金额、gas、事件参数、区块号等，因此刚 scaffold 出来的 Next.js 项目只要调用一次 `useReadContract` 或 `getLogs` 就会报错 `TS2737: BigInt literals are not available when targeting lower than ES2020`。
+
+在执行 `npx create-next-app` 之后立刻升级 target：
+
+```bash
+cd web
+jq '.compilerOptions.target = "ES2020"' tsconfig.json > tsconfig.tmp && mv tsconfig.tmp tsconfig.json
+```
+
+（如果没有 `jq`，手动打开 `tsconfig.json` 把 `"target": "ES2017"` 改成 `"target": "ES2020"` 即可。）
 
 ## 脚手架搭建
 
@@ -56,7 +74,9 @@ description: 从零到生产环境的端到端应用构建指南，如果你从�
 所有 Openzeppelin 智能合约可在此处找到：https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts，你可以使用以下命令安装（Foundry 应已安装）。
 
 ```bash
-forge install OpenZeppelin/openzeppelin-contracts
+# --no-git 避免把依赖加成 git submodule —— 当 contracts/ 尚不是独立 git 仓库时必须加
+# （monskills scaffolds 默认由外层项目目录管理 git 历史，所以 contracts/ 通常没自己的 .git）。
+forge install --no-git OpenZeppelin/openzeppelin-contracts
 ```
 
 ## 在前端使用 Wagmi

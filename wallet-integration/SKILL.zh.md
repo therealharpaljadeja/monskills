@@ -19,6 +19,14 @@ Monad 已被 Wagmi 原生支持 — 从 `wagmi/chains` 导入 `monad` 和 `monad
 npm install @rainbow-me/rainbowkit wagmi viem@2.x @tanstack/react-query
 ```
 
+### 把 tsconfig target 升级到 ES2020
+
+`create-next-app` 生成的默认 `tsconfig.json` 是 `"target": "ES2017"`，不允许 BigInt 字面量（`0n`、`1n`）。viem 和 wagmi 到处都在用 BigInt（金额、gas、事件参数），不升级的话第一个 `useReadContract` / `getLogs` 就会触发 `TS2737: BigInt literals are not available when targeting lower than ES2020`。写任何链上代码之前先升级：
+
+```bash
+jq '.compilerOptions.target = "ES2020"' tsconfig.json > tsconfig.tmp && mv tsconfig.tmp tsconfig.json
+```
+
 ## 配置
 
 ### 1. 配置 RainbowKit
