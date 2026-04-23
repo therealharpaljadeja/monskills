@@ -59,6 +59,22 @@ pnpx envio@3.0.0-alpha.21 init contract-import explorer \
 
 After init, the `indexer/` folder will contain `config.yaml`, `schema.graphql`, and handler stubs. The user edits the handlers to decide what gets stored in the database. Once the code is ready and pushed to GitHub, deploy to Envio Cloud (see below).
 
+### Opt into transaction fields before writing handlers
+
+By default, `event.transaction.*` is typed `never` in generated handlers — accessing `event.transaction.hash` (or any other tx field) is a TypeScript error. Most frontends want the tx hash (for explorer links, dedup, etc.), so opt in explicitly before writing handler code.
+
+Add `field_selection` to `config.yaml`:
+
+```yaml
+field_selection:
+  transaction_fields:
+    - hash
+```
+
+Place it at the top level of `config.yaml` (sibling of `networks:`, `contracts:`, etc.), not nested under a network or contract. After editing, re-run `pnpm codegen` (or `pnpx envio@3.0.0-alpha.21 codegen`) so the types regenerate — otherwise `event.transaction.hash` will still be typed `never`.
+
+Add other fields the handlers need (`from`, `to`, `value`, `gasUsed`, `input`, etc.) to the same list. Envio only pulls and types the fields listed here, so keep it minimal. The full set of available fields is in the [Envio field selection docs](https://docs.envio.dev/docs/HyperIndex/configuration-file#field-selection).
+
 ## Prerequisites
 
 Before any indexer command will work, the user must have all four of these in place:
