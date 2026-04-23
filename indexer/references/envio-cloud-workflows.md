@@ -22,16 +22,24 @@ Use when: the user wants to take a local HyperIndex project and put it on Envio 
    envio-cloud deployment status <name> <commit>
    ```
    Don't busy-loop — wait at least 5s between polls. If it stays pending for >5 minutes, check logs.
-5. **Verify indexing actually started — kick with an empty commit if not.** Envio Cloud has a quirk where `indexer add` sometimes creates the deployment but never starts the indexer. The deployment looks "deployed" in status but never progresses past block 0 and `deployment metrics` shows zero events processed. After the initial build completes, run:
+5. **Verify indexing actually started — kick with an empty commit if not.** Envio Cloud has a quirk where `indexer add` sometimes creates the deployment but never starts the indexer. The deployment looks "deployed" in status but the indexer never advances past `startBlock`. The authoritative check is the indexer's own `_meta` (one entry per chain), not the control-plane metrics. Resolve the endpoint, then query:
    ```bash
-   envio-cloud deployment status <name> <commit>
-   envio-cloud deployment metrics <name> <commit>
+   INDEXER_URL=$(envio-cloud deployment endpoint <name> <commit> <org> -q)
+   curl -sf "$INDEXER_URL" \
+     -H 'Content-Type: application/json' \
+     -d '{"query": "{ _meta { chainId startBlock progressBlock sourceBlock isReady readyAt eventsProcessed } }"}' \
+     | jq '.data._meta'
    ```
-   Indexing has started if status shows a syncing/running state **and** metrics shows a non-zero current block that is advancing, or events processed > 0. If after ~1–2 minutes post-build the block number is still 0 and no events have been processed, the indexer hasn't started — push an empty commit to force Envio Cloud to trigger a fresh build:
+   Interpret the result:
+   - **Healthy:** `isReady: true`, `readyAt` has a timestamp, and `progressBlock` is at or approaching `sourceBlock` (which is the indexer's own view of the chain tip — use it in-band instead of a separate RPC call). Gap between `progressBlock` and `sourceBlock` = still syncing historical blocks; it will close over time.
+   - **Stuck (the quirk):** `progressBlock == startBlock`, `isReady: false`, `readyAt: null`, persisting ~1–2 minutes after the build completed.
+   - **Do NOT treat `eventsProcessed: 0` as stuck.** A contract that has emitted no events since `startBlock` will sit at zero forever while the indexer is perfectly healthy.
+
+   If stuck, push an empty commit to force Envio Cloud to trigger a fresh build:
    ```bash
    (cd indexer && git commit --allow-empty -m "trigger envio-cloud rebuild" && git push)
    ```
-   Envio Cloud auto-picks up the new commit. Grab the new SHA from `git rev-parse --short HEAD` and poll `deployment status <name> <new-commit>` until indexing actually starts. Do this transparently — the user shouldn't have to know about this workaround.
+   Envio Cloud auto-picks up the new commit. Grab the new SHA from `git rev-parse --short HEAD`, re-resolve the endpoint for that commit, and re-run the `_meta` query until `isReady` flips to `true` and `progressBlock` is advancing. Do this transparently — the user shouldn't have to know about this workaround.
 6. **Promote to production when indexing is actually progressing:**
    ```bash
    envio-cloud deployment promote <name> <commit>
@@ -42,14 +50,19 @@ Use when: the user wants to take a local HyperIndex project and put it on Envio 
 
 ## Deployment exists but never started indexing
 
-Use when: `deployment status` looks healthy/deployed but the current block is stuck at 0, `deployment metrics` shows no events processed, and the GraphQL endpoint returns no data. This is a known Envio Cloud quirk — the deployment was created but the indexer process never actually kicked off. It's distinct from a failing deploy (which shows error status in `deployment status` / stack traces in `logs`) and from slow syncing (which has increasing block numbers).
+Use when: `deployment status` looks healthy/deployed but the indexer's `_meta` shows `isReady: false`, `readyAt: null`, and `progressBlock == startBlock`. This is a known Envio Cloud quirk — the deployment was created but the indexer process never actually kicked off. It's distinct from a failing deploy (which shows error status in `deployment status` / stack traces in `logs`) and from slow syncing (which has `progressBlock` increasing toward `sourceBlock`).
 
 Fix it by pushing an empty commit to the indexer repo so Envio Cloud triggers a fresh build:
 
-1. **Confirm the symptom first** — don't do this for a deploy that's actually progressing. Metrics should show 0 events processed and the current block should be stuck:
+1. **Confirm the symptom first** — don't do this for a deploy that's actually progressing. Query the indexer's own `_meta` (this is what the frontend will see, so it's the authoritative signal):
    ```bash
-   envio-cloud deployment metrics <indexer> <commit>
+   INDEXER_URL=$(envio-cloud deployment endpoint <indexer> <commit> <org> -q)
+   curl -sf "$INDEXER_URL" \
+     -H 'Content-Type: application/json' \
+     -d '{"query": "{ _meta { startBlock progressBlock sourceBlock isReady readyAt } }"}' \
+     | jq '.data._meta'
    ```
+   The quirk signature is `progressBlock == startBlock`, `isReady: false`, `readyAt: null`, holding for minutes. Do not use `eventsProcessed: 0` as the signal — that can be legitimate for a contract with no events since `startBlock`. `deployment metrics <indexer> <commit>` is a softer cross-check from the control plane.
 2. **Push an empty commit from the indexer repo:**
    ```bash
    (cd indexer && git commit --allow-empty -m "trigger envio-cloud rebuild" && git push)
@@ -137,13 +150,18 @@ Use when: an indexer has been deployed for this project and the frontend needs t
    INDEXER_URL=$(envio-cloud deployment endpoint <indexer> <commit> <org> -q)
    ```
    The command prints just the URL, so capture it directly into a shell variable.
-3. **Smoke-test it before writing anywhere:**
+3. **Query `_meta` before writing the URL anywhere.** `_meta` is the indexer's self-reported state (one entry per chain) and tells you both whether the endpoint is live and whether indexing is actually progressing:
    ```bash
    curl -sf "$INDEXER_URL" \
      -H 'Content-Type: application/json' \
-     -d '{"query": "{ _meta { block { number } } }"}' > /dev/null
+     -d '{"query": "{ _meta { chainId startBlock progressBlock sourceBlock isReady readyAt eventsProcessed } }"}' \
+     | jq '.data._meta'
    ```
-   If `curl` exits non-zero, the endpoint isn't serving yet — do NOT wire it in. Go check `deployment status` / `deployment logs` first. Wiring a dead URL into the frontend leaves the user debugging the app when the root cause is the indexer.
+   - If `curl` exits non-zero, the endpoint isn't serving yet — do NOT wire it in. Check `deployment status` / `deployment logs` first.
+   - If it responds but `isReady: false`, `readyAt: null`, and `progressBlock == startBlock`, the indexer is stuck — jump to the "Deployment exists but never started indexing" recipe before wiring.
+   - Only wire the URL into the frontend once `isReady: true` and `progressBlock` is advancing (at or approaching `sourceBlock`, the indexer's view of the chain tip). `eventsProcessed: 0` is fine if the contract has emitted nothing since `startBlock`.
+
+   Wiring a dead or stuck URL into the frontend leaves the user debugging the app when the root cause is the indexer.
 4. **Write it into the frontend env automatically.** Find the frontend dir (typically `web/`) and add `NEXT_PUBLIC_INDEXER_URL` to its `.env.local`. Append if the file exists, create if it doesn't, and overwrite any existing `NEXT_PUBLIC_INDEXER_URL` line rather than duplicating:
    ```bash
    ENV_FILE=web/.env.local
