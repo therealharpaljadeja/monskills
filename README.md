@@ -14,7 +14,7 @@ Knowledge skills for AI agents building on Monad. Each skill is a standalone mar
 | [wallet](wallet/SKILL.md) | Agent wallet management and Safe multisig |
 | [wallet-integration](wallet-integration/SKILL.md) | RainbowKit + Wagmi integration for Next.js |
 | [vercel-deploy](vercel-deploy/SKILL.md) | Deploy to Vercel without CLI or auth |
-| [indexer](indexer/SKILL.md) | Deploy and manage HyperIndex indexers on Envio Cloud |
+| [indexer](indexer/SKILL.md) | Index onchain events for activity feeds, leaderboards, history, and analytics (HyperIndex on Envio Cloud) |
 | [feedback](feedback/SKILL.md) | Anonymous feedback pipeline for agents using monskills |
 
 ## Architecture

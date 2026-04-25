@@ -1,11 +1,11 @@
 ---
 name: indexer
-description: Build, deploy, and manage a HyperIndex indexer on Envio Cloud. Use when the user wants to set up an indexer for Monad data, deploy it, inspect deployments, manage environment variables, or check indexer status.
+description: This skill has instructions to setup a Envio HyperIndex indexer to capture onchain smart contract events. Use when user wants a historical feed or activity feed or some similar tracking feed or feature in their app or wants to capture onchain smart contracts events as a trigger to perform some other actions in their app. Also use this skill when the user wants to debug, restart, promote or delete and existing Envio indexer deployed on Envio Cloud.
 ---
 
 # Indexer
 
-This skill covers initializing a HyperIndex indexer locally and deploying/managing it on Envio Cloud using the `envio-cloud` CLI.
+This skill covers initializing a HyperIndex indexer and deploying/managing it on Envio Cloud using the `envio-cloud` CLI.
 
 ## When to fetch this skill
 
@@ -97,8 +97,8 @@ If you attempt an `envio-cloud` command without these prereqs, the monskills hoo
 
 This skill is split across reference files. Fetch them on demand:
 
-- [CLI reference](./references/envio-cloud-cli.md) — every `envio-cloud` command, grouped by area (auth, context, indexer lifecycle, deployment, env, security).
 - [Workflow recipes](./references/envio-cloud-workflows.md) — opinionated sequences for common tasks (first deploy, debug a failing deploy, rotate env vars, allowlist an IP).
+- [CLI reference](./references/envio-cloud-cli.md) — every `envio-cloud` command, grouped by area (auth, context, indexer lifecycle, deployment, env, security).
 
 Start with the workflow recipe that matches the user's goal. Drop into the CLI reference only when you need a flag or subcommand not covered there.
 
