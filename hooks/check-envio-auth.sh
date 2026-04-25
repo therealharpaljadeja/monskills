@@ -33,7 +33,7 @@ DEBUG_LOG="${CACHE_DIR}/hook-debug.log"
 INSTALL_TTL_OK=86400
 INSTALL_TTL_MISSING=60
 
-mkdir -p "$CACHE_DIR" 2>/dev/null || true
+mkdir -p "$CACHE_DIR" 2>/dev/null
 
 # --- Augment PATH with common node-version-manager bin dirs ---
 # Claude Code starts hooks with a minimal PATH. Add the places users commonly

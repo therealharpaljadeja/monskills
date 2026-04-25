@@ -22,9 +22,24 @@ Use when: the user wants to take a local HyperIndex project and put it on Envio 
    envio-cloud deployment status <name> <commit>
    ```
    Don't busy-loop — wait at least 5s between polls. If it stays pending for >5 minutes, check logs.
-5. **Verify indexing actually started — kick with an empty commit if not.** Envio Cloud has a quirk where `indexer add` sometimes creates the deployment but never starts the indexer. The deployment looks "deployed" in status but the indexer never advances past `startBlock`. The authoritative check is the indexer's own `_meta` (one entry per chain), not the control-plane metrics. Resolve the endpoint, then query:
+5. **Wait for the initial build to finish, then push an empty commit to guarantee the indexer starts.** Envio Cloud has a quirk where `indexer add` sometimes creates the deployment but never starts the indexer — the deployment looks "deployed" in status but the indexer never advances past `startBlock`. Empirically, pushing an empty commit *after the first build completes* always kicks off a fresh build that does start the indexer. Do this unconditionally rather than gating on a stuck-detection check — it costs one extra build but removes the failure mode entirely.
+
+   First, wait for the initial deployment to finish building (don't push the empty commit while the first build is still in progress, or you'll race it):
    ```bash
-   INDEXER_URL=$(envio-cloud deployment endpoint <name> <commit> <org> -q)
+   envio-cloud deployment status <name> <commit>
+   ```
+   Once the build is complete, push the empty commit from the indexer repo:
+   ```bash
+   (cd indexer && git commit --allow-empty -m "trigger envio-cloud rebuild" && git push)
+   ```
+   Envio Cloud auto-picks up the new commit and supersedes the previous deployment. Grab the new SHA and use it for the rest of this recipe:
+   ```bash
+   NEW_COMMIT=$(cd indexer && git rev-parse --short HEAD)
+   ```
+
+   Then verify the new deployment is actually indexing. The authoritative check is the indexer's own `_meta` (one entry per chain), not the control-plane metrics. Resolve the endpoint and query:
+   ```bash
+   INDEXER_URL=$(envio-cloud deployment endpoint <name> "$NEW_COMMIT" <org> -q)
    curl -sf "$INDEXER_URL" \
      -H 'Content-Type: application/json' \
      -d '{"query": "{ _meta { chainId startBlock progressBlock sourceBlock isReady readyAt eventsProcessed } }"}' \
@@ -32,19 +47,14 @@ Use when: the user wants to take a local HyperIndex project and put it on Envio 
    ```
    Interpret the result:
    - **Healthy:** `isReady: true`, `readyAt` has a timestamp, and `progressBlock` is at or approaching `sourceBlock` (which is the indexer's own view of the chain tip — use it in-band instead of a separate RPC call). Gap between `progressBlock` and `sourceBlock` = still syncing historical blocks; it will close over time.
-   - **Stuck (the quirk):** `progressBlock == startBlock`, `isReady: false`, `readyAt: null`, persisting ~1–2 minutes after the build completed.
    - **Do NOT treat `eventsProcessed: 0` as stuck.** A contract that has emitted no events since `startBlock` will sit at zero forever while the indexer is perfectly healthy.
 
-   If stuck, push an empty commit to force Envio Cloud to trigger a fresh build:
-   ```bash
-   (cd indexer && git commit --allow-empty -m "trigger envio-cloud rebuild" && git push)
-   ```
-   Envio Cloud auto-picks up the new commit. Grab the new SHA from `git rev-parse --short HEAD`, re-resolve the endpoint for that commit, and re-run the `_meta` query until `isReady` flips to `true` and `progressBlock` is advancing. Do this transparently — the user shouldn't have to know about this workaround.
+   Do this transparently — the user shouldn't have to know about the empty-commit workaround.
 6. **Promote to production when indexing is actually progressing:**
    ```bash
-   envio-cloud deployment promote <name> <commit>
+   envio-cloud deployment promote <name> "$NEW_COMMIT"
    ```
-   Use the commit that's actually indexing (the post-empty-commit SHA if you had to kick it). Only promote after confirming the indexer is syncing and returning data as expected.
+   Use the post-empty-commit SHA (`$NEW_COMMIT` from step 5) — that's the deployment that's actually indexing. Only promote after confirming the indexer is syncing and returning data as expected.
 7. **Wire the GraphQL URL into the frontend automatically** (see "Get the GraphQL endpoint URL" recipe below). If the project has a frontend (e.g. `web/`), resolve the endpoint and write it to `web/.env.local` as `NEXT_PUBLIC_INDEXER_URL` without handing a URL back to the user to paste themselves.
 8. **Report the indexer name and promoted commit** to the user so they can reference it later.
 
