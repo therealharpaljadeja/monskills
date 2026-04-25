@@ -1,160 +1,65 @@
-# envio-cloud CLI reference
+# envio-cloud — behavioral notes
 
-Source of truth: https://docs.envio.dev/docs/HyperIndex/envio-cloud-cli
+CLI syntax is available via `envio-cloud --help` and `envio-cloud <command> --help`. This file covers what `--help` doesn't: guardrails, gotchas, and context for how the CLI fits into the broader workflow.
 
-## Install
+Source of truth for the CLI itself: https://docs.envio.dev/docs/HyperIndex/envio-cloud-cli
 
-```bash
-npm install -g envio-cloud
-# or run without installing:
-npx envio-cloud <command>
-```
+## Install and auth — never do these for the user
 
-Do not install this for the user. Tell them the command.
+- **Don't install the CLI for the user.** The command is `npm install -g envio-cloud` (or `npx envio-cloud <command>` to run without installing) — tell them, don't run it.
+- **`envio-cloud` requires `gh` (GitHub CLI)** to be installed and authenticated, since Envio Cloud deploys from GitHub. If `gh` is missing or not authenticated, tell the user to install it (`brew install gh` on macOS) and run `gh auth login` themselves — both require browser interaction.
+- **Don't run `envio-cloud login` for the user.** It opens a browser tab on envio.dev and only the user can complete it. Sessions last 30 days.
+- **`envio-cloud token` is the canonical session check.** Exit 0 = valid session. The monskills hook gates `envio-cloud` commands on this; use it whenever you need to know if the user is authenticated.
 
-## Companion requirement: GitHub CLI (`gh`)
+## GraphQL endpoint — what the frontend talks to
 
-`envio-cloud` requires `gh` to be installed and authenticated so the indexer repo can be pushed to GitHub (Envio Cloud deploys from GitHub).
+`envio-cloud deployment endpoint <indexer> <commit> <org>` prints the URL the frontend queries. **The indexer is useless to the frontend until this URL is wired in.** After a healthy deployment, resolve this URL and write it to the frontend's env file (typically `web/.env.local` as `NEXT_PUBLIC_INDEXER_URL`) — don't hand the URL back to the user to paste themselves. See `envio-cloud-workflows.md` for the full wiring recipe.
 
-```bash
-# macOS
-brew install gh
-gh auth login
-```
+Gotchas:
+- **Use the URL exactly as printed.** Don't rewrite it, add a trailing slash, or strip query parts.
+- **`--cluster` override is rare.** Only pass it if the user explicitly asked for a non-default cluster. Valid values: `hyper`, `hypertierchicago`, `ip-projects`, `prodaws`, `staging`.
+- **`-q` suppresses informational messages** — use it when capturing the URL into a shell variable.
+- **You can only resolve endpoints for orgs you are a member of** (exit 1 otherwise).
+- The URL is computed locally from deployment parameters; only the cluster is resolved via the API. Fast, but still requires authentication.
 
-Do not install `gh` or run `gh auth login` for the user. Both require browser interaction.
-
-## Authentication
-
-```bash
-envio-cloud login
-```
-
-Opens a browser tab on envio.dev. 30-day session duration. Only the user can complete this — never try to run it on their behalf.
-
-### Session status
-
-```bash
-envio-cloud token    # Exit 0 = session valid. Prints session info to stdout.
-envio-cloud logout   # Remove stored credentials.
-```
-
-`envio-cloud token` is the canonical way to check whether the current user is authenticated. The monskills hook uses this.
-
-## Context defaults
-
-Set org and indexer defaults so you don't have to repeat them on every command.
-
-```bash
-envio-cloud config set-org <org>
-envio-cloud config set-indexer <name>
-envio-cloud config get-context
-envio-cloud config clear
-```
-
-When both are set, `envio-cloud indexer get` (no args) refers to the active indexer in the active org.
-
-## Indexer lifecycle
-
-| Command | Purpose |
-|---|---|
-| `envio-cloud indexer list [--org <org>]` | List indexers in an org. |
-| `envio-cloud indexer get <name> [<org>]` | Show details for one indexer. |
-| `envio-cloud indexer add --name <name> --repo <repo>` | Register a new indexer from a GitHub repo. |
-| `envio-cloud indexer delete <name> [<org>]` | Remove an indexer. Irreversible — confirm with the user. |
-| `envio-cloud indexer settings get` | Read current indexer settings. |
-| `envio-cloud indexer settings set <key> <value>` | Update an indexer setting. |
-
-## Deployments
-
-A deployment is a specific commit of an indexer. Commands take `<indexer>` and `<commit>` as positional args.
-
-| Command | Purpose |
-|---|---|
-| `envio-cloud deployment status <indexer> <commit> [<org>]` | Build/sync status of a deployment. Pass `--watch-till-synced` to stream status until all chains hit 100%. |
-| `envio-cloud deployment metrics <indexer> <commit> [<org>]` | Runtime metrics (events/sec, lag, memory). |
-| `envio-cloud deployment logs <indexer> <commit> [<org>]` | Runtime logs. First place to look when something misbehaves. |
-| `envio-cloud deployment promote <indexer> <commit> [<org>]` | Promote a deployment to serve production traffic. |
-| `envio-cloud deployment restart <indexer> <commit> [<org>]` | Restart the running deployment. |
-| `envio-cloud deployment delete <indexer> <commit> [<org>]` | Delete a deployment. |
-| `envio-cloud deployment endpoint <indexer> <commit> <org>` | Print the GraphQL URL the frontend queries (see below). |
-
-### GraphQL endpoint URL — what the frontend talks to
-
-```bash
-envio-cloud deployment endpoint <indexer-name> <commit-hash> <organisation-id> [flags]
-```
-
-Alias: `envio-cloud deployment ep`.
-
-**This is the URL the frontend queries.** After a deployment is healthy, this command prints the GraphQL endpoint that any GraphQL client — Apollo, urql, graphql-request, `fetch`, or a raw `curl` — uses to read the indexed data and render it in the UI. The indexer is useless to the frontend until this URL is wired in.
-
-If the project has a frontend, Claude wires this up automatically (see the "Get the GraphQL endpoint URL" recipe in `envio-cloud-workflows.md`) — resolve the URL, write it to `web/.env.local` as `NEXT_PUBLIC_INDEXER_URL`, and point the GraphQL client at `process.env.NEXT_PUBLIC_INDEXER_URL`. Don't hand the raw URL to the user to paste themselves.
-
-Usage examples:
-
-```bash
-# Bare URL — ideal for copying into a .env file
-envio-cloud deployment endpoint myindexer abc1234 myorg
-
-# Pipe directly into a smoke-test query
-curl "$(envio-cloud deployment endpoint myindexer abc1234 myorg)" \
-  -H 'Content-Type: application/json' \
-  -d '{"query": "{ _meta { block { number } } }"}'
-
-# Machine-readable (for scripts that need more than the URL)
-envio-cloud deployment endpoint myindexer abc1234 myorg -o json
-```
-
-Frontend wiring example (Next.js + fetch):
+Frontend wiring (Next.js + `fetch`) — adapt the env var name for non-Next.js stacks (`VITE_INDEXER_URL` for Vite, etc.):
 
 ```ts
-// .env.local
-// NEXT_PUBLIC_INDEXER_URL=<paste the URL printed by `envio-cloud deployment endpoint`>
+// web/.env.local
+// NEXT_PUBLIC_INDEXER_URL=<URL printed by `envio-cloud deployment endpoint`>
 
-const res = await fetch(process.env.NEXT_PUBLIC_INDEXER_URL!, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ query: `{ transfers(first: 10) { id from to value } }` }),
-});
-const { data } = await res.json();
+// web/lib/indexer.ts
+export async function query<T>(gql: string, variables?: Record<string, unknown>): Promise<T> {
+  const res = await fetch(process.env.NEXT_PUBLIC_INDEXER_URL!, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query: gql, variables }),
+  });
+  const { data, errors } = await res.json();
+  if (errors) throw new Error(errors[0]?.message ?? 'GraphQL error');
+  return data as T;
+}
 ```
 
-Flags:
-
-| Flag | Purpose |
-|---|---|
-| `--cluster <name>` | Override the resolved cluster. Valid values: `hyper`, `hypertierchicago`, `ip-projects`, `prodaws`, `staging`. Only set this if the user explicitly asked for a non-default cluster. |
-| `-o json` | Structured output instead of the bare URL. |
-| `-q` | Suppress informational messages (global flag). Use this when piping the URL into another command. |
-
-Notes:
-- The URL is **computed locally** from deployment parameters; only the cluster is resolved via the API. Fast, but still requires authentication to resolve cluster.
-- `<commit-hash>` is the same short SHA returned by `indexer add` / shown in `deployment status`. Use the promoted/healthy commit — that's what serves traffic.
-- You can only view endpoints for orgs you are a member of (exit 1 otherwise).
-- Use the URL exactly as printed when writing it into env files or client configs. Don't rewrite it, add a trailing slash, or strip query parts.
+Query shape comes from `indexer/schema.graphql` — whatever entities the handlers write, the frontend can read by the same names. Don't reach for Apollo/urql unless the user asks; `fetch` is enough.
 
 ## Environment variables
 
-```bash
-envio-cloud indexer env list
-envio-cloud indexer env set <KEY> <value>
-envio-cloud indexer env delete <KEY>
-```
+- **Never echo secret values back to the user.** If you read env vars via `envio-cloud indexer env list`, don't include the values in your response.
+- **Setting an env var does not restart running deployments.** Follow up with `envio-cloud deployment restart <indexer> <commit>` if the change needs to take effect on an active deployment.
 
-Env vars are per-indexer, shared across all its deployments. Setting an env var does not restart running deployments automatically — follow up with `deployment restart` if the change needs to take effect on an active deployment.
+## IP allowlist — order matters
 
-Never echo secret values back to the user when reading them.
+Enabling the allowlist without adding the user's current IP first will lock them out of their own indexer's API. Always:
 
-## Security (IP allowlist)
+1. Add the user's current IP via `envio-cloud indexer security add-ip <ip>`
+2. *Then* enable via `envio-cloud indexer security enable`
 
-```bash
-envio-cloud indexer security get
-envio-cloud indexer security add-ip <ip-or-cidr>
-envio-cloud indexer security enable
-```
+Ask the user for their IP — don't assume.
 
-Enabling the allowlist without adding the user's current IP first will lock them out of their own indexer's API. Add their IP first, then enable.
+## Indexer deletion is irreversible
+
+`envio-cloud indexer delete <name> <org>` cannot be undone. Confirm by name with the user before running it. Don't add retry logic around it.
 
 ## Exit codes
 
