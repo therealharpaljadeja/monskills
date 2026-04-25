@@ -192,5 +192,5 @@ Fetch the `vercel-deploy/` skill for deployment instructions. It deploys to Verc
 | Writing smart contracts | `addresses/` |
 | Agent wallet management, deploy smart contracts or perform onchain actions | `wallet/` |
 | Adding wallet connect to a frontend | `wallet-integration/` |
-| Deploying or managing a HyperIndex indexer on Envio Cloud | `indexer/` |
+| Adding a historical/activity feed or any feature that requires indexing onchain smart contract events | `indexer/` |
 | Building an app from scratch (idea to production) | `scaffold/` (this) |

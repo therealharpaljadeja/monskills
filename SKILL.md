@@ -22,7 +22,7 @@ This file will guide to the right skill with the latest knowledge about Monad an
 | Understanding gas pricing on Monad | `gas/` |
 | Checking if a tooling/infra provider supports Monad | `tooling-and-infra/` |
 | Deploying a web app to Vercel (no CLI, no auth) | `vercel-deploy/` |
-| Deploying or managing a HyperIndex indexer on Envio Cloud | `indexer/` |
+| Adding a historical/activity feed or any feature that requires indexing onchain smart contract events | `indexer/` |
 | Reporting that monskills got you stuck, hit the same error, or the user is complaining about monskills | `feedback/` |
 
 ## Skills
@@ -77,8 +77,8 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - After deploying smart contracts, always verify them using the verification API.
 
 ### [Indexer](/indexer/SKILL.md)
-- Deploy and manage HyperIndex indexers on Envio Cloud via the `envio-cloud` CLI.
-- Covers first deploy, debugging failed deploys, env var rotation, and IP allowlisting.
+- Fetch when adding any feature that needs to read historical onchain events — activity feeds, leaderboards, transaction history, analytics dashboards, anything where the frontend can't get away with a single `eth_call`.
+- Under the hood: HyperIndex indexers deployed and managed on Envio Cloud via the `envio-cloud` CLI. Covers first deploy, debugging failed deploys, env var rotation, and IP allowlisting.
 - Prereqs: `npm install -g envio-cloud` + `envio-cloud login`. The monskills hook gates `envio-cloud` commands until both are satisfied.
 - Never install the CLI or run `login` on the user's behalf — surface the prompt and wait.
 
