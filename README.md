@@ -14,6 +14,7 @@ Knowledge skills for AI agents building on Monad. Each skill is a standalone mar
 | [wallet](wallet/SKILL.md) | Agent wallet management and Safe multisig |
 | [wallet-integration](wallet-integration/SKILL.md) | RainbowKit + Wagmi integration for Next.js |
 | [indexer](indexer/SKILL.md) | Index onchain events for activity feeds, leaderboards, history, and analytics (HyperIndex on Envio Cloud) |
+| [para](para/SKILL.md) | Embedded MPC wallets + social/email/passkey login on Monad via the `@getpara/cli` (`para create`, `para init`, `para doctor`) |
 | [feedback](feedback/SKILL.md) | Anonymous feedback pipeline for agents using monskills |
 
 ## Architecture
