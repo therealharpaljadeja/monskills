@@ -82,7 +82,7 @@ forge install --no-git OpenZeppelin/openzeppelin-contracts
 
 使用 [wagmi](https://wagmi.sh/react/getting-started) v3 库从前端调用智能合约。
 
-钱包连接使用 Rainbowkit，有一个名为 wallet-integration 的技能文件。
+钱包连接与认证使用 Para —— 内嵌 MPC 钱包（邮箱 / Passkey / 社交登录），同时支持连接外部钱包。`wallet-integration` 技能介绍了 `@getpara/cli` 的完整流程（用 `para create` 脚手架新应用，或用 `para init` 集成到现有应用），以及 Monad 的 wagmi 配置。
 
 ## 尽可能使用 useSendTransactionSync
 
@@ -181,5 +181,5 @@ forge verify-contract <ADDR> <CONTRACT> --chain 143 \
 | 选择要构建的区块链 | `why-monad/` |
 | 编写智能合约 | `addresses/` |
 | 代理钱包管理、部署智能合约或执行链上操作 | `wallet/` |
-| 在前端添加钱包连接 | `wallet-integration/` |
+| 在前端添加钱包 + 认证（内嵌 MPC 钱包、社交/邮箱/Passkey 登录，以及外部钱包连接 —— 基于 Para） | `wallet-integration/` |
 | 从零构建应用（从想法到生产） | `scaffold/`（本文件） |
