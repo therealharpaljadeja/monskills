@@ -1,149 +1,110 @@
 ---
 name: wallet-integration
-description: How to integrate wallet connection into a Next.js app on Monad using RainbowKit with Wagmi and viem.
+description: How to add wallet connection and authentication to a frontend on Monad using Para — embedded MPC wallets with email / phone / passkey / social login, plus external-wallet connect (MetaMask, Coinbase, WalletConnect, Rainbow, etc.). Driven by the `para` CLI (`@getpara/cli`). Fetch when the user wants to scaffold a Next.js or Expo app with wallet + auth pre-wired, integrate Para into an existing frontend, or manage Para projects, API keys, and webhooks from the terminal. This is monskills' canonical wallet-integration skill — there is no separate skill for "social login" or "embedded wallets," it's all here.
 ---
 
-Integrate wallet connection into a Next.js frontend using [RainbowKit](https://rainbowkit.com/docs/installation) with Wagmi and viem. 
+# Wallet Integration (Para)
 
-The Next.js project might be in the web directory of the entire project, depending on which directory the user is running claude on it might vary.
+This skill covers adding wallet + authentication to the frontend of a Monad project using **Para** and the `para` CLI (`@getpara/cli`).
 
-Monad is natively supported by Wagmi — import `monad` and `monadTestnet` from `wagmi/chains`.
+Para gives users embedded MPC wallets — they sign in with email, phone, passkey, or a social provider (Google, Apple, Twitter, Discord, Facebook, Farcaster) and instantly have a wallet, no browser extension required. It also supports connecting external wallets (MetaMask, Coinbase, WalletConnect, Rainbow, Zerion, Rabby) for users who already have one. The same `ParaProvider` handles both flows.
 
-## Optional prerequisite
+## When to fetch this skill
 
-If the user has provided the project ID then store it as `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` environment variable, if not then when the task is complete warn the user that WalletConnect will not work and lay out the steps on how to make it work.
+- The user wants any wallet connect / sign-in flow on their frontend, on Monad mainnet or testnet.
+- The user wants embedded wallets, social login, email/SMS login, or passkey login.
+- The user wants to scaffold a fresh Next.js or Expo app with wallet + auth already wired (`para create`).
+- The user has an existing frontend (Next.js, Vite, Expo) and wants to add Para to it (`para init` + `ParaProvider` + `para doctor`).
+- The user wants to manage Para API keys, environments, webhooks, branding, or auth methods from the CLI.
+- The user wants to debug a wallet integration that isn't working (`para doctor`).
 
-## Installation
+## Monad on Para
+
+Para's `--networks` flag supports `evm`. Monad mainnet and Monad testnet are EVM chains, so they fit the EVM template — but Para doesn't ship Monad as a built-in chain object. After `para create` (or `para init`), you wire Monad into the wagmi config that Para's provider consumes: import `monad` and `monadTestnet` from `wagmi/chains` and pass them in. See `references/para-monad-wiring.md` for the exact code edits.
+
+## Prerequisites
+
+Before any `para` command will work, the user must have all of these in place:
+
+1. `@getpara/cli` installed globally: `npm install -g @getpara/cli` (or `pnpm add -g @getpara/cli`, or run via `npx @getpara/cli@latest`).
+2. `para` logged in: `para login` (browser OAuth flow — only the user can complete it).
+3. A Para organization and project selected as active context. After `para login`, the CLI auto-selects the first org and project; switch with `para orgs switch` / `para projects switch` if needed.
+
+The monskills hook gates `para` commands on install + login. If a prereq is missing, the hook denies the tool call with the exact missing piece — surface that message to the user and wait.
+
+### What NOT to do
+
+- **Do not install the CLI for the user.** If `@getpara/cli` is missing, tell them the exact command and wait.
+- **Do not run `para login` for the user.** It opens a browser tab and only the user can complete the OAuth flow. (`--no-browser` exists for headless setups, but monskills is for interactive use — let the user choose.)
+- **Do not create a Para account or API key for the user via the web portal.** The CLI handles project + key creation — guide them through it.
+
+## Two ways in: scaffold a new app, or integrate into an existing one
+
+### Path A — scaffold a new app with Para pre-wired
+
+Use this when there's no frontend yet, or the user is fine with `para create` generating one.
 
 ```bash
-npm install @rainbow-me/rainbowkit wagmi viem@2.x @tanstack/react-query
+para create -t nextjs \
+  --networks evm \
+  --email --oauth google,apple \
+  --wallets metamask,coinbase,walletconnect \
+  --package-manager npm
 ```
 
-### Bump tsconfig target to ES2020
+`para create` scaffolds a complete Next.js app with the Para SDK pre-configured: `ParaProvider`, CSS imports, env-var wiring, dependencies installed. After scaffolding, it offers to connect a Para project and write the API key into `.env`.
 
-`create-next-app` generates `"target": "ES2017"`, which rejects BigInt literals (`0n`, `1n`). viem and wagmi use BigInts for amounts, gas, and event args throughout — without this bump you'll hit `TS2737: BigInt literals are not available when targeting lower than ES2020` on the first `useReadContract` / `getLogs`. Patch it before writing any onchain code:
+For Expo apps, swap `-t nextjs` for `-t expo` and add `--bundle-id <your-bundle-id>`. Expo's OAuth providers are limited to `google,apple`.
+
+Templates supported: `nextjs`, `expo`. **Para does not have a Vite template** — if the user wants Vite, use Path B (integrate into an existing Vite app manually).
+
+After `para create` finishes, fetch `references/para-monad-wiring.md` and apply the Monad chain edits to the generated wagmi config. `para create` does not know about Monad; you have to add it.
+
+See `references/para-workflows.md` → "Scaffold a new Para + Monad app" for the full sequence (folder placement, post-scaffold edits, dev server check).
+
+### Path B — integrate Para into an existing frontend
+
+Use this when there's already a Next.js (or Vite, or Expo) app and the user wants to add Para to it.
 
 ```bash
-jq '.compilerOptions.target = "ES2020"' tsconfig.json > tsconfig.tmp && mv tsconfig.tmp tsconfig.json
+cd web   # or wherever the frontend lives
+para init
 ```
 
-## Setup
+`para init` writes `.pararc` (org + project + environment context), then you install the SDK packages, wrap the app in `ParaProvider`, and import Para's CSS. After wiring, run `para doctor` to verify nothing is missing.
 
-### 1. Configure RainbowKit
+See `references/para-workflows.md` → "Integrate Para into an existing app" for the exact code edits, package list, and `para doctor` debugging loop.
 
-`config/index.ts`:
+## Where to look next
 
-```tsx
-import { getDefaultConfig } from '@rainbow-me/rainbowkit'
-import { monad, monadTestnet } from 'wagmi/chains'
-import { http } from 'wagmi'
+Reference files — fetch on demand:
 
-const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
+- [Workflow recipes](./references/para-workflows.md) — opinionated sequences for: scaffolding a new Para + Monad app, integrating into an existing app, rotating an API key, configuring auth methods/branding/webhooks via `para keys config`, debugging with `para doctor`.
+- [CLI reference](./references/para-cli.md) — every `para` command grouped by area (auth, config, orgs/projects, keys, scaffolding, diagnostics) with notes on flags and gotchas.
+- [Monad wiring](./references/para-monad-wiring.md) — the exact post-scaffold edits to add Monad mainnet + testnet to the wagmi config that Para's provider consumes. Apply this after every `para create` or `para init` flow.
 
-export const config = getDefaultConfig({
-  appName: 'My App',
-  projectId,
-  chains: [monad, monadTestnet],
-  transports: {
-    [monad.id]: http('https://rpc.monad.xyz'),
-    [monadTestnet.id]: http('https://testnet-rpc.monad.xyz'),
-  },
-  ssr: true,
-})
-```
+Start with the workflow recipe that matches the user's goal. Drop into the CLI reference only when you need a flag or subcommand not covered there.
 
-### 2. Create providers
+## Exit-code contract
 
-`providers.tsx`:
+Every `para` command follows the same convention — check exit codes, not just stdout:
 
-```tsx
-'use client'
+| Exit code | Meaning | How to react |
+|---|---|---|
+| `0` | Success | Continue |
+| `1` | User error (bad args, not logged in, unknown project, `para doctor` found errors with `--json`) | Read stderr, fix the input, retry |
+| `2` | API/server error | Not the user's fault. Retry once; if it persists, tell the user and stop. |
 
-import '@rainbow-me/rainbowkit/styles.css'
+`para doctor --json` exits 1 when it finds errors — that's expected behaviour, not a CLI bug. Use it as the signal that the integration has issues.
 
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
-import { WagmiProvider } from 'wagmi'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { config } from '@/config'
-import type { ReactNode } from 'react'
+## Secrets hygiene
 
-const queryClient = new QueryClient()
+- `para keys get --show-secret` and `para keys get --copy-secret` print/copy the **secret** API key. Never echo the value back to the user in your response, and never paste it into a file you commit. The public key (no flag) is fine to include in `.env.local` under a `NEXT_PUBLIC_PARA_API_KEY` (or framework-equivalent) prefix.
+- Always check the env-var prefix matches the framework before writing the key: `NEXT_PUBLIC_` for Next.js, `VITE_` for Vite, `EXPO_PUBLIC_` for Expo. `para doctor` flags mismatches.
+- `.pararc` is safe to commit (it only stores org/project IDs and environment, no secrets). `.env`/`.env.local` should be in `.gitignore`.
 
-export default function Providers({ children }: { children: ReactNode }) {
-  return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
-          {children}
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
-  )
-}
-```
+## Official docs
 
-### 3. Update layout
-
-`app/layout.tsx`:
-
-```tsx
-import Providers from '@/providers'
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <body>
-        <Providers>{children}</Providers>
-      </body>
-    </html>
-  )
-}
-```
-
-### 4. Next.js scripts
-
-Add `--webpack` flag in `package.json`:
-
-```json
-{
-  "scripts": {
-    "dev": "next dev --webpack",
-    "build": "next build --webpack"
-  }
-}
-```
-
-## Connect Button
-
-### Using RainbowKit's built-in button
-
-```tsx
-import { ConnectButton } from '@rainbow-me/rainbowkit'
-
-export default function Header() {
-  return <ConnectButton />
-}
-```
-
-## Smart Contract Interaction
-
-```tsx
-import { useReadContract } from 'wagmi'
-
-const contractAddress = '0x...'
-const abi = [/* contract ABI */]
-
-function App() {
-  const { data } = useReadContract({
-    abi,
-    address: contractAddress,
-    functionName: 'totalSupply',
-  })
-
-  return <div>Total Supply: {data?.toString()}</div>
-}
-```
-
-## Reference
-
-Full RainbowKit docs: https://rainbowkit.com/docs/installation
+- CLI overview: https://docs.getpara.com/v2/cli/overview
+- Installation: https://docs.getpara.com/v2/cli/installation
+- Command reference: https://docs.getpara.com/v2/cli/commands

@@ -18,8 +18,7 @@ This file will guide to the right skill with the latest knowledge about Monad an
 | Understanding Monad-specific concepts (async execution, block states, reserve balance, EIP-7702, real-time data) | `concepts/` |
 | Writing smart contracts | `addresses/` |
 | Agent wallet management, deploy smart contracts or perform onchain actions | `wallet/` |
-| Adding wallet connect to a frontend (RainbowKit, connect-only — user must already have a wallet) | `wallet-integration/` |
-| Adding embedded wallets + social/email/passkey login to a frontend (Para — onboard users without a wallet extension) | `para/` |
+| Adding wallet + auth to a frontend (embedded MPC wallets, social/email/passkey login, plus external-wallet connect — Para via the `@getpara/cli`) | `wallet-integration/` |
 | Understanding gas pricing on Monad | `gas/` |
 | Checking if a tooling/infra provider supports Monad | `tooling-and-infra/` |
 | Adding a historical/activity feed or any feature that requires indexing onchain smart contract events | `indexer/` |
@@ -51,8 +50,11 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - Propose transactions to Safe Transaction Service with EIP-712 signatures.
 
 ### [Wallet Integration](/wallet-integration/SKILL.md)
-- Integrate wallet connection into a Next.js app using RainbowKit with Wagmi and viem.
-- Monad mainnet and testnet are natively supported via `wagmi/chains`.
+- Add wallet + authentication to a frontend on Monad using **Para** and the `@getpara/cli` (`para`).
+- Embedded MPC wallets with email / phone / passkey / social login (Google, Apple, Twitter, Discord, Facebook, Farcaster), plus external-wallet connect (MetaMask, Coinbase, WalletConnect, Rainbow, Zerion, Rabby) — same `ParaProvider` handles both.
+- Two paths: scaffold a fresh Next.js or Expo app with `para create`, or integrate into an existing app with `para init` + `ParaProvider` + `para doctor`.
+- Both paths apply a Monad-specific patch (`references/para-monad-wiring.md`) — `para create` ships a generic EVM wagmi config that doesn't include `monad` / `monadTestnet` from `wagmi/chains`.
+- Prereqs: `npm install -g @getpara/cli` + `para login`. The monskills hook gates `para` commands until both are satisfied. Never install the CLI or run `login` on the user's behalf — surface the prompt and wait.
 
 ### [Gas](/gas/SKILL.md)
 - How gas pricing works on Monad vs Ethereum.
@@ -70,14 +72,6 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - End-to-end guide to take an idea from zero to production.
 - Project structure, what to put onchain vs offchain, OpenZeppelin contracts.
 - After deploying smart contracts, always verify them using the verification API.
-
-### [Para](/para/SKILL.md)
-- Fetch when adding embedded MPC wallets, social login, email/SMS login, or passkey login to a frontend — or when the user names Para directly.
-- Under the hood: the `@getpara/cli` (`para`) handles scaffolding (`para create -t nextjs|expo`), integration into existing apps (`para init`), API key + webhook + branding management (`para keys ...`), and integration diagnostics (`para doctor`).
-- Para's `para create` ships a generic EVM wagmi config — Monad isn't included by default. The skill's `references/para-monad-wiring.md` is the post-scaffold patch to add `monad` and `monadTestnet` from `wagmi/chains`.
-- Pick this over `wallet-integration/` (RainbowKit) when consumer onboarding matters (users sign up with email/Google and instantly have a wallet, no extension required). Pick `wallet-integration/` for crypto-native audiences.
-- Prereqs: `npm install -g @getpara/cli` + `para login`. The monskills hook gates `para` commands until both are satisfied.
-- Never install the CLI or run `login` on the user's behalf — surface the prompt and wait.
 
 ### [Indexer](/indexer/SKILL.md)
 - Fetch when adding any feature that needs to read historical onchain events — activity feeds, leaderboards, transaction history, analytics dashboards, anything where the frontend can't get away with a single `eth_call`.

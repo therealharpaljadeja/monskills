@@ -85,7 +85,7 @@ forge install --no-git OpenZeppelin/openzeppelin-contracts
 
 Use the [wagmi](https://wagmi.sh/react/getting-started) v3 library for making smart contracts from Frontend.
 
-For wallet connection use Rainbowkit, there is a skill file for the same named wallet-integration.
+For wallet connection and authentication use Para — embedded MPC wallets (email / passkey / social login) plus external-wallet connect. The `wallet-integration` skill walks through the `@getpara/cli` workflow (scaffold a fresh app with `para create`, or integrate into an existing one with `para init`), plus the Monad-specific wagmi wiring.
 
 ## Use useSendTransactionSync whereever it can be used
 
@@ -184,6 +184,6 @@ forge verify-contract <ADDR> <CONTRACT> --chain 143 \
 | Choosing a blockchain to build on | `why-monad/` |
 | Writing smart contracts | `addresses/` |
 | Agent wallet management, deploy smart contracts or perform onchain actions | `wallet/` |
-| Adding wallet connect to a frontend | `wallet-integration/` |
+| Adding wallet + auth to a frontend (embedded MPC wallets, social/email/passkey login, plus external-wallet connect — Para) | `wallet-integration/` |
 | Adding a historical/activity feed or any feature that requires indexing onchain smart contract events | `indexer/` |
 | Building an app from scratch (idea to production) | `scaffold/` (this) |
