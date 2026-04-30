@@ -2,43 +2,11 @@
 
 Opinionated sequences for common Para tasks. Each recipe assumes the user is already logged in (`para auth status` exit 0). If not, surface the install + login command and wait — see `para-cli.md` → "Install and auth."
 
-## Scaffold a new Para + Monad app
+This skill never scaffolds a fresh app — project scaffolding is handled by the `scaffold/` skill. Every recipe below assumes a Next.js or Vite frontend already exists in the repo (typically at `web/`).
 
-Use when: the project has no frontend yet, or the user is happy for `para create` to generate one. This is the fastest path from zero to "users can sign in with email and have an embedded wallet on Monad."
+## Integrate Para into the existing frontend
 
-1. **Confirm where the frontend should live.** monskills scaffolds put the frontend in `web/` by convention (see `scaffold/` skill). `para create` creates a directory at the path you give it; if `web/` doesn't exist yet, run `para create` from the repo root and pass the target path explicitly, or `cd` into the parent and let it create the dir.
-2. **Pick auth methods up front.** `para create` is much smoother non-interactively. Confirm with the user which they want before running:
-   - Email / phone — passwordless one-time codes.
-   - OAuth — `google,apple,twitter,discord,facebook,farcaster`.
-   - Passkey — embedded, no flag (always available).
-   - External wallets — `metamask,coinbase,walletconnect,rainbow,zerion,rabby` for EVM.
-
-   If unsure, default to: `--email --oauth google,apple --wallets metamask,coinbase,walletconnect`. That covers the majority of consumer flows and matches what most Monad apps ship.
-3. **Run scaffold:**
-   ```bash
-   para create -t nextjs \
-     --networks evm \
-     --email --oauth google,apple \
-     --wallets metamask,coinbase,walletconnect \
-     --package-manager npm
-   ```
-   Let the CLI's post-scaffold prompt connect a Para project and write the API key to `.env` — that saves a round-trip through `para projects create` + `para keys create`.
-4. **Apply the Monad wiring edits.** `para create` ships a generic EVM wagmi config (Ethereum mainnet, Sepolia). Monad isn't in there. Fetch `references/para-monad-wiring.md` and apply the edits — bump `tsconfig.json` target, add `monad` and `monadTestnet` from `wagmi/chains`, register HTTP transports.
-5. **Run `para doctor`** from inside the scaffolded app dir to confirm the integration is healthy:
-   ```bash
-   cd web && para doctor
-   ```
-   If it reports errors, fix them before starting the dev server — they always cause runtime failures.
-6. **Start the dev server and sanity-check the connect flow** in a browser:
-   ```bash
-   cd web && npm run dev
-   ```
-   Open the app, click connect, confirm the Para modal renders with the auth methods you configured, and confirm Monad mainnet + testnet appear in the chain switcher. If the modal is unstyled, the Para CSS import is missing — fix and re-run `para doctor`.
-7. **Report what's wired** — auth methods enabled, networks (Monad mainnet + testnet), env file path, and the dev URL. Don't echo the API key back to the user.
-
-## Integrate Para into an existing app
-
-Use when: the frontend already exists and the user wants to add Para without scaffolding from scratch (e.g. an existing Next.js app, or any Vite app — Vite has no `para create` template).
+Use when: the frontend already exists and the user wants to add Para to it (e.g. the Next.js app produced by the `scaffold/` skill, or an existing Vite app).
 
 1. **`cd` into the frontend directory** (the one with `package.json`). Don't run `para init` from the repo root if the frontend is in a subdir — `.pararc` should sit next to the frontend's `package.json`.
 2. **Pin the Para project context:**
@@ -65,7 +33,6 @@ Use when: the frontend already exists and the user wants to add Para without sca
 6. **Wire env vars.** Write the public key into the framework's env file with the right prefix:
    - Next.js → `web/.env.local` as `NEXT_PUBLIC_PARA_API_KEY=<public-key>`
    - Vite → `web/.env` as `VITE_PARA_API_KEY=<public-key>`
-   - Expo → `.env` as `EXPO_PUBLIC_PARA_API_KEY=<public-key>`
 
    Append (don't duplicate) — strip any prior `*_PARA_API_KEY=` line first.
 7. **Wrap the app in `ParaProvider` + import Para CSS.** This is the part `para doctor` will yell about if you skip it. For Next.js App Router:

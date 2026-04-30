@@ -82,7 +82,7 @@ forge install --no-git OpenZeppelin/openzeppelin-contracts
 
 使用 [wagmi](https://wagmi.sh/react/getting-started) v3 库从前端调用智能合约。
 
-钱包连接与认证使用 Para —— 内嵌 MPC 钱包（邮箱 / Passkey / 社交登录），同时支持连接外部钱包。`wallet-integration` 技能介绍了 `@getpara/cli` 的完整流程（用 `para create` 脚手架新应用，或用 `para init` 集成到现有应用），以及 Monad 的 wagmi 配置。
+钱包连接与认证使用 Para —— 内嵌 MPC 钱包（邮箱 / Passkey / 社交登录），同时支持连接外部钱包。`wallet-integration` 技能介绍了 `@getpara/cli` 的集成流程（在已脚手架的前端中运行 `para init` + `ParaProvider` + `para doctor`，并完成 Monad 的 wagmi 配置）。请勿运行 `para create` —— 项目脚手架由本技能负责。
 
 ## 尽可能使用 useSendTransactionSync
 

@@ -50,10 +50,10 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - Propose transactions to Safe Transaction Service with EIP-712 signatures.
 
 ### [Wallet Integration](/wallet-integration/SKILL.md)
-- Add wallet + authentication to a frontend on Monad using **Para** and the `@getpara/cli` (`para`).
+- Add wallet + authentication to an existing Monad frontend (Next.js or Vite) using **Para** and the `@getpara/cli` (`para`).
 - Embedded MPC wallets with email / phone / passkey / social login (Google, Apple, Twitter, Discord, Facebook, Farcaster), plus external-wallet connect (MetaMask, Coinbase, WalletConnect, Rainbow, Zerion, Rabby) — same `ParaProvider` handles both.
-- Two paths: scaffold a fresh Next.js or Expo app with `para create`, or integrate into an existing app with `para init` + `ParaProvider` + `para doctor`.
-- Both paths apply a Monad-specific patch (`references/para-monad-wiring.md`) — `para create` ships a generic EVM wagmi config that doesn't include `monad` / `monadTestnet` from `wagmi/chains`.
+- Single integration path: `para init` + `ParaProvider` + `para doctor` against an already-scaffolded frontend. Project scaffolding lives in the `scaffold/` skill — never run `para create` from this skill.
+- Always apply the Monad-specific patch (`references/para-monad-wiring.md`) — Para's SDK ships a generic EVM wagmi config that doesn't include `monad` / `monadTestnet` from `wagmi/chains`.
 - Prereqs: `npm install -g @getpara/cli` + `para login`. The monskills hook gates `para` commands until both are satisfied. Never install the CLI or run `login` on the user's behalf — surface the prompt and wait.
 
 ### [Gas](/gas/SKILL.md)
