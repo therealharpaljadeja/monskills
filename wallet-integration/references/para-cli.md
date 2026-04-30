@@ -35,30 +35,9 @@ Creates `.pararc` in the current directory pinning org + project + environment. 
 
 If the user already has a `.pararc` in a parent directory and you run `para init` in a subdir, you'll get two pinned configs. The closer one wins. Avoid this — do `para init` once, at the same level as the frontend's `package.json`.
 
-## `para create` — scaffold a fresh app
+## `para create` is intentionally out of scope
 
-```bash
-para create -t nextjs \
-  --networks evm \
-  --email --oauth google,apple \
-  --wallets metamask,coinbase,walletconnect \
-  --package-manager npm
-```
-
-What it generates:
-
-- Templates: `nextjs`, `expo`. **No Vite template** — if the user wants Vite, scaffold Vite manually and use `para init` + manual provider wiring instead.
-- Networks: `evm`, `solana`, `cosmos`, `stellar` (comma-separated). For Monad, use `evm`.
-- Auth methods: `--email`, `--phone`, `--oauth google,apple,twitter,discord,facebook,farcaster` (Expo limits OAuth to `google,apple`).
-- External wallets: `--wallets metamask,coinbase,walletconnect,rainbow,zerion,rabby` for EVM. Solana/Cosmos have their own wallet sets.
-- `--bundle-id <id>` — required for Expo, ignored for Next.js.
-- `--package-manager npm|yarn|pnpm|bun` — auto-detected from invocation if omitted.
-- `--skip-install` — skips `npm install`. Useful when scaffolding inside a monorepo with a hoisted lockfile.
-- `-y, --yes` — non-interactive mode. Pass every required flag explicitly when you use this.
-
-After scaffolding, `para create` offers to connect a Para project (creates or selects the org/project + API key, writes the key to `.env`). Let it do this — it saves a round-trip through `para projects create` + `para keys create`.
-
-**`para create` does not know about Monad.** It scaffolds a generic EVM wagmi config (Ethereum mainnet, Sepolia, etc.). Always follow up with the Monad wiring edits in `references/para-monad-wiring.md` — the dev server will run without them, but the chain dropdown won't include Monad.
+This skill never scaffolds a fresh app. Project scaffolding is owned by the `scaffold/` skill, which produces the Next.js frontend you integrate Para into. Don't run `para create` — it would generate a parallel app and confuse the workflow. If the user asks for a fresh scaffold, redirect them to the `scaffold/` skill and come back here to wire Para into what it produces.
 
 ## `para doctor` — diagnostics, run after every wiring change
 
@@ -73,7 +52,7 @@ Categories: `configuration`, `dependencies`, `setup`, `best-practices`. Severiti
 
 What it checks:
 
-- API key env var present and prefixed correctly (`NEXT_PUBLIC_` / `VITE_` / `EXPO_PUBLIC_`).
+- API key env var present and prefixed correctly (`NEXT_PUBLIC_` for Next.js, `VITE_` for Vite).
 - Para CSS import present.
 - `ParaProvider` wraps the app.
 - `QueryClient` is set up (Para's React hooks need React Query).
@@ -82,7 +61,7 @@ What it checks:
 - Required chain packages installed (e.g. `viem`, `wagmi` for EVM).
 - No deprecated `@getpara/*` packages still imported.
 
-Run `para doctor` after Path B (manual integration) and after every dependency upgrade. With `--json` it's safe to call from a script — exit 1 means there's something to fix.
+Run `para doctor` after every Para integration step and after every dependency upgrade. With `--json` it's safe to call from a script — exit 1 means there's something to fix.
 
 ## API key management
 
