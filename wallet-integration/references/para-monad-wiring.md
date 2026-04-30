@@ -1,12 +1,12 @@
 # Para — wiring Monad into the wagmi config
 
-`para create` and `para init` set up Para's React SDK, but the EVM chain set they ship is generic (Ethereum mainnet, Sepolia, etc.). Monad isn't included — neither mainnet (chain id 143) nor testnet (chain id 10143). This file is the post-scaffold patch you apply to make Monad the default chain.
+`para init` sets up Para's React SDK in your existing frontend, but the EVM chain set the SDK templates ship is generic (Ethereum mainnet, Sepolia, etc.). Monad isn't included — neither mainnet (chain id 143) nor testnet (chain id 10143). This file is the post-integration patch you apply to make Monad the default chain.
 
-Apply this **after** every `para create` flow, and after Path B's manual provider wiring in `references/para-workflows.md`.
+Apply this **after** the manual provider wiring in `references/para-workflows.md` → "Integrate Para into the existing frontend."
 
 ## Prereq: bump tsconfig target to ES2020
 
-`create-next-app` (and `para create -t nextjs`, which uses Next.js under the hood) generates `"target": "ES2017"`. viem and wagmi use BigInt literals (`0n`, `1n`) for chain ids, gas, amounts — without ES2020 you hit `TS2737: BigInt literals are not available when targeting lower than ES2020` the moment you touch a chain id or `useReadContract`.
+`create-next-app` generates `"target": "ES2017"`. viem and wagmi use BigInt literals (`0n`, `1n`) for chain ids, gas, amounts — without ES2020 you hit `TS2737: BigInt literals are not available when targeting lower than ES2020` the moment you touch a chain id or `useReadContract`.
 
 ```bash
 cd web
@@ -19,7 +19,7 @@ If `jq` isn't installed, open `tsconfig.json` and change `"target": "ES2017"` to
 
 Find the wagmi config that Para's provider consumes — it's typically at one of:
 
-- `web/config/wagmi.ts` (most common in `para create -t nextjs` output)
+- `web/config/wagmi.ts` (most common in Next.js setups)
 - `web/lib/wagmi.ts`
 - `web/app/wagmi.ts`
 
