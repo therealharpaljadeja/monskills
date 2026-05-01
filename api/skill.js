@@ -9,7 +9,6 @@ const VALID_SKILLS = [
   "addresses",
   "wallet",
   "wallet-integration",
-  "vercel-deploy",
   "gas",
   "concepts",
   "tooling-and-infra",

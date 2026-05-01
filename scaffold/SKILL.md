@@ -17,7 +17,6 @@ description: End to end guide to take an idea build an app to production, if you
 [ ] - Build frontend using the deployed contract addresses. Use Wagmi, Next.js and Shadcn if user has no preferences
 [ ] - **Apply known gotchas** (see section below) — bump `tsconfig.json` target to ES2020 right after `create-next-app`, etc.
 [ ] - Commit all changes to git (`git add -A && git commit`)
-[ ] - Deploy frontend to Vercel — fetch `vercel-deploy/` skill, then run the deploy script (`bash deploy.sh web/`)
 
 ## Known gotchas — apply up front
 
@@ -177,12 +176,6 @@ forge verify-contract <ADDR> <CONTRACT> --chain 143 \
   --verifier sourcify \
   --verifier-url "https://sourcify-api-monad.blockvision.org/"
 ```
-
-## Deploy to Vercel
-
-Before deploying, ensure all files are committed to git (`git add -A && git commit`). The deploy script archives only git-tracked files, so uncommitted or untracked files will not be included in the deployment.
-
-Fetch the `vercel-deploy/` skill for deployment instructions. It deploys to Vercel without requiring CLI installation or authentication.
 
 ## What to Fetch by Task
 
