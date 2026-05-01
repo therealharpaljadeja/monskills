@@ -32,7 +32,6 @@ paths:
               - addresses
               - wallet
               - wallet-integration
-              - vercel-deploy
       responses:
         "200":
           description: Skill markdown content
@@ -165,7 +164,6 @@ paths:
               - addresses
               - wallet
               - wallet-integration
-              - vercel-deploy
       responses:
         "200":
           description: Skill markdown content (same as /api/skill)
@@ -192,7 +190,6 @@ paths:
               - addresses
               - wallet
               - wallet-integration
-              - vercel-deploy
       responses:
         "200":
           description: Skill markdown content (same as /api/skill)

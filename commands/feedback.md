@@ -23,8 +23,8 @@ Steps:
 4. Pick `severity`: `high` if the user is blocked, `medium` if there is a
    workaround, `low` for nits.
 5. If the feedback is about a specific skill (wallet, scaffold, addresses,
-   concepts, gas, wallet-integration, vercel-deploy, tooling-and-infra,
-   why-monad, feedback), include it as `skill`. Otherwise omit.
+   concepts, gas, wallet-integration, tooling-and-infra, why-monad,
+   feedback), include it as `skill`. Otherwise omit.
 6. POST to `https://skills.devnads.com/api/feedback` with
    `Content-Type: application/json` and a body containing at minimum
    `source: "user"`, `message`, and whichever optional fields you determined.
