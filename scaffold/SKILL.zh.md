@@ -18,7 +18,6 @@ description: 从零到生产环境的端到端应用构建指南，如果你从�
 [ ] - 使用已部署的合约地址构建前端。如果用户没有偏好，使用 Wagmi、Next.js 和 Shadcn
 [ ] - **应用已知坑点**（见下文"已知坑点"章节）— 例如在 `create-next-app` 之后立即把 `tsconfig.json` 的 target 升级到 ES2020。
 [ ] - 将所有更改提交到 git (`git add -A && git commit`)
-[ ] - 将前端部署到 Vercel — 获取 `vercel-deploy/` 技能，然后运行部署脚本 (`bash deploy.sh web/`)
 
 ## 已知坑点 — 提前处理
 
@@ -174,12 +173,6 @@ forge verify-contract <ADDR> <CONTRACT> --chain 143 \
   --verifier sourcify \
   --verifier-url "https://sourcify-api-monad.blockvision.org/"
 ```
-
-## 部署到 Vercel
-
-部署前，确保所有文件已提交到 git (`git add -A && git commit`)。部署脚本仅归档 git 跟踪的文件，因此未提交或未跟踪的文件不会包含在部署中。
-
-获取 `vercel-deploy/` 技能以获取部署说明。无需安装 CLI 或进行身份验证即可部署到 Vercel。
 
 ## 按任务获取技能
 
