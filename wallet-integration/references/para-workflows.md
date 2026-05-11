@@ -14,6 +14,12 @@ Use when: the frontend already exists and the user wants to add Para to it (e.g.
    para init
    ```
    This writes `.pararc` (org + project + environment). Commit it — teammates pick up the same context without manual switching. No secrets in the file.
+
+   **If `para init` errors with `TTY initialization failed: uv_tty_init returned EINVAL`**, the shell isn't attached to a real TTY (common in sandboxed agents, Codespaces, and most CI-shaped environments). Re-run with `--no-input` — it skips the interactive prompts and uses the active org/project/env from global config:
+   ```bash
+   para init --no-input
+   ```
+   If the user hasn't run `para projects switch` / `para config set defaultEnvironment` yet, do that first, then `para init --no-input`.
 3. **Install the Para SDK packages.** The exact list depends on the framework and networks. For Next.js + EVM:
    ```bash
    npm install @getpara/react-sdk @getpara/evm-wallet-connectors viem wagmi @tanstack/react-query
@@ -42,8 +48,10 @@ Use when: the frontend already exists and the user wants to add Para to it (e.g.
    'use client'
 
    import '@getpara/react-sdk/styles.css'
-   import { ParaProvider } from '@getpara/react-sdk'
+   import { Environment, ParaProvider } from '@getpara/react-sdk'
    import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+   import { http } from 'wagmi'
+   import { monad, monadTestnet } from 'wagmi/chains'
    import type { ReactNode } from 'react'
 
    const queryClient = new QueryClient()
@@ -51,7 +59,34 @@ Use when: the frontend already exists and the user wants to add Para to it (e.g.
    export default function Providers({ children }: { children: ReactNode }) {
      return (
        <QueryClientProvider client={queryClient}>
-         <ParaProvider apiKey={process.env.NEXT_PUBLIC_PARA_API_KEY!}>
+         <ParaProvider
+           paraClientConfig={{
+             apiKey: process.env.NEXT_PUBLIC_PARA_API_KEY!,
+             env: Environment.BETA, // switch to Environment.PRODUCTION for prod builds
+           }}
+           config={{ appName: 'My Monad App' }}
+           paraModalConfig={{
+             // Empty array hides ALL social login buttons. Omit the key (or list a subset)
+             // to enable them. See "Configure auth methods…" below for the client-side
+             // vs key-side split.
+             oAuthMethods: ['GOOGLE', 'APPLE', 'DISCORD', 'TWITTER', 'FACEBOOK', 'FARCASTER'],
+             disablePhoneLogin: false,
+             recoverySecretStepEnabled: true,
+           }}
+           externalWalletConfig={{
+             evmConnector: {
+               config: {
+                 // First chain in the array is the default users land on at connect.
+                 chains: [monadTestnet, monad],
+                 transports: {
+                   [monadTestnet.id]: http('https://testnet-rpc.monad.xyz'),
+                   [monad.id]: http('https://rpc.monad.xyz'),
+                 },
+               },
+             },
+             wallets: ['METAMASK', 'COINBASE', 'WALLETCONNECT', 'RAINBOW', 'ZERION', 'RABBY'],
+           }}
+         >
            {children}
          </ParaProvider>
        </QueryClientProvider>
@@ -75,7 +110,13 @@ Use when: the frontend already exists and the user wants to add Para to it (e.g.
    ```
 
    The `'use client'` directive on `providers.tsx` is required — Para hooks are client-only. `para doctor` flags this if missing.
-8. **Apply the Monad wiring edits.** Fetch `references/para-monad-wiring.md` and add `monad` + `monadTestnet` to the wagmi config that Para's connectors consume.
+
+   **v2 prop shape — common pitfalls:**
+   - There is no flat `apiKey` prop and no `defaultChain` prop in v2. Everything lives inside `paraClientConfig`, `config`, `paraModalConfig`, or `externalWalletConfig`.
+   - Default chain = first entry in `externalWalletConfig.evmConnector.config.chains`.
+   - `oAuthMethods` is a string-union array: `'APPLE' | 'DISCORD' | 'FACEBOOK' | 'FARCASTER' | 'GOOGLE' | 'TWITTER' | 'TELEGRAM'`.
+   - `wallets` accepts `'METAMASK' | 'COINBASE' | 'WALLETCONNECT' | 'RAINBOW' | 'ZERION' | 'RABBY'`.
+8. **Apply the Monad wiring edits.** Fetch `references/para-monad-wiring.md` for the exact shape of `externalWalletConfig.evmConnector.config` (chains + transports) and the tsconfig bump.
 9. **Run `para doctor`** to verify everything is wired:
    ```bash
    para doctor
@@ -104,6 +145,17 @@ Use when: a key is leaked, or the user is rotating on schedule.
 ## Configure auth methods, branding, or webhooks via CLI
 
 Use when: the user wants to change which login methods appear in the Para modal, or update colors/fonts, or wire a webhook to a backend, without leaving the terminal.
+
+### Client-side vs key-side — what each controls
+
+This trips people up. There are two separate surfaces for "auth method" configuration, and `para doctor` does not catch the wrong one:
+
+| Where | What it controls | Examples |
+|---|---|---|
+| **Client-side** — `paraModalConfig` on `ParaProvider` (see step 7 above) | Which **IDP buttons** appear in the modal, phone-login visibility, recovery-step toggle, modal theming/layout | Hide social login: `oAuthMethods: []`. Hide phone: `disablePhoneLogin: true`. Hide only Twitter: drop `'TWITTER'` from the array. |
+| **Key-side** — `para keys config security` | Which **second-factor methods** users can register (PASSKEY / PASSWORD / PIN), allowed origins, session length, IP allowlist, transaction popups | Force passkey-only: pick `PASSKEY` and uncheck the others. Add a CIDR to the IP allowlist. |
+
+If the user says "hide social login" or "I only want email login" — that's **client-side**, edit `paraModalConfig`. The CLI cannot turn off IDP buttons. Conversely, if they want to disallow PINs as a second factor — that's **key-side**, edit via `para keys config security`.
 
 1. **Inspect current config:**
    ```bash

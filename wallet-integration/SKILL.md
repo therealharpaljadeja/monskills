@@ -21,7 +21,18 @@ This skill assumes the frontend already exists (typically scaffolded by the `sca
 
 ## Monad on Para
 
-Para's `--networks` flag supports `evm`. Monad mainnet and Monad testnet are EVM chains, so they fit the EVM template — but Para doesn't ship Monad as a built-in chain object. After `para init`, you wire Monad into the wagmi config that Para's provider consumes: import `monad` and `monadTestnet` from `wagmi/chains` and pass them in. See `references/para-monad-wiring.md` for the exact code edits.
+Para's `--networks` flag supports `evm`. Monad mainnet and Monad testnet are EVM chains, so they fit the EVM template — but Para doesn't ship Monad as a built-in chain object. After `para init`, you import `monad` and `monadTestnet` from `wagmi/chains` and pass them through `externalWalletConfig.evmConnector.config.{chains,transports}` on the `ParaProvider` (v2 stores the chain list there — there is no separate `wagmi.ts` `createConfig` and no `defaultChain` prop). See `references/para-monad-wiring.md` for the exact code edits.
+
+## v2 SDK shape — read before editing the provider
+
+If you're updating an existing Para integration, the `ParaProvider` props are **not** a flat `apiKey={...}`. v2 splits them into four config objects:
+
+- `paraClientConfig={{ apiKey, env: Environment.BETA }}` — credentials and environment (`BETA` / `PRODUCTION`).
+- `config={{ appName }}` — app metadata.
+- `paraModalConfig={{ oAuthMethods, disablePhoneLogin, recoverySecretStepEnabled, ... }}` — **client-side** modal controls (which IDP buttons render, phone toggle, recovery step). Empty `oAuthMethods: []` hides all social login.
+- `externalWalletConfig={{ evmConnector: { config: { chains, transports } }, wallets: ['METAMASK', ...] }}` — chain list, RPC transports, and which external-wallet tiles appear.
+
+Default chain = first entry in `externalWalletConfig.evmConnector.config.chains`. There is no top-level `defaultChain` prop. Full example in `references/para-workflows.md` → step 7.
 
 ## Prerequisites
 
@@ -48,6 +59,8 @@ para init
 ```
 
 `para init` writes `.pararc` (org + project + environment context), then you install the SDK packages, wrap the app in `ParaProvider`, and import Para's CSS. After wiring, run `para doctor` to verify nothing is missing.
+
+In a sandboxed or headless terminal (no real TTY), `para init` will exit with `TTY initialization failed: uv_tty_init returned EINVAL` — re-run as `para init --no-input` and it will use the active org/project/env from global config instead of prompting.
 
 See `references/para-workflows.md` → "Integrate Para into the existing frontend" for the exact code edits, package list, and `para doctor` debugging loop.
 

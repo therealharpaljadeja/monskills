@@ -28,10 +28,14 @@ When a command operates on "the active project," it's resolved through this chai
 ## `para init` — pin the project for the team
 
 ```bash
-para init
+para init                # interactive
+para init --no-input     # non-interactive (use this in any sandboxed/headless env)
+para init --force        # overwrite an existing .pararc
 ```
 
-Creates `.pararc` in the current directory pinning org + project + environment. Commit this — it's how teammates land on the same Para context without manually switching. No secrets in it. `--force` overwrites an existing `.pararc`.
+Creates `.pararc` in the current directory pinning org + project + environment. Commit this — it's how teammates land on the same Para context without manually switching. No secrets in it.
+
+**Headless / sandboxed terminals — use `--no-input`.** Without a real TTY, `para init` aborts with `TTY initialization failed: uv_tty_init returned EINVAL`. This hits Codespaces, most CI runners, and any agent that wraps the shell without forwarding a PTY. `--no-input` skips the interactive prompts and uses the active org / project / environment from global config — set those first via `para projects switch` and `para config set defaultEnvironment <beta|prod>` if they aren't already pinned.
 
 If the user already has a `.pararc` in a parent directory and you run `para init` in a subdir, you'll get two pinned configs. The closer one wins. Avoid this — do `para init` once, at the same level as the frontend's `package.json`.
 
@@ -79,13 +83,15 @@ After rotating or archiving, update the frontend env file and redeploy. Don't pr
 
 | Category | What it controls |
 |---|---|
-| `security` | Auth methods (PASSKEY/PASSWORD/PIN), allowed origins, session length (5–43200 minutes), transaction popups, IP allowlist (CIDR blocks) |
+| `security` | **Second-factor methods** (PASSKEY/PASSWORD/PIN), allowed origins, session length (5–43200 minutes), transaction popups, IP allowlist (CIDR blocks) |
 | `branding` | Foreground/background/accent colors, fonts, social URLs, welcome/backup-kit emails |
 | `setup` | Wallet types, Cosmos prefix, Apple Team ID, iOS bundle ID, Android package + fingerprints |
 | `ramps` | Buy/receive/withdraw toggles, provider ordering (RAMP/STRIPE/MOONPAY), default amounts |
 | `webhooks` | Endpoint URL, event subscription, on/off toggle, test send, secret rotation |
 
 Most of these can also be edited via the developer portal — use whichever the user prefers. The CLI is faster for repeated edits or scripted setups.
+
+**`security` does not control which IDP buttons appear in the modal.** `PASSKEY/PASSWORD/PIN` here are the *second-factor* methods Para offers users for recovery — not the OAuth provider buttons (Google, Apple, Twitter, etc.) on the login screen. To hide social login or phone login, edit `paraModalConfig` on the `ParaProvider` (client-side); see `para-workflows.md` → "Client-side vs key-side — what each controls."
 
 ### IP allowlist gotcha
 
