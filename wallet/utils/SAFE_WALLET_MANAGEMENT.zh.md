@@ -303,7 +303,16 @@ User can now:
 cast receipt <TRANSACTION_HASH> --rpc-url https://testnet-rpc.monad.xyz
 ```
 
-在回执中查找 `contractAddress` 字段。
+**不要使用 `contractAddress` 字段——对于 Safe 部署，该字段始终为 `null`。** Safe 并未直接 `CREATE`；它 delegatecall 到 CreateCall，因此回执的顶层 `contractAddress` 为空。已部署的地址在 CreateCall 发出的 `ContractCreation(address)` 日志中。
+
+从日志中解析：
+
+```bash
+cast receipt <TRANSACTION_HASH> --rpc-url https://testnet-rpc.monad.xyz --json \
+  | jq -r '.logs[] | select(.address == "0x9b35Af71d77eaf8d7e40252370304687390A1A52") | "0x" + .data[26:66]'
+```
+
+（`0x9b35Af71d77eaf8d7e40252370304687390A1A52` 是 CreateCall 在 Monad 主网和测试网上的地址——参见 `addresses/`。）
 
 ### 5. 验证智能合约
 

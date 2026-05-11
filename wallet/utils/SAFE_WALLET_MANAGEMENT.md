@@ -311,7 +311,16 @@ After user executes the transaction in Safe UI:
 cast receipt <TRANSACTION_HASH> --rpc-url https://testnet-rpc.monad.xyz
 ```
 
-Look for the `contractAddress` field in the receipt.
+**Do NOT use the `contractAddress` field — it is always `null` for Safe deployments.** The Safe didn't directly `CREATE`; it delegatecalled into CreateCall, so the receipt's top-level `contractAddress` stays empty. The deployed address is in the `ContractCreation(address)` log emitted by CreateCall.
+
+Parse it from the logs:
+
+```bash
+cast receipt <TRANSACTION_HASH> --rpc-url https://testnet-rpc.monad.xyz --json \
+  | jq -r '.logs[] | select(.address == "0x9b35Af71d77eaf8d7e40252370304687390A1A52") | "0x" + .data[26:66]'
+```
+
+(`0x9b35Af71d77eaf8d7e40252370304687390A1A52` is the CreateCall address on Monad mainnet and testnet — see `addresses/`.)
 
 ### 5. Verify Smart Contract
 
