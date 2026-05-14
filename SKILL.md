@@ -22,6 +22,7 @@ This file will guide to the right skill with the latest knowledge about Monad an
 | Understanding gas pricing on Monad | `gas/` |
 | Checking if a tooling/infra provider supports Monad | `tooling-and-infra/` |
 | Adding a historical/activity feed or any feature that requires indexing onchain smart contract events | `indexer/` |
+| Setting up Alchemy as the Monad RPC provider, or building an ERC-4337 smart-account agent wallet on Monad with sponsored gas (Gas Manager / Account Kit / Bundler) | `alchemy/` |
 | Reporting that monskills got you stuck, hit the same error, or the user is complaining about monskills | `feedback/` |
 
 ## Skills
@@ -78,6 +79,12 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - Under the hood: HyperIndex indexers deployed and managed on Envio Cloud via the `envio-cloud` CLI. Covers first deploy, debugging failed deploys, env var rotation, and IP allowlisting.
 - Prereqs: `npm install -g envio-cloud` + `envio-cloud login`. The monskills hook gates `envio-cloud` commands until both are satisfied.
 - Never install the CLI or run `login` on the user's behalf — surface the prompt and wait.
+
+### [Alchemy](/alchemy/SKILL.md)
+- Use Alchemy for Monad mainnet **JSON-RPC**, **Account Kit** (ERC-4337 smart accounts), **Bundler**, and **Gas Manager** (paymaster for sponsored transactions).
+- Pair with `gas/` — sponsored ops still pay the policy owner for `gas_limit`, not `gas_used`. Tight estimates matter.
+- Alchemy's Token / NFT / Prices / Portfolio / Transfers / Simulation / Webhook APIs do **NOT** yet support Monad mainnet — for on-chain data, use `indexer/`.
+- Authored by Alchemy under MIT.
 
 ### [Feedback](/feedback/SKILL.md)
 - Anonymous feedback pipeline for agents using monskills.
