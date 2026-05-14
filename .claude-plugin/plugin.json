@@ -20,6 +20,7 @@
     "./gas",
     "./tooling-and-infra",
     "./feedback",
-    "./indexer"
+    "./indexer",
+    "./alchemy"
   ]
 }
