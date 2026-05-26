@@ -18,6 +18,7 @@ This file will guide to the right skill with the latest knowledge about Monad an
 | Understanding Monad-specific concepts (async execution, block states, reserve balance, EIP-7702, real-time data) | `concepts/` |
 | Writing smart contracts | `addresses/` |
 | Agent wallet management, deploy smart contracts or perform onchain actions | `wallet/` |
+| Agent wallet for deploying contracts or running onchain actions on Monad with sponsored gas (ERC-4337 smart account; alternative to the Safe multisig path in `wallet/`) | `alchemy/` |
 | Adding wallet + auth to a frontend (embedded MPC wallets, social/email/passkey login, plus external-wallet connect — Para via the `@getpara/cli`) | `wallet-integration/` |
 | Understanding gas pricing on Monad | `gas/` |
 | Checking if a tooling/infra provider supports Monad | `tooling-and-infra/` |
@@ -55,6 +56,13 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - Single integration path: `para init` + `ParaProvider` + `para doctor` against an already-scaffolded frontend. Project scaffolding lives in the `scaffold/` skill — never run `para create` from this skill.
 - Always apply the Monad-specific patch (`references/para-monad-wiring.md`) — Para's SDK ships a generic EVM wagmi config that doesn't include `monad` / `monadTestnet` from `wagmi/chains`.
 - Prereqs: `npm install -g @getpara/cli` + `para login`. The monskills hook gates `para` commands until both are satisfied. Never install the CLI or run `login` on the user's behalf — surface the prompt and wait.
+
+### [Alchemy](/alchemy/SKILL.md)
+- ERC-4337 smart-account agent wallet that the agent operates to deploy contracts and run onchain actions on Monad mainnet.
+- Pairs with Alchemy Bundler and Gas Manager (paymaster) so the wallet sponsors its own gas. The agent does not need to hold MON.
+- Alternative or complement to the Safe multisig pattern in `wallet/`.
+- For end-user embedded wallets in a frontend (email, Google, X, passkey, social login), use `wallet-integration/` (Para) instead.
+- Authored by Alchemy under MIT.
 
 ### [Gas](/gas/SKILL.md)
 - How gas pricing works on Monad vs Ethereum.
