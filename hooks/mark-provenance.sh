@@ -64,10 +64,19 @@ CMD=$(json_field '.tool_input.command')
 CWD=$(json_field '.cwd')
 [ -n "$CMD" ] || exit 0
 
-# Only act on a `git commit ...` invocation (require trailing space after
-# `commit`, which every agent-issued `git commit -m ...` has). Anything else:
-# leave untouched.
-printf '%s' "$CMD" | grep -Eq '(^|[^[:alnum:]_])git[[:space:]]+commit[[:space:]]' || exit 0
+# Only act on a `git commit ...` invocation. Global options may sit between
+# `git` and the `commit` subcommand — `git -C <path> commit`, `git -c k=v
+# commit`, `git --git-dir <path> commit`, `git -p commit`, etc. — and agents
+# pick whichever form is convenient, so the matcher must allow them.
+#
+# An option "unit" is either an arg-taking global option plus its value
+# (-C/-c/--git-dir/... <arg>) or any other lone `-flag`. We require a trailing
+# separator after `commit` (every agent-issued `git commit -m ...` has one),
+# which also excludes the distinct `git commit-tree` / `git commit-graph`
+# subcommands.
+GIT_COMMIT_RE='(^|[^[:alnum:]_])git[[:space:]]+((((-C|-c|--git-dir|--work-tree|--namespace|--super-prefix|--exec-path)[[:space:]]+[^[:space:]]+|-[^[:space:]]+)[[:space:]]+)*)commit[[:space:]]'
+
+printf '%s' "$CMD" | grep -Eq "$GIT_COMMIT_RE" || exit 0
 
 # Idempotent: never double-stamp.
 case "$CMD" in
@@ -117,8 +126,10 @@ is_monad_project "$ROOT" || exit 0
 
 # --- Rewrite: insert the trailer flag into the FIRST `git commit` invocation ---
 # Inserting right after the `commit` token (not at the end of the line) keeps it
-# from bleeding into a later chained command such as `&& git push`.
-NEWCMD=$(printf '%s' "$CMD" | sed -E "s/(^|[^[:alnum:]_])git[[:space:]]+commit[[:space:]]/\1git commit --trailer \"${TRAILER}\" /")
+# from bleeding into a later chained command such as `&& git push`. \2 re-emits
+# any global options (`-C <path>`, `-c k=v`, ...) verbatim so the rewritten form
+# is `git <global-opts> commit --trailer "..." ...`.
+NEWCMD=$(printf '%s' "$CMD" | sed -E "s/${GIT_COMMIT_RE}/\1git \2commit --trailer \"${TRAILER}\" /")
 
 # If nothing changed (unusual command shape), leave it alone.
 [ "$NEWCMD" != "$CMD" ] || exit 0
