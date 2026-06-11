@@ -100,10 +100,17 @@ is_monad_project() {
   [ -f "$root/.claude-plugin/marketplace.json" ] && return 1
   [ -f "$root/.claude-plugin/plugin.json" ] && return 1
 
-  # Monad fingerprint: explicit testnet id (10143), named monad chains, or a
-  # chainId of 143 (mainnet). Restricted to code/config files; markdown is
-  # excluded so prose mentioning "monad" never triggers it.
-  local pat='monadTestnet|monadMainnet|monad-testnet|monad-mainnet|10143|(chainId|"chainId"|id)[[:space:]]*[:=][[:space:]]*143([^0-9]|$)'
+  # Monad fingerprint. Restricted to code/config files; markdown is excluded so
+  # prose mentioning "monad" never triggers it. We deliberately do NOT match a
+  # bare "monad" (collides with fp-ts/category-theory code). Signals:
+  #   - named chains, camelCase + hyphen + underscore: monadTestnet,
+  #     monad-testnet, monad_testnet (the underscore form is how Foundry
+  #     [rpc_endpoints] keys are conventionally written), same for mainnet.
+  #   - the official monad.xyz domain — catches RPC URLs like
+  #     testnet-rpc.monad.xyz / rpc.monad.xyz even when no chain name/id is present
+  #     (e.g. a contracts-only Foundry project before any frontend exists).
+  #   - explicit testnet id 10143, or a chainId of 143 (mainnet).
+  local pat='monadTestnet|monadMainnet|monad[-_](testnet|mainnet)|monad\.xyz|10143|(chainId|"chainId"|id)[[:space:]]*[:=][[:space:]]*143([^0-9]|$)'
 
   if command -v git >/dev/null 2>&1 &&
      git -C "$root" grep -I -l -E "$pat" -- \
