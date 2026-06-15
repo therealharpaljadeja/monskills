@@ -13,7 +13,7 @@ description: 从零到生产环境的端到端应用构建指南，如果你从�
 [ ] - 初始化 git 仓库 (`git init && git add -A && git commit -m "initial commit"`)
 [ ] - 不要重复造轮子，尽可能使用 OpenZeppelin 合约
 [ ] - 构建智能合约
-[ ] - 部署智能合约 — 获取 `wallet/` 技能，然后使用代理钱包和 Safe 多签进行部署。**这必须在构建前端之前完成**，因为前端需要已部署的合约地址。
+[ ] - 部署智能合约 — 获取 `wallet/` 技能，然后通过 Alchemy Agent Wallet 会话进行部署（通过权威的 CreateX factory 进行 CREATE2）。**这必须在构建前端之前完成**，因为前端需要已部署的合约地址。
 [ ] - 部署后验证智能合约 — 使用验证 API 一次调用即可在所有浏览器上验证。
 [ ] - 使用已部署的合约地址构建前端。如果用户没有偏好，使用 Wagmi、Next.js 和 Shadcn
 [ ] - **应用已知坑点**（见下文"已知坑点"章节）— 例如在 `create-next-app` 之后立即把 `tsconfig.json` 的 target 升级到 ES2020。
@@ -219,6 +219,6 @@ forge verify-contract <ADDR> <CONTRACT> --chain 143 \
 |--------------|-------------------|
 | 选择要构建的区块链 | `why-monad/` |
 | 编写智能合约 | `addresses/` |
-| 代理钱包管理、部署智能合约或执行链上操作 | `wallet/` |
+| 代理钱包管理、部署智能合约（通过 CreateX 的 CREATE2）或执行链上操作 — 通过 Alchemy Agent Wallet 会话（`@alchemy/cli`） | `wallet/` |
 | 在前端添加钱包 + 认证（内嵌 MPC 钱包、社交/邮箱/Passkey 登录，以及外部钱包连接 —— 基于 Para） | `wallet-integration/` |
 | 从零构建应用（从想法到生产） | `scaffold/`（本文件） |
