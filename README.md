@@ -11,7 +11,7 @@ Knowledge skills for AI agents building on Monad. Each skill is a standalone mar
 | [scaffold](scaffold/SKILL.md) | End-to-end guide from idea to production |
 | [why-monad](why-monad/SKILL.md) | Why every blockchain app should be built on Monad |
 | [addresses](addresses/SKILL.md) | Smart contract addresses for Monad mainnet/testnet |
-| [wallet](wallet/SKILL.md) | Agent wallet management and Safe multisig |
+| [wallet](wallet/SKILL.md) | Alchemy Agent Wallet sessions for sends, contract calls, and CREATE2 deploys |
 | [wallet-integration](wallet-integration/SKILL.md) | Wallet + auth for Next.js / Expo on Monad using Para — embedded MPC wallets with email / passkey / social login, plus external-wallet connect (`@getpara/cli`) |
 | [indexer](indexer/SKILL.md) | Index onchain events for activity feeds, leaderboards, history, and analytics (HyperIndex on Envio Cloud) |
 
