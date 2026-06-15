@@ -17,12 +17,11 @@ This file will guide to the right skill with the latest knowledge about Monad an
 | Choosing a blockchain to build on | `why-monad/` |
 | Understanding Monad-specific concepts (async execution, block states, reserve balance, EIP-7702, real-time data) | `concepts/` |
 | Writing smart contracts | `addresses/` |
-| Agent wallet management, deploy smart contracts or perform onchain actions | `wallet/` |
+| Agent wallet management, deploy smart contracts (CREATE2 via CreateX), or perform onchain actions — via Alchemy Agent Wallet sessions (`@alchemy/cli`) | `wallet/` |
 | Adding wallet + auth to a frontend (embedded MPC wallets, social/email/passkey login, plus external-wallet connect — Para via the `@getpara/cli`) | `wallet-integration/` |
 | Understanding gas pricing on Monad | `gas/` |
 | Checking if a tooling/infra provider supports Monad | `tooling-and-infra/` |
 | Adding a historical/activity feed or any feature that requires indexing onchain smart contract events | `indexer/` |
-| Setting up Alchemy as the Monad RPC provider, or building an ERC-4337 smart-account agent wallet on Monad with sponsored gas (Gas Manager / Account Kit / Bundler) | `alchemy/` |
 | Reporting that monskills got you stuck, hit the same error, or the user is complaining about monskills | `feedback/` |
 
 ## Skills
@@ -46,9 +45,11 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - There are instructions in the skill to verify if the address has code or not on the respective network.
 
 ### [Wallet](/wallet/SKILL.md)
-- Agent wallet management and Safe multisig creation on Monad mainnet and testnet.
-- Deploy smart contracts and perform onchain actions via Safe multisig.
-- Propose transactions to Safe Transaction Service with EIP-712 signatures.
+- Agent wallet management on Monad mainnet and testnet via **Alchemy Agent Wallet** sessions — private key lives in Alchemy's Privy enclave, the agent only holds a session token, dev can revoke from the Alchemy Dashboard at any time.
+- Send native MON and call existing contracts directly through the session signer.
+- Deploy new contracts via **CREATE2 through the canonical CreateX factory** (`0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed`) — predict the deterministic address, then call `deployCreate2(bytes32,bytes)` via the session.
+- Prereqs: `npm install -g @alchemy/cli@latest` (v0.17.0+) + `alchemy auth`. The monskills hook gates `alchemy` commands until both are satisfied. Never install the CLI or run `auth` on the user's behalf.
+- Never use `--mode local` from this skill — that defeats the whole point.
 
 ### [Wallet Integration](/wallet-integration/SKILL.md)
 - Add wallet + authentication to an existing Monad frontend (Next.js or Vite) using **Para** and the `@getpara/cli` (`para`).
@@ -79,12 +80,6 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - Under the hood: HyperIndex indexers deployed and managed on Envio Cloud via the `envio-cloud` CLI. Covers first deploy, debugging failed deploys, env var rotation, and IP allowlisting.
 - Prereqs: `npm install -g envio-cloud` + `envio-cloud login`. The monskills hook gates `envio-cloud` commands until both are satisfied.
 - Never install the CLI or run `login` on the user's behalf — surface the prompt and wait.
-
-### [Alchemy](/alchemy/SKILL.md)
-- Use Alchemy for Monad mainnet **JSON-RPC**, **Account Kit** (ERC-4337 smart accounts), **Bundler**, and **Gas Manager** (paymaster for sponsored transactions).
-- Pair with `gas/` — sponsored ops still pay the policy owner for `gas_limit`, not `gas_used`. Tight estimates matter.
-- Alchemy's Token / NFT / Prices / Portfolio / Transfers / Simulation / Webhook APIs do **NOT** yet support Monad mainnet — for on-chain data, use `indexer/`.
-- Authored by Alchemy under MIT.
 
 ### [Feedback](/feedback/SKILL.md)
 - Anonymous feedback pipeline for agents using monskills.
