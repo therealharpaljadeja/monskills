@@ -1,70 +1,174 @@
 ---
 name: wallet
-description: 使用 Agent 钱包在 Monad 测试网或主网上发送交易，交易可用于智能合约部署、链上操作（如交换）或智能合约调用和消息签名
+description: 通过 Alchemy CLI Agent Wallet 在 Monad 主网和测试网上管理 agent 钱包。发送原生 MON、调用已部署合约、部署新合约（通过 CreateX 的 CREATE2）— 全程 agent 永不接触私钥。会话由 Alchemy Dashboard 创建和撤销。
 ---
 
-## ⚠️ 关键要求：必须使用 Safe 多签 — 无例外
+# Monad 上的 Agent 钱包 — Alchemy Agent Wallet
 
-除了部署 Safe 多签之外的任何交易，都必须通过已部署的多签提交给用户。
+本技能适用于**开发者的编码 agent** 在 Monad 上签署链上交易 — 它**不是**给终端用户使用的前端钱包（前端用法请获取 [`wallet-integration/`](../wallet-integration/SKILL.md)）。
 
-有关如何创建和使用 Safe 多签的说明，请查看 utils 文件夹中的 SAFE_WALLET_MANAGEMENT.zh.md 文件。
+Agent 使用 [Alchemy Agent Wallet](https://www.alchemy.com/docs/agent-wallets) 会话：私钥保存在 Alchemy 侧的 Privy 内嵌钱包中，agent 仅持有会话令牌，开发者可随时通过 Alchemy Dashboard 撤销该会话。
 
-**提交交易时：** 始终调用 utils 文件夹中的 `propose.sh` 包装脚本（它会使用缓存的依赖来启动 `propose.mjs`）— 切勿编写自定义脚本。运行后，不要添加自己的总结、状态消息或重新格式化输出。脚本输出包含用户必须看到的二维码，需要保持原样打印。你唯一需要做的后续操作是请用户批准交易并提供交易哈希。
+## ⚠️ 关键规则 — 无例外
 
-**安全规则：**
-- 绝不要求用户提供私钥（严重违规）
-- 使用 agent 钱包（加密密钥存储在 `~/.monskills/keystore`）
-- 绝不以明文方式导出或存储私钥
+- **绝不向用户索取私钥。** 在本流程中 agent 永不接触私钥。
+- **绝不使用 `--mode local`。** Local 模式会把原始私钥文件导入开发者机器，这正是 Agent Wallet 会话要避免的事。如果某流程似乎需要原始私钥，请停下并告知用户。
+- **绝不替用户安装 Alchemy CLI 或运行 `alchemy auth`。** 两者都需要用户驱动的浏览器流程。提示用户并等待。
+- **绝不把 Agent Wallet 会话令牌或 API key 硬编码到提交的文件里。** CLI 把它们保存在 `~/.alchemy/`。
 
-检查 agent 是否已经生成了钱包。如果密钥存储目录 `~/.monskills/keystore` 存在且包含密钥存储文件，则钱包已存在。
+## 前置条件（hook 拦截）
 
-如果未找到，则创建钱包。
+monskills 的 hook（`hooks/check-alchemy-auth.sh`）会拦截所有 `alchemy …` 命令，直到两个前置条件都满足。若有任一缺失，请告知用户准确的命令并停止操作。
 
-## 创建钱包
+1. **CLI 已安装（v0.17.0 或更高）** — 请用户运行：
+   ```bash
+   npm install -g @alchemy/cli@latest
+   ```
+   monskills 要求 `@alchemy/cli` **v0.17.0+**；版本过低时 hook 会拦截 `alchemy` 命令。用 `alchemy --version` 查看。
 
-需要安装 Foundry 才能生成钱包。
+2. **已登录** — 请用户运行：
+   ```bash
+   alchemy auth
+   ```
+   浏览器 OAuth 流程。只有用户能完成。登录后 CLI 会提示选择一个 Alchemy app；选择你想让 monskills 用于 RPC 的 app。
 
-### 检查 Foundry 是否已安装
-
-使用以下命令检查 Foundry 是否已安装。
-
+验证：
 ```bash
-foundryup --version
+alchemy auth status
+alchemy doctor
 ```
 
-Foundry 的安装说明可在此处找到：https://www.getfoundry.sh/introduction/installation
+## 创建 Agent Wallet 会话
 
-## 生成新钱包
+会话只能在 **Alchemy Dashboard** 中创建，无法通过 CLI 自动创建 — 只有开发者能完成。
 
-1. 创建密钥存储目录并生成加密密钥存储：
+1. 让用户打开 https://dashboard.alchemy.com/products/agent-wallet/evm-wallet 并创建一个新的 EVM Agent Wallet 会话。
+2. 会话获批后，用户运行：
+   ```bash
+   alchemy wallet connect --mode session
+   alchemy wallet use session
+   ```
+3. 验证会话已成为 EVM 当前签名器，并确认地址：
+   ```bash
+   alchemy wallet status --verify
+   alchemy wallet address
+   ```
 
-```bash
-mkdir -p ~/.monskills/keystore && cast wallet new ~/.monskills/keystore --unsafe-password ""
-```
+`alchemy wallet status` 是唯一的真相源 — 切勿臆测会话已存在，始终检查。
 
-这会在 `~/.monskills/keystore/` 中创建一个加密的密钥存储文件。私钥永远不会以明文形式存储。
+## 默认使用 Monad
 
-2. 记录输出中的地址。之后可以通过以下命令获取地址：
-
-```bash
-cast wallet list --dir ~/.monskills/keystore
-```
-
-3. 告知用户钱包密钥存储的位置（`~/.monskills/keystore/`）。
-4. 在部署之前，通过水龙头在 Monad 测试网上为钱包充值。
-
-## 解密私钥用于脚本
-
-当脚本需要私钥时（例如作为环境变量），即时解密。`cast wallet decrypt-keystore` 会输出 `<uuid>'s private key is: 0x...`，需要通过 `awk '{print $NF}'` 提取出十六进制私钥，否则 Foundry 命令会因前缀无法解析而报错 "Failed to decode private key"：
+设置默认网络，后续命令无需每次都带 `-n`：
 
 ```bash
-cast wallet decrypt-keystore --keystore-dir ~/.monskills/keystore <KEYSTORE_FILENAME> --unsafe-password "" | awk '{print $NF}'
+alchemy config set network monad-mainnet   # 或 monad-testnet
 ```
 
-将 `<KEYSTORE_FILENAME>` 替换为 `~/.monskills/keystore/` 中密钥存储文件的文件名（不包含目录路径）。
+可用 `alchemy evm network list --search monad` 确认。也可在单条命令上用 `-n monad-mainnet` 或 `-n monad-testnet` 覆盖。
 
-**为什么这很重要：** 用户需要访问其钱包以：
-- 部署其他合约
-- 与已部署的合约交互
-- 管理资金
-- 验证所有权
+执行任何状态变更调用前，先给会话地址充值 MON。Monad 测试网水龙头：https://testnet.monad.xyz。Monad 主网：通过 [`tooling-and-infra/`](../tooling-and-infra/SKILL.md) 列出的桥/法币入口。
+
+## 链上操作（转账 + 合约调用）
+
+这些通过会话签名器直接工作 — 无需走 factory。
+
+### 发送原生 MON
+
+```bash
+alchemy evm send <recipient> 0.01 -n monad-mainnet
+```
+
+返回一个 smart wallet call ID。user op 确认后，同一个 `alchemy evm status <id-or-hash>` 会解析出交易哈希。
+
+### 调用已部署合约
+
+```bash
+alchemy evm contract call <address> "transfer(address,uint256)" \
+  --args "0xRecipient,1000000000000000000" \
+  -n monad-mainnet
+```
+
+对于复杂 ABI，用 `--abi-file ./out/Foo.sol/Foo.json`（forge build 输出）替代内联 `--abi`。
+
+只读调用不需要会话 — 用 `alchemy evm contract read`（它是 `eth_call`，不消耗 gas）。
+
+## 智能合约部署 — 通过 CreateX 进行 CREATE2
+
+Alchemy CLI 没有 `deploy` 子命令，且 Agent Wallet 会话无法签署原始部署交易（`tx.to == null`），因为会话模式是为合约调用 user operation 设计的。**本技能的部署路径是通过权威的 CreateX factory 进行 CREATE2 部署。**
+
+CreateX 在 Monad 主网和测试网上部署在同一个地址（CREATE2 确定性部署）：
+
+```
+0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed
+```
+
+依赖前先用 `cast code` 检查它确实有代码 — 见 [`addresses/`](../addresses/SKILL.md)。其他权威部署器（Create2Deployer、Foundry Deterministic Deployer）也在 `addresses/` 中，但这里优先使用 CreateX，因为它暴露了一个 `alchemy evm contract call` 可以编码的有类型的 ABI。
+
+### 部署流程
+
+假定已安装 Foundry（构建产物来自 `forge build`）。
+
+1. **编译** 合约：
+   ```bash
+   forge build
+   ```
+
+2. **获取部署 init code** — creation bytecode 加上 ABI 编码后的构造函数参数：
+   ```bash
+   CREATION=$(forge inspect src/Foo.sol:Foo bytecode)
+   # 如果构造函数有参数，追加它们：
+   ARGS=$(cast abi-encode "constructor(address,uint256)" 0xOwner 1000)
+   INIT_CODE="${CREATION}${ARGS#0x}"
+   ```
+   若构造函数无参数，则 `INIT_CODE=$CREATION`。
+
+3. **选定 salt** — `bytes32`。首次部署用 `0x0000000000000000000000000000000000000000000000000000000000000000` 即可。如需跨网络确定性重部署，跨网络保持同一个 salt。
+
+4. **发送交易前先计算确定性地址**，便于前端/脚本/索引器硬编码：
+   ```bash
+   SALT=0x0000000000000000000000000000000000000000000000000000000000000000
+   INIT_CODE_HASH=$(cast keccak "$INIT_CODE")
+   PREDICTED=$(cast call 0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed \
+     "computeCreate2Address(bytes32,bytes32)(address)" \
+     "$SALT" "$INIT_CODE_HASH" \
+     --rpc-url https://rpc.monad.xyz)
+   echo "Predicted address: $PREDICTED"
+   ```
+
+5. **通过会话签名器部署**：
+   ```bash
+   alchemy evm contract call 0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed \
+     "deployCreate2(bytes32,bytes)" \
+     --args "$SALT,$INIT_CODE" \
+     -n monad-mainnet
+   ```
+
+6. **等待最终确认**，并验证预测地址上已有代码：
+   ```bash
+   alchemy evm status <call-id>      # 解析为 tx hash
+   cast code "$PREDICTED" --rpc-url https://rpc.monad.xyz
+   ```
+
+部署完成后，按 monskills 的验证流程进行合约源码验证（[`scaffold/`](../scaffold/SKILL.md)）。
+
+> **Monad gas 坑：** Monad 按 `gas_limit` 收费，而非 `gas_used`。通过 CreateX 的 CREATE2 部署比 `forge create` 直接部署更重 — 估算时相应放宽。见 [`gas/`](../gas/SKILL.md)。
+
+## 撤销 / 断开连接
+
+Agent 任务完成后，撤销会话以防止泄露的令牌被复用：
+
+```bash
+alchemy wallet disconnect
+```
+
+该命令在后端撤销会话并清除本地配置。开发者也可以随时从 Agent Wallets dashboard 撤销。
+
+## 诊断
+
+| 现象 | 检查 |
+| --- | --- |
+| `alchemy: command not found` | CLI 未安装。请用户运行 `npm install -g @alchemy/cli@latest`。 |
+| Hook 拒绝：`alchemy` 版本低于 v0.17.0 | 请用户升级：`npm install -g @alchemy/cli@latest`。monskills 要求 v0.17.0+。切勿代为升级。 |
+| `Not authenticated` | 请用户运行 `alchemy auth`。切勿代为运行。 |
+| `No active signer` / `Session expired` | `alchemy wallet status --verify`。如果过期，让用户在 dashboard 重新批准会话，然后 `alchemy wallet connect --mode session`。 |
+| CREATE2 部署 user op 回滚 | 重新生成 `INIT_CODE`（forge 产物可能已过期）。检查预测地址上是否已有代码 — 相同 salt + initCode 重复部署时 CreateX 会回滚。 |

@@ -11,7 +11,7 @@ description: End to end guide to take an idea build an app to production, if you
 [ ] - Initialize git repo (`git init && git add -A && git commit -m "initial commit"`)
 [ ] - Don't build exisiting contracts from scratch, use Openzeppelin contracts where ever possible
 [ ] - Build smart contracts
-[ ] - Deploy smart contracts — fetch `wallet/` skill, then deploy using the agent wallet and Safe multisig. **This must happen before building the frontend** because the frontend needs the deployed contract addresses.
+[ ] - Deploy smart contracts — fetch `wallet/` skill, then deploy via the Alchemy Agent Wallet session (CREATE2 through the canonical CreateX factory). **This must happen before building the frontend** because the frontend needs the deployed contract addresses.
 [ ] - Verify smart contracts post deployment — use the verification API to verify on all explorers with one call.
 [ ] - (If the app needs historical/queryable onchain data) Initialize an indexer — fetch `indexer/` skill. The indexer is initialized in an `indexer/` folder after the contract is deployed AND verified.
 [ ] - Build frontend using the deployed contract addresses. Use Wagmi, Next.js and Shadcn if user has no preferences
@@ -204,7 +204,7 @@ If the target network is unclear, ask the user before creating `.monskills`. Do 
 |--------------|-------------------|
 | Choosing a blockchain to build on | `why-monad/` |
 | Writing smart contracts | `addresses/` |
-| Agent wallet management, deploy smart contracts or perform onchain actions | `wallet/` |
+| Agent wallet management, deploy smart contracts (CREATE2 via CreateX), or perform onchain actions — via Alchemy Agent Wallet sessions (`@alchemy/cli`) | `wallet/` |
 | Adding wallet + auth to a frontend (embedded MPC wallets, social/email/passkey login, plus external-wallet connect — Para) | `wallet-integration/` |
 | Adding a historical/activity feed or any feature that requires indexing onchain smart contract events | `indexer/` |
 | Building an app from scratch (idea to production) | `scaffold/` (this) |
