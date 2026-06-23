@@ -19,7 +19,8 @@
 MODE="${1:-pre-tool}"
 
 # Honour the same global escape hatch as the other monskills hooks, plus a
-# dedicated one for this marker.
+# dedicated one for this marker. MONSKILLS_SKIP_CLI_CHECK=1 disables every
+# monskills hook gate; MONSKILLS_SKIP_MARK=1 disables only provenance stamping.
 if [ "${MONSKILLS_SKIP_MARK:-0}" = "1" ] || [ "${MONSKILLS_SKIP_CLI_CHECK:-0}" = "1" ]; then
   exit 0
 fi
@@ -27,21 +28,39 @@ fi
 [ "$MODE" = "pre-tool" ] || exit 0
 
 TRAILER="Built-with: monskills"
+MAX_INPUT_BYTES="${MONSKILLS_HOOK_MAX_INPUT_BYTES:-262144}"
 
-INPUT=$(cat)
+# Hook input should be tiny JSON. Read a bounded amount so malformed or
+# unexpectedly large stdin cannot make this helper consume unbounded memory.
+[[ "$MAX_INPUT_BYTES" =~ ^[0-9]+$ ]] || MAX_INPUT_BYTES=262144
+[ "$MAX_INPUT_BYTES" -gt 0 ] || MAX_INPUT_BYTES=262144
+INPUT=$(dd bs="$MAX_INPUT_BYTES" count=1 2>/dev/null)
 [ -n "$INPUT" ] || exit 0
 
 # --- Extract a field from the PreToolUse stdin JSON ---
 json_field() {
   # $1 = jq path (e.g. .tool_input.command)
   if command -v jq >/dev/null 2>&1; then
-    printf '%s' "$INPUT" | jq -r "$1 // \"\"" 2>/dev/null
+    printf '%s' "$INPUT" | jq -er "$1 | if type == \"string\" then . else \"\" end" 2>/dev/null || printf ''
+  elif command -v python3 >/dev/null 2>&1; then
+    JSON_PATH="$1" python3 -c '
+import json, os, sys
+try:
+    value = json.loads(sys.stdin.read())
+    for part in os.environ.get("JSON_PATH", "").strip(".").split("."):
+        if not part:
+            continue
+        value = value.get(part, "") if isinstance(value, dict) else ""
+    sys.stdout.write(value if isinstance(value, str) else "")
+except Exception:
+    pass
+' <<< "$INPUT" 2>/dev/null
   else
     # Best-effort: pull the first matching "key":"value". Only handles the flat
     # shapes we care about; if it fails we just don't mark (fail-safe).
     local key
     key=$(printf '%s' "$1" | sed -E 's/.*\.([A-Za-z_]+)$/\1/')
-    printf '%s' "$INPUT" | sed -n "s/.*\"${key}\"[[:space:]]*:[[:space:]]*\"\(\([^\"\\]\|\\\\.\)*\)\".*/\1/p" | head -n1
+    printf '%s' "$INPUT" | sed -n "s/.*\"${key}\"[[:space:]]*:[[:space:]]*\"\(\([^\"\\]\|\\\\.\)*\)\".*/\1/p; q"
   fi
 }
 
@@ -76,7 +95,7 @@ CWD=$(json_field '.cwd')
 # subcommands.
 GIT_COMMIT_RE='(^|[^[:alnum:]_])git[[:space:]]+((((-C|-c|--git-dir|--work-tree|--namespace|--super-prefix|--exec-path)[[:space:]]+[^[:space:]]+|-[^[:space:]]+)[[:space:]]+)*)commit[[:space:]]'
 
-printf '%s' "$CMD" | grep -Eq "$GIT_COMMIT_RE" || exit 0
+[[ "$CMD" =~ $GIT_COMMIT_RE ]] || exit 0
 
 # Idempotent: never double-stamp.
 case "$CMD" in
@@ -89,6 +108,8 @@ ROOT=$(git -C "$CWD" rev-parse --show-toplevel 2>/dev/null)
 [ -n "$ROOT" ] || ROOT="$CWD"
 
 # --- Only stamp genuine Monad dApp projects ---
+# This detection is read-only: it searches tracked code/config first, then
+# untracked code/config as a fallback. It never writes to the project tree.
 # Skips the monskills repo / the plugin itself, and any repo that shows no Monad
 # fingerprint. A miss just means no marker (safe); a rare false positive only
 # adds an innocuous trailer.
