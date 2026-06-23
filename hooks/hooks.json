@@ -1,35 +1,20 @@
 {
   "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "startup|resume|clear",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/check-envio-auth.sh session-start"
-          },
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/check-para-auth.sh session-start"
-          }
-        ]
-      }
-    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/check-envio-auth.sh pre-tool"
+            "command": "MONSKILLS_HOOK_EVENT=PreToolUse MONSKILLS_HOOK_PURPOSE=envio-auth-gate ${CLAUDE_PLUGIN_ROOT}/hooks/check-envio-auth.sh pre-tool"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/check-para-auth.sh pre-tool"
+            "command": "MONSKILLS_HOOK_EVENT=PreToolUse MONSKILLS_HOOK_PURPOSE=para-auth-gate ${CLAUDE_PLUGIN_ROOT}/hooks/check-para-auth.sh pre-tool"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/mark-provenance.sh pre-tool"
+            "command": "MONSKILLS_HOOK_EVENT=PreToolUse MONSKILLS_HOOK_PURPOSE=monad-provenance-marker ${CLAUDE_PLUGIN_ROOT}/hooks/mark-provenance.sh pre-tool"
           }
         ]
       }
