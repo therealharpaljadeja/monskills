@@ -2,6 +2,8 @@
 
 Monad 上的嵌入式钱包、账户抽象和智能账户实现。
 
+提供商链接仅供参考。集成前请验证当前提供商域名和 Monad 支持状态。
+
 ## 嵌入式钱包
 
 | 提供商 | 主网 | 测试网 | 描述 | 文档 |
@@ -11,7 +13,7 @@ Monad 上的嵌入式钱包、账户抽象和智能账户实现。
 | Dynamic | Yes | Yes | 面向加密用户的登录流程 + 新用户引导 | [dynamic.xyz](https://www.dynamic.xyz/) |
 | Fordefi | Yes | Yes | 机构级 MPC 钱包，支持 DeFi 策略控制和模拟 | [fordefi.com](https://www.fordefi.com/) |
 | MetaMask Embedded Wallet | Yes | Yes | 通过 Google 或 Apple 的一键 OAuth 引导 | [metamask.io](https://metamask.io/) |
-| Openfort | Yes | Yes | 嵌入式、后端和生态系统钱包 | [openfort.xyz](https://www.openfort.xyz/) |
+| Openfort | Yes | Yes | 嵌入式、后端和生态系统钱包 | [openfort.io/docs](https://www.openfort.io/docs/) |
 | Para | Yes | Yes | 跨多个生态系统的跨应用嵌入式钱包 | [para.io](https://www.para.io/) |
 | Phantom | — | Yes | 无需助记词的引导，应用内非托管访问（仅测试网） | [phantom.app](https://phantom.app/) |
 | Portal | Yes | Yes | 快速稳定币金融平台，提供简洁的 SDK/API | [portalhq.io](https://www.portalhq.io/) |
@@ -29,7 +31,7 @@ Monad 上的嵌入式钱包、账户抽象和智能账户实现。
 | Biconomy | Yes | Yes | 全面的智能账户和执行基础设施 | [docs.biconomy.io](https://docs.biconomy.io/) |
 | FastLane | ? | Yes | MEV 协议，集成 4337 Bundler 和任务调度器 | [fastlane.finance](https://fastlane.finance/) |
 | Gelato | — | Yes | Paymaster 和 Bundler 服务，用于赞助交易 | [docs.gelato.network](https://docs.gelato.network/) |
-| Openfort | Yes | Yes | SSS、Passkey 和赞助 Paymaster，用于钱包引导 | [openfort.xyz](https://www.openfort.xyz/) |
+| Openfort | Yes | Yes | SSS、Passkey 和赞助 Paymaster，用于钱包引导 | [openfort.io/docs](https://www.openfort.io/docs/) |
 | Pimlico | Yes | Yes | 高级 ERC-4337 基础设施——Bundler、Paymaster、SDK | [docs.pimlico.io](https://docs.pimlico.io/) |
 | Sequence | Yes | Yes | 统一中继器，支持 Gas 赞助、批处理和并行处理 | [docs.sequence.xyz](https://docs.sequence.xyz/) |
 | thirdweb | Yes | Yes | 预审计账户工厂合约，支持赞助策略 | [portal.thirdweb.com](https://portal.thirdweb.com/) |

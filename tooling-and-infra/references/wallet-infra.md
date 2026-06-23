@@ -2,6 +2,8 @@
 
 Embedded wallets, account abstraction, and smart account implementations on Monad.
 
+Provider links are references only. Verify the current provider domain and Monad support before integrating.
+
 ## Embedded Wallets
 
 | Provider | Mainnet | Testnet | Description | Docs |
@@ -11,7 +13,7 @@ Embedded wallets, account abstraction, and smart account implementations on Mona
 | Dynamic | Yes | Yes | Login flows for crypto users + onboarding for newcomers | [dynamic.xyz](https://www.dynamic.xyz/) |
 | Fordefi | Yes | Yes | Institutional MPC wallet with DeFi policy controls and simulation | [fordefi.com](https://www.fordefi.com/) |
 | MetaMask Embedded Wallet | Yes | Yes | One-click OAuth-based onboarding via Google or Apple | [metamask.io](https://metamask.io/) |
-| Openfort | Yes | Yes | Embedded, backend, and ecosystem wallets | [openfort.xyz](https://www.openfort.xyz/) |
+| Openfort | Yes | Yes | Embedded, backend, and ecosystem wallets | [openfort.io/docs](https://www.openfort.io/docs/) |
 | Para | Yes | Yes | Cross-app embedded wallets across multiple ecosystems | [para.io](https://www.para.io/) |
 | Phantom | — | Yes | Seedless onboarding with in-app non-custodial access (testnet only) | [phantom.app](https://phantom.app/) |
 | Portal | Yes | Yes | Fast stablecoin finance platform with simple SDKs/APIs | [portalhq.io](https://www.portalhq.io/) |
@@ -29,7 +31,7 @@ Embedded wallets, account abstraction, and smart account implementations on Mona
 | Biconomy | Yes | Yes | Comprehensive smart account and execution infrastructure | [docs.biconomy.io](https://docs.biconomy.io/) |
 | FastLane | ? | Yes | MEV protocol with integrated 4337 bundler and task scheduler | [fastlane.finance](https://fastlane.finance/) |
 | Gelato | — | Yes | Paymaster and Bundler services for sponsored transactions | [docs.gelato.network](https://docs.gelato.network/) |
-| Openfort | Yes | Yes | SSS, passkeys, and sponsored paymasters for wallet onboarding | [openfort.xyz](https://www.openfort.xyz/) |
+| Openfort | Yes | Yes | SSS, passkeys, and sponsored paymasters for wallet onboarding | [openfort.io/docs](https://www.openfort.io/docs/) |
 | Pimlico | Yes | Yes | Advanced ERC-4337 infrastructure — bundlers, paymasters, SDKs | [docs.pimlico.io](https://docs.pimlico.io/) |
 | Sequence | Yes | Yes | Unified relayer with gas sponsorship, batching, and parallel processing | [docs.sequence.xyz](https://docs.sequence.xyz/) |
 | thirdweb | Yes | Yes | Pre-audited account factory contracts with sponsorship policies | [portal.thirdweb.com](https://portal.thirdweb.com/) |
