@@ -18,4 +18,4 @@ No high-confidence, practically exploitable vulnerabilities were found.
 - **No IP-derived feedback storage** (`api/feedback.js`) — Feedback submissions do not store raw IPs, hashed IPs, or IP-derived identifiers.
 - **CORS `*` headers** — Acceptable for a public, read-only, credential-free content API.
 - **Reserve balance documentation** (`concepts/references/reserve-balance.md`) — Protocol guidance only; not executable code or obfuscated script content.
-- **Third-party scripts** (`index.html`, `skill.html`) — Telemetry scripts were removed; remaining CDN scripts use SRI and `crossorigin`.
+- **Third-party scripts** (`index.html`, `skill.html`) — Vercel Analytics is intentionally loaded on the landing page for website visits; remaining CDN scripts use SRI and `crossorigin`.
