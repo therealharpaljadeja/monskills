@@ -51,7 +51,7 @@ cp .env.example .env
 
 Schema is provisioned via one-time setup endpoints that are removed after use. The current active table is `feedback` (populated by `/api/feedback` from the `/feedback` slash command). When adding a new table, temporarily re-add an `api/setup.js` with the `CREATE TABLE IF NOT EXISTS ...` statements, hit it once behind maintainer-only access, then delete the file.
 
-For existing databases created before app-side download tracking was removed, apply [004-remove-app-side-download-tracking.sql](docs/migrations/004-remove-app-side-download-tracking.sql). It drops the legacy `skill_downloads` table and removes the old `feedback.ip_hash` column so feedback inserts no longer require an IP-derived value.
+For existing databases created before app-side download tracking was removed, apply [004-remove-app-side-download-tracking.sql](docs/migrations/004-remove-app-side-download-tracking.sql). It preserves the legacy `skill_downloads` table and removes only the old `feedback.ip_hash` column so feedback inserts no longer require an IP-derived value.
 
 ## Development
 
