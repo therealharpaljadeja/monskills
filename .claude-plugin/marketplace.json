@@ -4,14 +4,14 @@
     "name": "Harpalsinh Jadeja"
   },
   "metadata": {
-    "version": "0.7.1",
+    "version": "0.7.2",
     "description": "Skills for developing apps on Monad. Assists LLM with frontend, smart contract deployment, and deploying to production"
   },
   "plugins": [
     {
       "name": "monskills",
       "source": "./",
-      "version": "0.7.1",
+      "version": "0.7.2",
       "description": "Skills for developing apps on Monad. Assists LLM with frontend, smart contract deployment, and deploying to production",
       "author": {
         "name": "Harpalsinh Jadeja"
