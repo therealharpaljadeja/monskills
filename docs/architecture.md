@@ -2,7 +2,7 @@
 
 ## Overview
 
-MONSKILLS is a static website with thin serverless functions for serving public skill markdown and accepting consent-gated slash-command feedback. The application does not store skill download events, raw IPs, hashed IPs, or IP-derived identifiers. Download/traffic analytics are handled outside the application through GitHub analytics.
+MONSKILLS is a static website with thin serverless functions for serving public skill markdown and accepting consent-gated slash-command feedback. The application does not store skill download events, raw IPs, hashed IPs, or IP-derived identifiers. Landing-page website visits are measured with Vercel Analytics, and repository traffic insight comes from GitHub analytics.
 
 ## C4 Model
 
@@ -31,10 +31,11 @@ MONSKILLS is a static website with thin serverless functions for serving public 
 **Actors:**
 - **AI Agent** — Fetches skill markdown files to gain Monad development knowledge.
 - **Developer** — Browses the landing page and copies skill URLs.
-- **Maintainer** — Reviews GitHub analytics and slash-command feedback.
+- **Maintainer** — Reviews Vercel Analytics, GitHub analytics, and slash-command feedback.
 
 **External Systems:**
 - **Neon PostgreSQL** — Serverless database storing consent-gated feedback submissions.
+- **Vercel Analytics** — Website visit analytics for the landing page.
 - **GitHub Analytics** — Source of repository traffic/download insight outside MONSKILLS application storage.
 
 ### Skill Serving Flow
@@ -78,7 +79,7 @@ Historical deployments may still contain legacy download analytics tables or col
 
 - **Static-first:** No build step, no framework. Skills are plain markdown files.
 - **Serverless skill serving:** Vercel `routes` config maps skill URLs to a serverless function that validates skill names and returns markdown.
-- **No app-side download tracking:** Skill fetches do not write to the database. Use GitHub analytics for repository traffic insight.
+- **No app-side skill download tracking:** Skill fetches do not write to the database. Use GitHub analytics for repository traffic insight and Vercel Analytics for landing-page visits.
 - **Feedback via slash command:** Feedback is collected only through the `/feedback` slash command and stored without IP-derived identifiers.
 
 See [ADRs](adr/) for detailed decision records.

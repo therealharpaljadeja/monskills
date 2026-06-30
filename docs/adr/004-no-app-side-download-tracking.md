@@ -40,4 +40,4 @@ Existing databases must apply `docs/migrations/004-remove-app-side-download-trac
 
 ### Neutral
 - The app still receives HTTP requests through Vercel as any hosted service does; the decision is about what MONSKILLS application code stores.
-- Repository traffic insight comes from GitHub analytics outside MONSKILLS application storage.
+- Website visit analytics comes from Vercel Analytics, and repository traffic insight comes from GitHub analytics outside MONSKILLS application storage.
