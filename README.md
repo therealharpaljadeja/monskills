@@ -14,14 +14,13 @@ Knowledge skills for AI agents building on Monad. Each skill is a standalone mar
 | [wallet](wallet/SKILL.md) | Alchemy Agent Wallet sessions for sends, contract calls, and CREATE2 deploys |
 | [wallet-integration](wallet-integration/SKILL.md) | Wallet + auth for Next.js / Expo on Monad using Para — embedded MPC wallets with email / passkey / social login, plus external-wallet connect (`@getpara/cli`) |
 | [indexer](indexer/SKILL.md) | Index onchain events for activity feeds, leaderboards, history, and analytics (HyperIndex on Envio Cloud) |
-| [feedback](feedback/SKILL.md) | Anonymous feedback pipeline for agents using monskills |
 
 ## Architecture
 
 - **Frontend:** Static HTML landing page (`index.html`)
 - **API:** Vercel serverless functions (`api/`)
-- **Database:** Neon serverless PostgreSQL (anonymous download tracking)
-- **Skills:** Markdown files served via Vercel routes through a tracking function
+- **Database:** Neon serverless PostgreSQL (slash-command feedback)
+- **Skills:** Markdown files served via Vercel routes through a serverless function
 
 See [docs/architecture.md](docs/architecture.md) for the full system overview and C4 diagrams.
 
@@ -46,12 +45,13 @@ cp .env.example .env
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `DATABASE_URL` | Yes | Neon PostgreSQL connection string |
-| `STATS_SECRET` | Yes | Secret key to access `/api/stats` |
+| `DATABASE_URL` | Yes | Neon PostgreSQL connection string for feedback submissions |
 
 ### Database Setup
 
-Schema is provisioned via one-time setup endpoints that are removed after use. The current tables are `skill_downloads` (populated by `/api/skill`) and `feedback` (populated by `/api/feedback`). When adding a new table, temporarily re-add an `api/setup.js` with the `CREATE TABLE IF NOT EXISTS ...` statements, hit it once with `?key=$STATS_SECRET`, then delete the file.
+Schema is provisioned via one-time setup endpoints that are removed after use. The current active table is `feedback` (populated by `/api/feedback` from the `/feedback` slash command). When adding a new table, temporarily re-add an `api/setup.js` with the `CREATE TABLE IF NOT EXISTS ...` statements, hit it once behind maintainer-only access, then delete the file.
+
+For existing databases created before app-side download tracking was removed, apply [004-remove-app-side-download-tracking.sql](docs/migrations/004-remove-app-side-download-tracking.sql). It drops the legacy `skill_downloads` table and removes the old `feedback.ip_hash` column so feedback inserts no longer require an IP-derived value.
 
 ## Development
 
@@ -61,7 +61,7 @@ This is a static site with Vercel serverless functions. There's no local dev ser
 
 The site deploys to Vercel. Push to `main` to trigger a deploy.
 
-Ensure `DATABASE_URL` and `STATS_SECRET` are set in your Vercel project environment variables.
+Ensure `DATABASE_URL` is set in your Vercel project environment variables if feedback collection is enabled.
 
 ## Documentation
 
@@ -73,7 +73,8 @@ Ensure `DATABASE_URL` and `STATS_SECRET` are set in your Vercel project environm
 - ADRs:
   - [ADR-001: Static markdown skill distribution](docs/adr/001-static-markdown-distribution.md)
   - [ADR-002: Anonymous IP tracking with daily hash rotation](docs/adr/002-anonymous-ip-tracking.md)
-  - [ADR-003: Vercel routes for download tracking](docs/adr/003-vercel-routes-tracking.md)
+  - [ADR-003: Vercel routes for skill serving](docs/adr/003-vercel-routes-tracking.md)
+  - [ADR-004: Remove app-side download tracking](docs/adr/004-no-app-side-download-tracking.md)
 
 ## License
 

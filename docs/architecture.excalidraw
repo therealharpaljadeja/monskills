@@ -392,7 +392,7 @@
       "y": 390,
       "width": 130,
       "height": 30,
-      "text": "GET /api/stats?key=\n→ application/json",
+      "text": "POST /api/feedback\n→ application/json",
       "fontSize": 11,
       "fontFamily": 1,
       "textAlign": "center",

@@ -9,13 +9,13 @@ Monad 与以太坊兼容，但其架构引入了开发者必须了解的行为�
 
 | 我遇到的问题... | 获取 |
 |----------------------|-------|
-| 新充值账户无法发送交易，资金到账延迟 | [async-execution.zh.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/concepts/references/async-execution.zh.md) |
-| 现有 Solidity 合约是否需要为 Monad 做修改 | [parallel-execution.zh.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/concepts/references/parallel-execution.zh.md) |
-| 选择 `latest`、`safe`、`finalized` 区块标签 | [block-states.zh.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/concepts/references/block-states.zh.md) |
-| 交易因余额不足回退、10 MON 下限、清空交易 | [reserve-balance.zh.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/concepts/references/reserve-balance.zh.md) |
-| 智能钱包委托、EIP-7702、会话密钥、Gas 赞助 | [eip-7702.zh.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/concepts/references/eip-7702.zh.md) |
-| 订阅事件、WebSocket 数据流、高吞吐量数据接入 | [realtime-data.zh.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/concepts/references/realtime-data.zh.md) |
-| 区块生命周期事件、推测性数据、BLOCK_START/QC/FINALIZED | [execution-events.zh.md](https://raw.githubusercontent.com/therealharpaljadeja/monskills/main/concepts/references/execution-events.zh.md) |
+| 新充值账户无法发送交易，资金到账延迟 | [async-execution.zh.md](./references/async-execution.zh.md) |
+| 现有 Solidity 合约是否需要为 Monad 做修改 | [parallel-execution.zh.md](./references/parallel-execution.zh.md) |
+| 选择 `latest`、`safe`、`finalized` 区块标签 | [block-states.zh.md](./references/block-states.zh.md) |
+| 交易因余额不足回退、10 MON 下限、清空交易 | [reserve-balance.zh.md](./references/reserve-balance.zh.md) |
+| 智能钱包委托、EIP-7702、会话密钥、Gas 赞助 | [eip-7702.zh.md](./references/eip-7702.zh.md) |
+| 订阅事件、WebSocket 数据流、高吞吐量数据接入 | [realtime-data.zh.md](./references/realtime-data.zh.md) |
+| 区块生命周期事件、推测性数据、BLOCK_START/QC/FINALIZED | [execution-events.zh.md](./references/execution-events.zh.md) |
 
 ## 概要
 

@@ -1,4 +1,4 @@
-import { getDb, hashIp } from "./_lib/db.js";
+import { getDb } from "./_lib/db.js";
 
 const MAX_MESSAGE_LEN = 5000;
 const MAX_CONTEXT_LEN = 4000;
@@ -15,9 +15,6 @@ const ALLOWED_CATEGORIES = new Set([
   "suggestion",
   "other",
 ]);
-
-const WINDOW_SECONDS = 60 * 60;
-const MAX_PER_WINDOW = 10;
 
 function clampString(value, max) {
   if (typeof value !== "string") return null;
@@ -98,33 +95,16 @@ export default async function handler(req, res) {
   const agentName = clampString(body.agent || body.agent_name, MAX_FIELD_LEN);
   const context = clampString(body.context, MAX_CONTEXT_LEN);
 
-  const rawIp =
-    req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
-    req.headers["x-real-ip"] ||
-    req.socket?.remoteAddress ||
-    "unknown";
-  const ipHash = hashIp(rawIp);
-
   const sql = getDb();
 
   try {
-    const recent = await sql`
-      SELECT COUNT(*)::int AS count
-      FROM feedback
-      WHERE ip_hash = ${ipHash}
-        AND created_at > NOW() - (${WINDOW_SECONDS} || ' seconds')::interval
-    `;
-    if (recent[0]?.count >= MAX_PER_WINDOW) {
-      return res.status(429).json({ ok: false, error: "Too many submissions, try again later" });
-    }
-
     const inserted = await sql`
       INSERT INTO feedback
-        (source, skill_name, category, severity, message, context, agent_name, ip_hash)
+        (source, skill_name, category, severity, message, context, agent_name)
       VALUES
         (${source || null}, ${skillName || null}, ${category || null},
          ${severity || null}, ${message}, ${context || null},
-         ${agentName || null}, ${ipHash})
+         ${agentName || null})
       RETURNING id
     `;
     return res.status(200).json({ ok: true, id: inserted[0].id });

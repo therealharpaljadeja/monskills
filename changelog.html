@@ -289,7 +289,6 @@ a:hover { text-decoration: underline; }
   MIT License · <a href="/" >skills.devnads.com</a>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
 <script>
 const REPO = 'therealharpaljadeja/monskills';
 const API = 'https://api.github.com/repos/' + REPO + '/releases?per_page=50';
@@ -400,15 +399,15 @@ function renderReleases(releases) {
   }).join('');
   timelineEl.innerHTML = items;
 
-  if (window.gsap) {
-    gsap.from('.entry', {
-      opacity: 0,
-      y: 16,
-      duration: 0.45,
-      ease: 'power2.out',
-      stagger: 0.07
-    });
-  }
+  document.querySelectorAll('.entry').forEach((entry, index) => {
+    entry.style.opacity = '0';
+    entry.style.transform = 'translateY(16px)';
+    entry.style.transition = 'opacity 450ms ease, transform 450ms ease';
+    window.setTimeout(() => {
+      entry.style.opacity = '1';
+      entry.style.transform = 'translateY(0)';
+    }, index * 70);
+  });
 }
 
 function renderError(message) {
@@ -432,12 +431,10 @@ fetch(API, { headers: { 'Accept': 'application/vnd.github+json' } })
   .catch(err => renderError(err.message || 'Unknown error'));
 
 // Looping shine on the hero title
-if (window.gsap) {
-  gsap.fromTo('#hero-title',
-    { backgroundPosition: '100% 0' },
-    { backgroundPosition: '0% 0', duration: 2.5, ease: 'power1.inOut', repeat: -1, repeatDelay: 3 }
-  );
-}
+document.getElementById('hero-title').animate(
+  [{ backgroundPosition: '100% 0' }, { backgroundPosition: '0% 0' }],
+  { duration: 2500, easing: 'ease-in-out', iterations: Infinity, delay: 3000 }
+);
 </script>
 </body>
 </html>
