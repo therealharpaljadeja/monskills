@@ -10,36 +10,37 @@ This document defines the trust boundaries in the MONSKILLS system, identifying 
  UNTRUSTED                    BOUNDARY                     TRUSTED
  ─────────                    ────────                     ───────
 
- ┌───────────┐                                       ┌───────────────┐
- │ Internet  │                                       │ Neon DB       │
- │           │                                       │               │
- │ AI agents │──── HTTPS ────┐                       │ Only accessed │
- │ Browsers  │               │                       │ via DATABASE_ │
- │ curl      │               ▼                       │ URL (TLS)     │
- └───────────┘       ┌───────────────┐               └───────┬───────┘
-                     │ Vercel Edge   │                       │
-                     │               │                       │
-                     │ Routes config │                       │
-                     │ (pattern      │                       │
-                     │  matching)    │                       │
-                     └───────┬───────┘                       │
-                             │                               │
-                             ▼                               │
-                     ┌───────────────┐                       │
-                     │ api/skill.js  │───── SQL/HTTPS ───────┘
+ ┌───────────┐
+ │ Internet  │
+ │           │
+ │ AI agents │──── HTTPS ────┐
+ │ Browsers  │               │
+ │ curl      │               ▼
+ └───────────┘       ┌───────────────┐
+                     │ Vercel Edge   │
+                     │ Routes config │
+                     └───────┬───────┘
+                             │
+                             ▼
+                     ┌───────────────┐
+                     │ api/skill.js  │
                      │               │
                      │ - Validates   │
                      │   skill name  │
-                     │ - Hashes IP   │
                      │ - Reads file  │
+                     │ - Returns MD  │
                      └───────────────┘
-                            │
-                     ┌───────────────┐
-                     │ api/stats.js  │
-                     │               │
-                     │ - Validates   │
-                     │   secret key  │
-                     └───────────────┘
+                             │
+                             ▼
+                     ┌───────────────┐               ┌───────────────┐
+                     │ api/feedback  │ SQL/HTTPS     │ Neon DB       │
+                     │               │──────────────►│ feedback only │
+                     │ - Validates   │               │               │
+                     │   payload     │               │               │
+                     │ - Stores      │               │               │
+                     │   sanitized   │               │               │
+                     │   feedback    │               │               │
+                     └───────────────┘               └───────────────┘
 ```
 
 ## Trust Boundaries
@@ -51,53 +52,39 @@ This document defines the trust boundaries in the MONSKILLS system, identifying 
 **Controls:**
 - Vercel routes config only matches specific URL patterns against an allowlist of skill names.
 - Unmatched routes fall through to static file serving or 404.
-- No authentication required (skills are public by design).
+- No authentication required for skills because they are public by design.
+- Skill fetches do not write download events or request metadata to application storage.
 
 **Risks:**
 - Denial-of-service via high request volume → Mitigated by Vercel platform rate limiting and CDN caching.
 
 ### Boundary 2: Vercel Function → Neon Database
 
-**What crosses:** SQL INSERT statements with skill name and hashed IP.
+**What crosses:** SQL INSERT statements for consent-gated feedback submissions.
 
 **Controls:**
 - `DATABASE_URL` is stored as a Vercel environment variable, never in code.
 - Connection uses TLS (enforced by Neon's `?sslmode=require`).
-- Skill name is validated against an allowlist before any DB operation.
-- IP is hashed before storage — raw IP never reaches the database.
-- The Neon serverless driver uses HTTPS, not a persistent connection.
+- Feedback fields are length-limited and enum-validated where applicable.
+- No raw IPs, hashed IPs, download events, or IP-derived identifiers are written by application code.
 
 **Risks:**
 - SQL injection → Mitigated by using parameterized queries (tagged template literals in `@neondatabase/serverless`).
 - Connection string leak → Mitigated by `.env` in `.gitignore`, Vercel env var encryption.
-
-### Boundary 3: Internet → Stats API
-
-**What crosses:** Request for analytics data, which includes aggregated download counts.
-
-**Controls:**
-- Protected by `STATS_SECRET` query parameter.
-- Returns 401 if key is missing or incorrect.
-- Response contains only aggregated data (skill names, counts, hashed IPs) — no PII.
-
-**Risks:**
-- Secret brute-force → Mitigated by using a high-entropy secret (`openssl rand -hex 16`).
-- Secret in URL query string may appear in server logs → Acceptable risk for an internal admin endpoint. Consider migrating to `Authorization` header if needed.
 
 ## Data Classification
 
 | Data | Classification | Storage | Notes |
 |------|---------------|---------|-------|
 | Skill markdown content | Public | Filesystem (git) | Intentionally open |
-| IP addresses | Not stored | N/A | Hashed before any storage |
-| IP hashes | Internal | Neon DB | SHA-256 with daily rotating salt |
-| Skill download counts | Internal | Neon DB | Aggregated, no PII |
+| Skill download events | Not stored | N/A | Use GitHub analytics outside app storage |
+| IP addresses | Not stored | N/A | Application code does not persist raw IPs |
+| IP hashes | Not stored | N/A | Application code does not persist IP-derived identifiers |
+| Feedback submissions | Internal | Neon DB | Consent-gated slash-command feedback; must be sanitized by the command |
 | `DATABASE_URL` | Secret | Vercel env vars | Never in code or logs |
-| `STATS_SECRET` | Secret | Vercel env vars | Never in code or logs |
 
 ## Assumptions
 
 1. Vercel's platform security (TLS termination, DDoS protection, isolation) is trusted.
 2. Neon's serverless infrastructure and encryption at rest is trusted.
-3. The daily hash salt rotation is sufficient to prevent IP reconstruction (no rainbow tables for daily salts).
-4. Skill content is public and does not require access control.
+3. Skill content is public and does not require access control.

@@ -22,7 +22,6 @@ This file will guide to the right skill with the latest knowledge about Monad an
 | Understanding gas pricing on Monad | `gas/` |
 | Checking if a tooling/infra provider supports Monad | `tooling-and-infra/` |
 | Adding a historical/activity feed or any feature that requires indexing onchain smart contract events | `indexer/` |
-| Reporting that monskills got you stuck, hit the same error, or the user is complaining about monskills | `feedback/` |
 
 ## Skills
 
@@ -79,7 +78,6 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - Prereqs: `npm install -g envio-cloud` + `envio-cloud login`. The monskills hook gates `envio-cloud` commands until both are satisfied.
 - Never install the CLI or run `login` on the user's behalf — surface the prompt and wait.
 
-### [Feedback](/feedback/SKILL.md)
-- Anonymous feedback pipeline for agents using monskills.
-- Fetch when the agent is stuck, hitting the same error repeatedly, or the user is complaining about monskills.
-- Submissions are POST'd to `/api/feedback` with rate limits and privacy rules — strip any secrets, keys, or user-owned addresses first.
+## Feedback
+
+Feedback is handled only through the `/feedback` slash command when the host agent supports it. Do not fetch feedback as a skill.

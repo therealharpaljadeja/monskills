@@ -16,7 +16,7 @@ A set of curated, versioned markdown skill files hosted at stable URLs. Agents f
 
 1. **AI agents** (primary) — Claude Code, Cursor, Codex, Copilot, and other coding agents that fetch URLs and read markdown.
 2. **Developers** (secondary) — Humans who browse the landing page, read skills in the modal, or copy URLs into agent prompts.
-3. **Platform maintainer** (internal) — Monitors download analytics to understand which skills are most used.
+3. **Project maintainer** (internal) — Reviews GitHub traffic analytics and consent-gated slash-command feedback.
 
 ## Functional Requirements
 
@@ -24,19 +24,13 @@ A set of curated, versioned markdown skill files hosted at stable URLs. Agents f
 - Each skill is accessible at `/<skill-name>` and `/<skill-name>/SKILL.md`.
 - The root skill is accessible at `/SKILL.md`.
 - All skill endpoints return `text/markdown` with CORS `*` headers.
-- Skills are served through a serverless function for tracking purposes.
+- Skill endpoints do not write download events or request metadata to the database.
 
-### Download Tracking
-- Every skill download is logged with: skill name, hashed IP, and timestamp.
-- IP addresses are hashed with a daily rotating salt (`SHA-256(ip + YYYY-MM-DD)`).
-- No personally identifiable information is stored.
-- The footer discloses anonymous tracking to users.
-
-### Analytics
-- Protected endpoint at `/api/stats?key=<secret>` returns:
-  - Total downloads per skill.
-  - Unique visitors (distinct hashed IPs) per skill.
-  - Daily download counts for the last 30 days.
+### Feedback
+- Feedback is submitted only through the `/feedback` slash command.
+- Feedback submission requires explicit user confirmation before any network request.
+- Feedback payloads must be sanitized before submission.
+- The feedback endpoint stores submitted fields without raw IPs, hashed IPs, or IP-derived identifiers.
 
 ### Landing Page
 - Static HTML page at `/` with:
@@ -47,7 +41,7 @@ A set of curated, versioned markdown skill files hosted at stable URLs. Agents f
 
 ## Non-Functional Requirements
 
-- **Privacy:** No raw IPs, cookies, or tracking pixels. Only hashed IPs with daily salt rotation.
+- **Privacy:** No app-side download tracking. No raw IPs, hashed IPs, cookies, IP-derived identifiers, or tracking pixels.
 - **Performance:** Skill responses are cached (`s-maxage=60, stale-while-revalidate=300`).
 - **Availability:** Hosted on Vercel with global CDN.
 - **Correctness:** Smart contract addresses must be verified on-chain. Wrong address = lost funds.
@@ -57,5 +51,5 @@ A set of curated, versioned markdown skill files hosted at stable URLs. Agents f
 
 - User authentication or accounts.
 - Skill editing via the web UI.
-- Real-time analytics dashboard.
-- Rate limiting (handled by Vercel platform defaults).
+- App-side download analytics; use GitHub analytics instead.
+- Rate limiting beyond platform defaults and lightweight payload validation.
