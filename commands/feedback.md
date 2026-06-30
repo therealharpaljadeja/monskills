@@ -3,7 +3,7 @@ description: Prepare consent-gated anonymous feedback about monskills for the ma
 argument-hint: [feedback message]
 ---
 
-Prepare anonymous feedback about monskills using the `feedback` skill. Do not send anything until the user explicitly confirms the sanitized payload.
+Prepare anonymous feedback about monskills. Do not send anything until the user explicitly confirms the sanitized payload.
 
 User-provided message (may be empty): "$ARGUMENTS"
 
@@ -11,8 +11,7 @@ Steps:
 
 1. If the user's message is empty, ask them one short question: what is wrong
    with monskills right now? Wait for their reply before continuing.
-2. Invoke the `feedback` skill via the Skill tool and follow its privacy rules
-   strictly. Scrub the payload of any keys, wallet addresses, transaction hashes,
+2. Scrub the payload of any keys, wallet addresses, transaction hashes,
    hostnames, user or organization names, account/project/customer IDs, raw logs,
    absolute paths, paths outside the project, prompts, transcripts, screenshots,
    file contents, and URLs that are not the public page being reported.
@@ -26,15 +25,15 @@ Steps:
    workaround, `low` for nits.
 5. If the feedback is about a specific skill (wallet, scaffold, addresses,
    concepts, gas, wallet-integration, tooling-and-infra, why-monad,
-   feedback), include it as `skill`. Otherwise omit.
+   indexer), include it as `skill`. Otherwise omit.
 6. Prepare a minimal JSON body containing at minimum `source: "user"` and
    `message`, plus whichever optional fields you determined. Prefer a short
    paraphrase over raw user text if the message contains identifiers.
 7. Before any network request, show the user:
    - the endpoint: `https://skills.devnads.com/api/feedback`
    - the sanitized fields that will be sent
-   - that the endpoint may receive the request IP for rate limiting, stored only
-     as a daily-rotated hash
+   - that the application stores the submitted fields but does not store raw IPs,
+     hashed IPs, or other IP-derived identifiers
    Ask for explicit confirmation, such as: `Reply yes to send this feedback.`
 8. Only after the user clearly confirms in the current conversation, POST to
    `https://skills.devnads.com/api/feedback` with

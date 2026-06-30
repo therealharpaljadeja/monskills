@@ -1,6 +1,5 @@
 import { readFileSync } from "fs";
 import { join } from "path";
-import { getDb, hashIp } from "./_lib/db.js";
 
 const VALID_SKILLS = [
   "monskill",
@@ -12,7 +11,6 @@ const VALID_SKILLS = [
   "gas",
   "concepts",
   "tooling-and-infra",
-  "feedback",
   "indexer",
 ];
 
@@ -45,23 +43,6 @@ export default async function handler(req, res) {
       }
     } else {
       return res.status(404).send("Skill not found");
-    }
-  }
-
-  // Fire-and-forget: log the download to Neon
-  if (process.env.DATABASE_URL) {
-    const sql = getDb();
-    const rawIp =
-      req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
-      req.headers["x-real-ip"] ||
-      req.socket?.remoteAddress ||
-      "unknown";
-    const ipHash = hashIp(rawIp);
-
-    try {
-      await sql`INSERT INTO skill_downloads (skill_name, ip_hash) VALUES (${skill}, ${ipHash})`;
-    } catch (e) {
-      console.error("Failed to log download:", e);
     }
   }
 

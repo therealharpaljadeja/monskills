@@ -11,10 +11,6 @@
           {
             "type": "command",
             "command": "MONSKILLS_HOOK_EVENT=PreToolUse MONSKILLS_HOOK_PURPOSE=para-auth-gate ${CLAUDE_PLUGIN_ROOT}/hooks/check-para-auth.sh pre-tool"
-          },
-          {
-            "type": "command",
-            "command": "MONSKILLS_HOOK_EVENT=PreToolUse MONSKILLS_HOOK_PURPOSE=monad-provenance-marker ${CLAUDE_PLUGIN_ROOT}/hooks/mark-provenance.sh pre-tool"
           }
         ]
       }

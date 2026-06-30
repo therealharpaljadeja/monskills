@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: MONSKILLS API
-  description: API for serving Monad development skills and viewing download analytics.
+  description: API for serving Monad development skills and receiving consent-gated feedback.
   version: 1.0.0
   contact:
     name: Harpalsinh Jadeja
@@ -16,8 +16,7 @@ paths:
     get:
       summary: Get a skill's markdown content
       description: |
-        Returns the SKILL.md file for the requested skill.
-        Also logs an anonymous download event (hashed IP + skill name) to the database.
+        Returns the SKILL.md file for the requested skill. Skill fetches do not write download events or request metadata to the database.
       parameters:
         - name: name
           in: query
@@ -32,6 +31,10 @@ paths:
               - addresses
               - wallet
               - wallet-integration
+              - gas
+              - concepts
+              - tooling-and-infra
+              - indexer
       responses:
         "200":
           description: Skill markdown content
@@ -52,13 +55,6 @@ paths:
             text/markdown:
               schema:
                 type: string
-                example: |
-                  ---
-                  name: scaffold
-                  description: End-to-end guide from idea to production.
-                  ---
-                  # Scaffold
-                  ...
         "404":
           description: Skill not found
           content:
@@ -67,91 +63,12 @@ paths:
                 type: string
                 example: Skill not found
 
-  /api/stats:
-    get:
-      summary: Get download analytics
-      description: |
-        Returns aggregated download statistics per skill.
-        Protected by a secret key passed as a query parameter.
-      parameters:
-        - name: key
-          in: query
-          required: true
-          description: The stats secret key (must match STATS_SECRET env var)
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Analytics data
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  totals:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        skill_name:
-                          type: string
-                          example: scaffold
-                        downloads:
-                          type: integer
-                          example: 142
-                  unique_visitors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        skill_name:
-                          type: string
-                          example: scaffold
-                        unique_visitors:
-                          type: integer
-                          example: 98
-                  daily_last_30_days:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        skill_name:
-                          type: string
-                          example: scaffold
-                        date:
-                          type: string
-                          format: date
-                          example: "2026-03-18"
-                        downloads:
-                          type: integer
-                          example: 12
-        "401":
-          description: Unauthorized — missing or incorrect key
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: Unauthorized
-        "500":
-          description: Server error — DATABASE_URL not configured
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: DATABASE_URL not configured
-
   /{skill}:
     get:
       summary: Skill shorthand URL
       description: |
         Convenience route that rewrites to /api/skill?name={skill}.
-        Example: GET /scaffold → served by /api/skill?name=scaffold
+        Example: GET /scaffold -> served by /api/skill?name=scaffold
       parameters:
         - name: skill
           in: path
@@ -164,6 +81,10 @@ paths:
               - addresses
               - wallet
               - wallet-integration
+              - gas
+              - concepts
+              - tooling-and-infra
+              - indexer
       responses:
         "200":
           description: Skill markdown content (same as /api/skill)
@@ -176,8 +97,8 @@ paths:
     get:
       summary: Skill direct file URL
       description: |
-        Direct path to skill file, also routed through tracking.
-        Example: GET /scaffold/SKILL.md → served by /api/skill?name=scaffold
+        Direct path to skill file, routed through the same skill-serving function.
+        Example: GET /scaffold/SKILL.md -> served by /api/skill?name=scaffold
       parameters:
         - name: skill
           in: path
@@ -190,6 +111,10 @@ paths:
               - addresses
               - wallet
               - wallet-integration
+              - gas
+              - concepts
+              - tooling-and-infra
+              - indexer
       responses:
         "200":
           description: Skill markdown content (same as /api/skill)
@@ -201,9 +126,7 @@ paths:
   /SKILL.md:
     get:
       summary: Root skill index
-      description: |
-        Returns the master SKILL.md index file.
-        Tracked as skill name "monskill".
+      description: Returns the master SKILL.md index file.
       responses:
         "200":
           description: Master skill index markdown
@@ -211,3 +134,46 @@ paths:
             text/markdown:
               schema:
                 type: string
+
+  /api/feedback:
+    post:
+      summary: Submit consent-gated feedback
+      description: |
+        Stores sanitized feedback submitted by the /feedback slash command. The endpoint does not store raw IPs, hashed IPs, or IP-derived identifiers.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - source
+                - message
+              properties:
+                source:
+                  type: string
+                  enum: [agent, user]
+                message:
+                  type: string
+                  maxLength: 5000
+                context:
+                  type: string
+                  maxLength: 4000
+                skill:
+                  type: string
+                category:
+                  type: string
+                severity:
+                  type: string
+      responses:
+        "200":
+          description: Feedback accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  id:
+                    type: integer
