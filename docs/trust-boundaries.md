@@ -54,6 +54,7 @@ This document defines the trust boundaries in the MONSKILLS system, identifying 
 - Unmatched routes fall through to static file serving or 404.
 - No authentication required for skills because they are public by design.
 - Skill fetches do not write download events or request metadata to application storage.
+- The landing page loads Vercel Analytics for website visit analytics.
 
 **Risks:**
 - Denial-of-service via high request volume → Mitigated by Vercel platform rate limiting and CDN caching.
@@ -78,6 +79,7 @@ This document defines the trust boundaries in the MONSKILLS system, identifying 
 |------|---------------|---------|-------|
 | Skill markdown content | Public | Filesystem (git) | Intentionally open |
 | Skill download events | Not stored | N/A | Use GitHub analytics outside app storage |
+| Landing-page visit analytics | External telemetry | Vercel Analytics | Browser page visits only, not skill-fetch database rows |
 | IP addresses | Not stored | N/A | Application code does not persist raw IPs |
 | IP hashes | Not stored | N/A | Application code does not persist IP-derived identifiers |
 | Feedback submissions | Internal | Neon DB | Consent-gated slash-command feedback; must be sanitized by the command |

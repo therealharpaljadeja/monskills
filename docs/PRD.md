@@ -16,7 +16,7 @@ A set of curated, versioned markdown skill files hosted at stable URLs. Agents f
 
 1. **AI agents** (primary) — Claude Code, Cursor, Codex, Copilot, and other coding agents that fetch URLs and read markdown.
 2. **Developers** (secondary) — Humans who browse the landing page, read skills in the modal, or copy URLs into agent prompts.
-3. **Project maintainer** (internal) — Reviews GitHub traffic analytics and consent-gated slash-command feedback.
+3. **Project maintainer** (internal) — Reviews website visit analytics, GitHub traffic analytics, and consent-gated slash-command feedback.
 
 ## Functional Requirements
 
@@ -38,10 +38,11 @@ A set of curated, versioned markdown skill files hosted at stable URLs. Agents f
   - Modal preview for each skill (renders markdown client-side).
   - Copy-to-clipboard for skill URLs.
   - Multiple usage methods (npx, agent prompt, Claude Code plugin, curl).
+  - Vercel Analytics for website visit analytics.
 
 ## Non-Functional Requirements
 
-- **Privacy:** No app-side download tracking. No raw IPs, hashed IPs, cookies, IP-derived identifiers, or tracking pixels.
+- **Privacy:** No app-side skill download tracking. No raw IPs, hashed IPs, cookies, or IP-derived identifiers are stored by application code. Landing-page website visits are measured with Vercel Analytics.
 - **Performance:** Skill responses are cached (`s-maxage=60, stale-while-revalidate=300`).
 - **Availability:** Hosted on Vercel with global CDN.
 - **Correctness:** Smart contract addresses must be verified on-chain. Wrong address = lost funds.
