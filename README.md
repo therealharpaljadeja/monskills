@@ -95,7 +95,6 @@ Ensure `DATABASE_URL` is set in your Vercel project environment variables if fee
 
 - [Product Requirements Document](docs/PRD.md)
 - [System Architecture (C4)](docs/architecture.md)
-- [Architecture Diagram (Excalidraw)](docs/architecture.excalidraw)
 - [API Specification (OpenAPI)](docs/api.yaml)
 - [Trust Boundaries](docs/trust-boundaries.md)
 - [Security Review Request](docs/security-review-request.md)

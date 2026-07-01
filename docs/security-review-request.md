@@ -49,7 +49,7 @@ The project does **not** handle payments, user accounts, wallet private keys, OA
 |-------------|----------|
 | Repo README with build and test instructions | [../README.md](../README.md) |
 | Product requirements | [PRD.md](PRD.md) |
-| System overview and C4 architecture | [architecture.md](architecture.md) and [architecture.excalidraw](architecture.excalidraw) |
+| System overview and C4 architecture | [architecture.md](architecture.md) |
 | Trust boundaries | [trust-boundaries.md](trust-boundaries.md) |
 | API documentation | [api.yaml](api.yaml) |
 | ADRs | [adr/](adr/) |
@@ -149,7 +149,7 @@ External services:
 | Database client | `@neondatabase/serverless` |
 | Frontend | Static HTML, CSS, and browser JavaScript |
 | API docs | OpenAPI 3.0.3 in [api.yaml](api.yaml) |
-| Diagrams/specs | Markdown C4 overview and Excalidraw architecture diagram |
+| Diagrams/specs | Markdown C4 overview |
 
 ### Key Design Decisions
 
