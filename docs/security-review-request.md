@@ -23,7 +23,6 @@
 13. [Monitoring and Operations](#13-monitoring-and-operations)
 14. [Known Risks and Mitigations](#14-known-risks-and-mitigations)
 15. [Threat Model Summary](#15-threat-model-summary)
-16. [Recommendations and Owner Action Items](#16-recommendations-and-owner-action-items)
 
 ---
 
@@ -565,35 +564,3 @@ Required for production changes:
 | Secret committed to repository | Low | High | Mitigated by `.env.example` and expected GitHub secret scanning; scanner setup needs confirmation. |
 | Supply-chain compromise of CDN script | Low | Medium | Partially mitigated by SRI for i18n scripts; CSP/vendoring can further reduce risk. |
 | Unauthorized access to feedback database | Low | Medium | Mitigated by Vercel env secret storage and Neon platform controls; access policy requires review. |
-
----
-
-## 16. Recommendations and Owner Action Items
-
-### Production Review Critical
-
-- [ ] Confirm whether this is a documentation-only review or tied to a material production change.
-- [ ] Provide the production GitHub org/repo where Security scanners should run.
-- [ ] Confirm whether the repo is in a Monad Foundation managed GitHub org.
-- [ ] Schedule Security office hours for system design.
-- [ ] Schedule Security office hours for production infra settings review if settings are changing.
-- [ ] Confirm the Vercel project, Neon project, production domain, and alert destinations.
-- [ ] Add automated tests or obtain Security acceptance for the documented coverage gap.
-- [ ] Run the project-approved agent security review workflow and document false positives in the PR.
-
-### Recommended Hardening
-
-- [ ] Add focused automated tests for `api/skill.js` and `api/feedback.js`.
-- [ ] Add security headers/CSP for static HTML pages after reviewing required script sources.
-- [ ] Confirm feedback retention and accidental-secret handling policy.
-- [ ] Confirm GitHub branch protection, required reviews, dependency scanning, and secret scanning.
-- [ ] Confirm Vercel deployment protection and production environment-variable access.
-- [ ] Confirm Neon backups, access controls, connection-string scope, and retention.
-
-### Key Questions for Security Review
-
-- Is public wildcard CORS acceptable for unauthenticated markdown skill endpoints?
-- Is the current no-IP-storage feedback design acceptable without app-level IP rate limiting?
-- What minimum automated test coverage or exception is required before approval?
-- Should site integrity monitoring be owned by Security, the maintainer, or both?
-- Should static HTML security headers/CSP be required for the next material production change?
