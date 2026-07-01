@@ -12,6 +12,7 @@ const VALID_SKILLS = [
   "concepts",
   "tooling-and-infra",
   "indexer",
+  "idea-validator",
 ];
 
 export default async function handler(req, res) {

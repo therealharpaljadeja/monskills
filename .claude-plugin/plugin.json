@@ -19,6 +19,7 @@
     "./scaffold",
     "./gas",
     "./tooling-and-infra",
-    "./indexer"
+    "./indexer",
+    "./idea-validator"
   ]
 }

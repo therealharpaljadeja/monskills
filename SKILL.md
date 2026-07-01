@@ -22,6 +22,7 @@ This file will guide to the right skill with the latest knowledge about Monad an
 | Understanding gas pricing on Monad | `gas/` |
 | Checking if a tooling/infra provider supports Monad | `tooling-and-infra/` |
 | Adding a historical/activity feed or any feature that requires indexing onchain smart contract events | `indexer/` |
+| Checking if a new idea has already been built as a Monad Blitz hackathon project | `idea-validator/` |
 
 ## Skills
 
@@ -81,3 +82,8 @@ This file will guide to the right skill with the latest knowledge about Monad an
 ## Feedback
 
 Feedback is handled only through the `/feedback` slash command when the host agent supports it. Do not fetch feedback as a skill.
+
+### [Idea Validator](/idea-validator/SKILL.md)
+- Checks a new project idea against 1,250+ Monad Blitz hackathon showcase submissions.
+- Queries `https://blitz.devnads.com/api/showcase` via a helper script, then judges genuine concept overlap and reports similar projects with names, categories, and links.
+- Fetch when the user wants a prior-art check before or during building.
