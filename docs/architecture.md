@@ -38,6 +38,16 @@ MONSKILLS is a static website with thin serverless functions for serving public 
 - **Vercel Analytics** — Website visit analytics for the landing page.
 - **GitHub Analytics** — Source of repository traffic/download insight outside MONSKILLS application storage.
 
+### Level 2 — Containers
+
+| Container | Technology | Responsibility | Security notes |
+|-----------|------------|----------------|----------------|
+| Static website | HTML, CSS, browser JavaScript | Presents the skill catalog, renders markdown previews, copies skill URLs, and loads Vercel Analytics on the landing page. | Public content only. Client-rendered markdown is sourced from repository-controlled skill files. |
+| Skill API | Vercel serverless function, Node.js | Validates skill names against an allowlist and returns bundled `SKILL.md` content as `text/markdown`. | No database writes, no request metadata persistence, CORS `*` by design for public skills. |
+| Feedback API | Vercel serverless function, Node.js | Accepts JSON feedback from the `/feedback` slash command and stores sanitized fields. | POST-only except CORS preflight, length limits, enum validation, honeypot handling, parameterized SQL. |
+| Feedback database | Neon PostgreSQL | Stores consent-gated feedback rows. | `DATABASE_URL` is a Vercel secret. Application code does not store raw IPs, hashed IPs, or IP-derived identifiers. |
+| Skill corpus | Markdown files in git | Provides versioned agent instructions and Monad development guidance. | Reviewed through PRs. Address-bearing docs require extra care because wrong addresses can cause loss of funds. |
+
 ### Skill Serving Flow
 
 ```
@@ -83,3 +93,11 @@ Historical deployments may still contain legacy download analytics tables or col
 - **Feedback via slash command:** Feedback is collected only through the `/feedback` slash command and stored without IP-derived identifiers.
 
 See [ADRs](adr/) for detailed decision records.
+
+## Security-Sensitive Implementation Details
+
+- `api/skill.js` rejects unknown skill names before constructing a filesystem path.
+- `api/feedback.js` validates request method, body shape, string lengths, source/category/severity enums, and spam indicators before writing to Neon.
+- SQL writes use `@neondatabase/serverless` tagged template literals so untrusted values are parameterized.
+- `vercel.json` routes only known skill names through the skill API and bundles only markdown/reference files needed at runtime.
+- Skill content is intentionally public and unauthenticated; feedback data is internal and stored in Neon.

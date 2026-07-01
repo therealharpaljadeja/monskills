@@ -26,7 +26,7 @@ See [docs/architecture.md](docs/architecture.md) for the full system overview an
 
 ## Prerequisites
 
-- Node.js >= 18
+- Node.js >= 20 LTS recommended (`@neondatabase/serverless` requires Node.js >= 19)
 - A [Neon](https://neon.tech) PostgreSQL database
 - A [Vercel](https://vercel.com) account for deployment
 
@@ -55,7 +55,35 @@ For existing databases created before app-side download tracking was removed, ap
 
 ## Development
 
-This is a static site with Vercel serverless functions. There's no local dev server needed for the skills themselves (they're just markdown).
+This is a static site with Vercel serverless functions. There is no local dev server needed for the skills themselves because they are markdown files served by `api/skill.js`.
+
+### Build
+
+There is no compile/build stage for this repository. The deployable artifact is the repository contents plus the Vercel serverless functions.
+
+```bash
+npm install
+```
+
+### Test and Validation
+
+Automated test coverage is documented in [docs/test-coverage.md](docs/test-coverage.md). At the time of this documentation packet, the repository has syntax/runtime validation guidance but does not yet have a full automated coverage suite.
+
+Run these checks before opening a PR:
+
+```bash
+node --check api/skill.js
+node --check api/feedback.js
+node --check api/_lib/db.js
+```
+
+Manually verify skill-serving routes in a Vercel preview or production deployment:
+
+```bash
+curl -i https://skills.devnads.com/SKILL.md
+curl -i https://skills.devnads.com/scaffold
+curl -i https://skills.devnads.com/scaffold/SKILL.md
+```
 
 ## Deployment
 
@@ -70,6 +98,10 @@ Ensure `DATABASE_URL` is set in your Vercel project environment variables if fee
 - [Architecture Diagram (Excalidraw)](docs/architecture.excalidraw)
 - [API Specification (OpenAPI)](docs/api.yaml)
 - [Trust Boundaries](docs/trust-boundaries.md)
+- [Security Review Request](docs/security-review-request.md)
+- [Security Operations Checklist](docs/security-operations.md)
+- [Test Coverage](docs/test-coverage.md)
+- [Security Review Notes](docs/security-review.md)
 - ADRs:
   - [ADR-001: Static markdown skill distribution](docs/adr/001-static-markdown-distribution.md)
   - [ADR-002: Anonymous IP tracking with daily hash rotation](docs/adr/002-anonymous-ip-tracking.md)

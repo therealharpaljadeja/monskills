@@ -46,7 +46,19 @@ A set of curated, versioned markdown skill files hosted at stable URLs. Agents f
 - **Performance:** Skill responses are cached (`s-maxage=60, stale-while-revalidate=300`).
 - **Availability:** Hosted on Vercel with global CDN.
 - **Correctness:** Smart contract addresses must be verified on-chain. Wrong address = lost funds.
-- **Simplicity:** No build step, no framework, no client-side dependencies.
+- **Simplicity:** No build step and no frontend framework; client-side dependencies are limited to the documented analytics/i18n scripts.
+- **Security reviewability:** System design, trust boundaries, API behavior, test status, production change checks, and monitoring expectations must be documented before production changes are approved.
+
+## Security Review Scope
+
+In scope for security review:
+
+- Static landing pages: `index.html`, `skill.html`, `changelog.html`, `shared.css`, and static assets.
+- Skill markdown distribution through Vercel routes and `api/skill.js`.
+- Consent-gated feedback submission through `commands/feedback.md` and `api/feedback.js`.
+- Neon PostgreSQL feedback storage and the `DATABASE_URL` deployment secret.
+- Vercel deployment configuration in `vercel.json`.
+- Documentation and hooks that direct agents to external CLIs or onchain workflows.
 
 ## Out of Scope
 
@@ -54,3 +66,7 @@ A set of curated, versioned markdown skill files hosted at stable URLs. Agents f
 - Skill editing via the web UI.
 - App-side download analytics; use GitHub analytics instead.
 - Rate limiting beyond platform defaults and lightweight payload validation.
+- The Monad blockchain protocol, RPC providers, explorers, wallets, and third-party services referenced by skills.
+- End-user applications built by developers after reading MONSKILLS.
+- Historical analytics data outside current application code paths.
+- Vercel, Neon, GitHub, and browser platform internals except for MONSKILLS-specific configuration choices.

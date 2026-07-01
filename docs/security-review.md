@@ -1,4 +1,6 @@
-# Security Review — MONSKILLS
+# Security Review Notes — MONSKILLS
+
+This document records current self-review notes. The Security Team review packet is [security-review-request.md](security-review-request.md).
 
 ## Summary
 
@@ -12,7 +14,7 @@ No high-confidence, practically exploitable vulnerabilities were found.
 
 ## Confirmed Secure
 
-- **SQL injection** (`api/skill.js`) — Neon tagged template literals use parameterized queries. Skill name is also validated against a hardcoded allowlist.
+- **SQL injection** (`api/feedback.js`) — Neon tagged template literals use parameterized queries.
 - **Path traversal** (`api/skill.js`) — Skill name checked against `VALID_SKILLS` before use in `join()`. No user-controlled path components.
 - **No download tracking** (`api/skill.js`) — Skill fetches do not write download events or request metadata to application storage.
 - **No IP-derived feedback storage** (`api/feedback.js`) — Feedback submissions do not store raw IPs, hashed IPs, or IP-derived identifiers.
