@@ -54,7 +54,6 @@ The project does **not** handle payments, user accounts, wallet private keys, OA
 | API documentation | [api.yaml](api.yaml) |
 | ADRs | [adr/](adr/) |
 | Test coverage status | [test-coverage.md](test-coverage.md) |
-| Peer review, office hours, static analysis, production change checklist | [security-operations.md](security-operations.md) |
 | Current self-review notes | [security-review.md](security-review.md) |
 
 ---
@@ -466,7 +465,15 @@ curl -i https://skills.devnads.com/scaffold/SKILL.md
 
 ### Peer Review
 
-All production changes should be reviewed PR by PR before merge. Review expectations and production change checks are documented in [security-operations.md](security-operations.md).
+All production changes should be reviewed PR by PR before merge.
+
+Reviewers should verify:
+
+- Skill-address changes are sourced and, where applicable, verified on the correct Monad network.
+- Vercel route changes match `api/skill.js` allowlists and [api.yaml](api.yaml).
+- Feedback changes preserve the no-IP-storage guarantee.
+- Dependency changes receive Socket.dev feedback or equivalent dependency review.
+- Security review documentation remains current when architecture, trust boundaries, API behavior, or production configuration changes.
 
 ### Static Analysis and Agent Review
 

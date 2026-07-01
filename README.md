@@ -99,7 +99,6 @@ Ensure `DATABASE_URL` is set in your Vercel project environment variables if fee
 - [API Specification (OpenAPI)](docs/api.yaml)
 - [Trust Boundaries](docs/trust-boundaries.md)
 - [Security Review Request](docs/security-review-request.md)
-- [Security Operations Checklist](docs/security-operations.md)
 - [Test Coverage](docs/test-coverage.md)
 - [Security Review Notes](docs/security-review.md)
 - ADRs:
