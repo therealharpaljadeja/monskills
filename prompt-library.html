@@ -121,20 +121,18 @@ button { font: inherit; }
 
 .thumb {
   height: 150px;
-  background: repeating-linear-gradient(45deg, var(--hover) 0, var(--hover) 10px, #1a1233 10px, #1a1233 20px);
+  background: var(--hover);
   display: flex;
   align-items: center;
   justify-content: center;
   border-bottom: 1px solid var(--border);
 }
 
-.thumb span {
-  color: var(--dim);
-  font-size: 11px;
-  border: 1px dashed var(--border);
-  border-radius: 3px;
-  padding: 2px 8px;
-  background: var(--bg);
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .card-body {
@@ -482,16 +480,6 @@ Build cleanup actions as separate safe flows: hide locally without transactions,
 Deliver wallet scan, threshold filters, suspicious-token review, protected-assets settings, allowance revoke flow, dust swap flow, optional donate/burn/transfer flows, transaction simulation, cleanup receipts, indexed history, tests for protected token blocking, bad price data, failed transfers, fee-greater-than-value warnings, malicious token metadata, and unsafe recipient prevention, `.monskills` metadata, and production warnings that token pricing, spam detection, approvals, swaps, and burns require independent security review.
 </template>
 
-<template id="prompt-onchain-reputation-passport">
-Before building, open `https://skills.devnads.com/install.md` and follow its MONSKILLS install instructions. After MONSKILLS is installed, use the local `monskill` routing skill and build an onchain reputation passport on Monad testnet.
-
-Fetch `scaffold/` first and design a reputation app where users collect attestations from projects, events, and collaborators. Fetch `addresses/` for ERC-8004 IdentityRegistry and ReputationRegistry addresses, and verify any contract address before use. Keep profiles, search, and rich metadata offchain; put attestations, issuer permissions, revocations, and commitment hashes onchain.
-
-Fetch `wallet-integration/` for Para login so users can create a wallet with email, passkey, social login, or connect an external wallet. Fetch `concepts/` for EIP-7702 if you add session-key style UX or smart wallet delegation, and fetch block-states guidance for confidence labels. Fetch `indexer/` to build a queryable history of issued, revoked, and endorsed reputation events.
-
-Deliver a passport page, issuer console, verification page, event timeline, privacy-conscious metadata model, contract tests, deployed and verified contracts, `.monskills` metadata, and a short threat model covering fake issuers, revoked claims, and address confusion.
-</template>
-
 <template id="prompt-protocol-learning-quest">
 Before building, open `https://skills.devnads.com/install.md` and follow its MONSKILLS install instructions. After MONSKILLS is installed, use the local `monskill` routing skill and build a protocol learning quest app for Monad testnet.
 
@@ -592,60 +580,63 @@ var prompts = [
     title: 'Intent Bridge to Monad',
     desc: 'A user-friendly bridge app that turns destination-token intents into verified cross-chain routes.',
     thumb: 'bridge route',
+    image: 'assets/prompt-library/intent-bridge-to-monad.png',
     template: 'prompt-intent-bridge-to-monad'
   },
   {
     title: 'Wallet Portfolio Cleaner',
     desc: 'A wallet cleanup app for low-value and suspicious tokens with thresholds, simulations, and safe actions.',
     thumb: 'wallet clean',
+    image: 'assets/prompt-library/wallet-portfolio-cleaner.png',
     template: 'prompt-wallet-portfolio-cleaner'
-  },
-  {
-    title: 'Onchain Reputation Passport',
-    desc: 'A reputation and attestation app with issuer controls, revocations, public verification, and event history.',
-    thumb: 'passport view',
-    template: 'prompt-onchain-reputation-passport'
   },
   {
     title: 'Protocol Learning Quest',
     desc: 'A lesson app where users learn Monad protocols by completing guided, safe testnet interactions.',
     thumb: 'lesson path',
+    image: 'assets/prompt-library/protocol-learning-quest.png',
     template: 'prompt-protocol-learning-quest'
   },
   {
     title: 'Community Funding Portal',
     desc: 'Campaign funding with goals, deadlines, pledges, refunds, reward tiers, milestones, and backer history.',
     thumb: 'funding page',
+    image: 'assets/prompt-library/community-funding-portal.png',
     template: 'prompt-community-funding-portal'
   },
   {
     title: 'Token Discovery Feed',
     desc: 'A short-form swipe feed for discovering Monad tokens with watchlists, risk signals, and trade previews.',
     thumb: 'token feed',
+    image: 'assets/prompt-library/token-discovery-feed.png',
     template: 'prompt-token-discovery-feed'
   },
   {
     title: 'Private Payroll',
     desc: 'Onchain payroll with encrypted payout profiles, address rotation, receipts, and privacy-aware accounting.',
     thumb: 'payroll vault',
+    image: 'assets/prompt-library/private-payroll.png',
     template: 'prompt-private-payroll'
   },
   {
     title: 'x402 Fund Audit Agent',
     desc: 'A paid AI audit service for crypto funds with x402-gated intake, reports, receipts, and settlement records.',
     thumb: 'audit agent',
+    image: 'assets/prompt-library/x402-audit-agent.png',
     template: 'prompt-x402-fund-audit-agent'
   },
   {
     title: 'Social Trade Agent',
     desc: 'An X-tagged trading bot with linked identities, scoped wallet permissions, simulations, and audit trails.',
     thumb: 'trade bot',
+    image: 'assets/prompt-library/social-trade-agent.png',
     template: 'prompt-social-trade-agent'
   },
   {
     title: 'Onchain Referral SDK',
     desc: 'A developer toolkit for protocols to add referral codes, attribution, reward vaults, and analytics.',
     thumb: 'referral sdk',
+    image: 'assets/prompt-library/onchain-referral-sdk.png',
     template: 'prompt-onchain-referral-sdk'
   }
 ];
@@ -775,11 +766,14 @@ prompts.forEach(function(item) {
   button.type = 'button';
   button.className = 'prompt-card';
   button.innerHTML =
-    '<div class="thumb"><span>[ ' + item.thumb + ' ]</span></div>' +
+    '<div class="thumb"><img loading="lazy" alt=""></div>' +
     '<div class="card-body">' +
       '<div class="card-title"></div>' +
       '<div class="card-desc"></div>' +
     '</div>';
+  var image = button.querySelector('.thumb img');
+  image.src = item.image;
+  image.alt = item.title;
   button.querySelector('.card-title').textContent = item.title;
   button.querySelector('.card-desc').textContent = item.desc;
   button.addEventListener('click', function() { openPrompt(item); });
