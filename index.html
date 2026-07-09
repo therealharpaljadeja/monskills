@@ -150,6 +150,43 @@ h2 {
   color: var(--accent);
 }
 
+.prompt-callout {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: -0.45rem 0 1rem;
+  padding: 0.6rem 0.85rem;
+  overflow: hidden;
+  color: var(--fg);
+  background: rgba(139, 117, 255, 0.08);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 0 22px rgba(139, 117, 255, 0.12);
+}
+.prompt-callout::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-120%);
+  background: linear-gradient(90deg, transparent, rgba(196, 181, 255, 0.18), transparent);
+  animation: callout-shine 2.8s ease-in-out infinite;
+}
+.prompt-callout span {
+  position: relative;
+  z-index: 1;
+}
+.prompt-callout:hover {
+  color: #fff;
+  background: rgba(139, 117, 255, 0.13);
+  text-decoration: none;
+}
+@keyframes callout-shine {
+  55%, 100% { transform: translateX(120%); }
+}
+
 .footer {
   color: var(--dim);
   font-size: 11px;
@@ -308,6 +345,10 @@ h2 {
   </div>
 </div>
 
+<a class="prompt-callout" href="prompt-library.html">
+  <span data-i18n="promptCallout">NEW: open the Prompt Library for copy-ready Monad app briefs →</span>
+</a>
+
 <div class="providers">
   <span class="providers-label" data-i18n="providers.label">Works with</span>
   <img class="provider-logo" src="logos/cursor.png" alt="Cursor" title="Cursor">
@@ -346,6 +387,7 @@ i18next.addResourceBundle('en', 'translation', {
   'tabs.tellAgent': 'Tell your Agent',
   'plugin.step1': '1. Add the marketplace',
   'plugin.step2': '2. Install the plugin',
+  'promptCallout': 'NEW: open the Prompt Library for copy-ready Monad app briefs →',
   'providers.label': 'Works with',
   'footer.license': 'MIT License',
   'footer.install': 'Install',
@@ -366,6 +408,7 @@ i18next.addResourceBundle('zh', 'translation', {
   'tabs.tellAgent': '告诉你的 Agent',
   'plugin.step1': '1. 添加插件市场',
   'plugin.step2': '2. 安装插件',
+  'promptCallout': 'NEW: 打开提示词库，获取可直接复制的 Monad 应用简介 →',
   'providers.label': '兼容平台',
   'footer.license': 'MIT 许可证',
   'footer.install': '安装',
