@@ -11,6 +11,10 @@
           {
             "type": "command",
             "command": "MONSKILLS_HOOK_EVENT=PreToolUse MONSKILLS_HOOK_PURPOSE=para-auth-gate ${CLAUDE_PLUGIN_ROOT}/hooks/check-para-auth.sh pre-tool"
+          },
+          {
+            "type": "command",
+            "command": "MONSKILLS_HOOK_EVENT=PreToolUse MONSKILLS_HOOK_PURPOSE=alchemy-auth-gate ${CLAUDE_PLUGIN_ROOT}/hooks/check-alchemy-auth.sh pre-tool"
           }
         ]
       }
