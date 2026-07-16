@@ -20,17 +20,23 @@ Agent 使用 [Alchemy Agent Wallet](https://www.alchemy.com/docs/agent-wallets) 
 
 monskills 的 hook（`hooks/check-alchemy-auth.sh`）会拦截所有 `alchemy …` 命令，直到两个前置条件都满足。若有任一缺失，请告知用户准确的命令并停止操作。
 
-1. **CLI 已安装（v0.17.0 或更高）** — 请用户运行：
+1. **CLI 已安装（v0.18.0 或更高）** — 请用户运行：
    ```bash
    npm install -g @alchemy/cli@latest
    ```
-   monskills 要求 `@alchemy/cli` **v0.17.0+**；版本过低时 hook 会拦截 `alchemy` 命令。用 `alchemy --version` 查看。
+   monskills 要求 `@alchemy/cli` **v0.18.0+**；版本过低时 hook 会拦截 `alchemy` 命令。用 `alchemy --version` 查看。
 
 2. **已登录** — 请用户运行：
    ```bash
    alchemy auth
    ```
    浏览器 OAuth 流程。只有用户能完成。登录后 CLI 会提示选择一个 Alchemy app；选择你想让 monskills 用于 RPC 的 app。
+
+   **无头 / 远程环境（无法打开浏览器）：** 如果 CLI 运行在浏览器无法访问的环境中 —— GitHub Codespaces、Gitpod、Replit、Google Cloud Shell、Coder 工作区、SSH 会话，或非交互 / CI / 管道会话 —— **不要**让用户去完成浏览器登录，而应让其使用**设备授权流程（device authorization flow）**：
+   ```bash
+   alchemy auth login --device-code
+   ```
+   CLI 会打印一个短验证码和一个验证链接；用户在任意设备的浏览器中打开该链接，核对验证码与终端中一致后批准即可。`--device-code` 标志在任何环境下都有效。当检测到 Codespaces、Gitpod、Replit、Google Cloud Shell、Coder、SSH 或非交互会话时，普通的 `alchemy auth` 也会自动切换到该流程 —— 因此在这些环境下不强制要求加该标志。如果自动检测未能识别环境，浏览器登录会在两分钟后超时，其错误信息会指向同一条命令。在远程 / 无头环境下如有疑问，请优先使用 `--device-code`。
 
 验证：
 ```bash
@@ -168,7 +174,8 @@ alchemy wallet disconnect
 | 现象 | 检查 |
 | --- | --- |
 | `alchemy: command not found` | CLI 未安装。请用户运行 `npm install -g @alchemy/cli@latest`。 |
-| Hook 拒绝：`alchemy` 版本低于 v0.17.0 | 请用户升级：`npm install -g @alchemy/cli@latest`。monskills 要求 v0.17.0+。切勿代为升级。 |
-| `Not authenticated` | 请用户运行 `alchemy auth`。切勿代为运行。 |
+| Hook 拒绝：`alchemy` 版本低于 v0.18.0 | 请用户升级：`npm install -g @alchemy/cli@latest`。monskills 要求 v0.18.0+。切勿代为升级。 |
+| `Not authenticated` | 请用户运行 `alchemy auth`。切勿代为运行。在无头 / 远程环境（Codespaces、Gitpod、Replit、Cloud Shell、Coder、SSH、CI）中，请让其改用 `alchemy auth login --device-code`。 |
+| 浏览器登录卡住 / 两分钟后超时 | 说明环境是无头的。请用户运行 `alchemy auth login --device-code`，并通过打印出的链接 + 验证码批准。 |
 | `No active signer` / `Session expired` | `alchemy wallet status --verify`。如果过期，让用户在 dashboard 重新批准会话，然后 `alchemy wallet connect --mode session`。 |
 | CREATE2 部署 user op 回滚 | 重新生成 `INIT_CODE`（forge 产物可能已过期）。检查预测地址上是否已有代码 — 相同 salt + initCode 重复部署时 CreateX 会回滚。 |
