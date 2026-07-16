@@ -47,7 +47,7 @@ This file will guide to the right skill with the latest knowledge about Monad an
 - Agent wallet management on Monad mainnet and testnet via **Alchemy Agent Wallet** sessions — private key lives in Alchemy's Privy enclave, the agent only holds a session token, dev can revoke from the Alchemy Dashboard at any time.
 - Send native MON and call existing contracts directly through the session signer.
 - Deploy new contracts via **CREATE2 through the canonical CreateX factory** (`0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed`) — predict the deterministic address, then call `deployCreate2(bytes32,bytes)` via the session.
-- Prereqs: `npm install -g @alchemy/cli@latest` (v0.17.0+) + `alchemy auth`. The monskills hook gates `alchemy` commands until both are satisfied. Never install the CLI or run `auth` on the user's behalf.
+- Prereqs: `npm install -g @alchemy/cli@latest` (v0.18.0+) + `alchemy auth`. The monskills hook gates `alchemy` commands until both are satisfied. Never install the CLI or run `auth` on the user's behalf.
 - Never use `--mode local` from this skill — that defeats the whole point.
 
 ### [Wallet Integration](/wallet-integration/SKILL.md)

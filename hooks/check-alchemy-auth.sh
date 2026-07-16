@@ -4,8 +4,12 @@
 #   mode = session-start | pre-tool
 #
 # `alchemy` (@alchemy/cli) requires:
-#   1. CLI installed at v0.17.0 or newer (`npm install -g @alchemy/cli@latest`)
-#   2. Logged in (`alchemy auth` — browser OAuth, only the user can complete it)
+#   1. CLI installed at v0.18.0 or newer (`npm install -g @alchemy/cli@latest`)
+#   2. Logged in (`alchemy auth` — browser OAuth, only the user can complete it).
+#      In headless / remote environments where a browser is unreachable
+#      (GitHub Codespaces, Gitpod, Replit, Google Cloud Shell, Coder, SSH,
+#      non-interactive/CI/piped sessions), the user should instead run the
+#      device authorization flow: `alchemy auth login --device-code`.
 #
 # monskills is for interactive developer use, not CI — no headless/token
 # bypass is provided.
@@ -30,7 +34,7 @@ INSTALL_TTL_OK=86400
 INSTALL_TTL_MISSING=60
 
 # Minimum @alchemy/cli version monskills supports.
-MIN_ALCHEMY_VERSION="0.17.0"
+MIN_ALCHEMY_VERSION="0.18.0"
 
 mkdir -p "$CACHE_DIR" 2>/dev/null
 
@@ -235,7 +239,7 @@ emit_session_context() {
   if [ "$alchemy_auth" = "ok" ]; then
     alchemy_auth_line="- alchemy auth: OK"
   else
-    alchemy_auth_line="- alchemy auth: not detected at session start. Ask the user to run: alchemy auth (browser OAuth flow — only the user can complete it). After signing in the CLI will prompt to pick an Alchemy app for RPC."
+    alchemy_auth_line="- alchemy auth: not detected at session start. Ask the user to run: alchemy auth (browser OAuth flow — only the user can complete it). After signing in the CLI will prompt to pick an Alchemy app for RPC. IF the environment is headless/remote where a browser can't be reached (GitHub Codespaces, Gitpod, Replit, Google Cloud Shell, Coder, SSH, or non-interactive/CI/piped sessions), tell the user to use the device authorization flow instead: alchemy auth login --device-code (prints a short code + verification link to approve from a browser on any device)."
   fi
 
   local msg
@@ -281,7 +285,7 @@ case "$MODE" in
         ;;
     esac
     if [ "$(check_alchemy_auth)" != "ok" ]; then
-      emit_deny "alchemy requires sign-in. Ask the user to run: alchemy auth (browser OAuth flow, only the user can complete it), then retry."
+      emit_deny "alchemy requires sign-in. Ask the user to run: alchemy auth (browser OAuth flow, only the user can complete it), then retry. In a headless/remote environment where a browser can't be reached (GitHub Codespaces, Gitpod, Replit, Google Cloud Shell, Coder, SSH, or non-interactive/CI/piped sessions), tell the user to use the device authorization flow instead: alchemy auth login --device-code."
       exit 0
     fi
     ;;
