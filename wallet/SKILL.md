@@ -20,17 +20,23 @@ The agent uses an [Alchemy Agent Wallet](https://www.alchemy.com/docs/agent-wall
 
 The monskills hook (`hooks/check-alchemy-auth.sh`) gates every `alchemy …` command until both prereqs are satisfied. If either is missing, surface the exact command and stop.
 
-1. **CLI installed (v0.17.0 or newer)** — ask the user to run:
+1. **CLI installed (v0.18.0 or newer)** — ask the user to run:
    ```bash
    npm install -g @alchemy/cli@latest
    ```
-   monskills requires `@alchemy/cli` **v0.17.0+**; the hook blocks `alchemy` commands on older versions. Check with `alchemy --version`.
+   monskills requires `@alchemy/cli` **v0.18.0+**; the hook blocks `alchemy` commands on older versions. Check with `alchemy --version`.
 
 2. **Signed in** — ask the user to run:
    ```bash
    alchemy auth
    ```
    Browser OAuth flow. Only the user can complete it. After sign-in the CLI prompts to pick an Alchemy app; pick the app whose API key you want monskills to use for RPC.
+
+   **Headless / remote environments (no reachable browser):** if the CLI is running somewhere a browser can't reach it — GitHub Codespaces, Gitpod, Replit, Google Cloud Shell, Coder workspaces, SSH sessions, or non-interactive/CI/piped sessions — do **not** ask the user to complete a browser login. Tell them to use the **device authorization flow** instead:
+   ```bash
+   alchemy auth login --device-code
+   ```
+   The CLI prints a short code and a verification link; the user opens the link in a browser on any device, checks the code matches their terminal, and approves. The `--device-code` flag works in every environment. Plain `alchemy auth` also switches to this flow automatically when it detects Codespaces, Gitpod, Replit, Google Cloud Shell, Coder, SSH, or a non-interactive session — so the flag isn't strictly required there. If auto-detection misses the environment, the browser login times out after two minutes and its error points to this same command. When in doubt in a remote/headless context, prefer `--device-code`.
 
 Verify with:
 ```bash
@@ -185,7 +191,8 @@ This revokes the session backend-side and clears the local config. The developer
 | Symptom | Check |
 | --- | --- |
 | `alchemy: command not found` | CLI not installed. Ask user to `npm install -g @alchemy/cli@latest`. |
-| Hook denies: `alchemy` version below v0.17.0 | Ask user to upgrade: `npm install -g @alchemy/cli@latest`. monskills requires v0.17.0+. Do not upgrade it for them. |
-| `Not authenticated` | Ask user to `alchemy auth`. Do not run it for them. |
+| Hook denies: `alchemy` version below v0.18.0 | Ask user to upgrade: `npm install -g @alchemy/cli@latest`. monskills requires v0.18.0+. Do not upgrade it for them. |
+| `Not authenticated` | Ask user to `alchemy auth`. Do not run it for them. In a headless/remote env (Codespaces, Gitpod, Replit, Cloud Shell, Coder, SSH, CI), ask them to use `alchemy auth login --device-code` instead. |
+| Browser login hangs / times out after 2 min | The environment is headless. Ask user to run `alchemy auth login --device-code` and approve via the printed link + code. |
 | `No active signer` / `Session expired` | `alchemy wallet status --verify`. If expired, ask user to re-approve the session in the dashboard, then `alchemy wallet connect --mode session`. |
 | User op reverts on a CREATE2 deploy | Re-derive `INIT_CODE` (forge artifacts may be stale). Check the predicted address doesn't already have code — CreateX reverts on a re-deploy with the same salt + initCode. |
