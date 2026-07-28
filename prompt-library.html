@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MONSKILLS Prompt Library</title>
+<meta name="description" content="Battle-tested prompts for agents building on Monad with Monskills.">
+<meta property="og:title" content="MONSKILLS Prompt Library">
+<meta property="og:description" content="Battle-tested prompts for agents building on Monad with Monskills.">
+<meta property="og:url" content="https://skills.devnads.com/prompts">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://skills.devnads.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://skills.devnads.com/og.png">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --bg: #0E091C;
+  --fg: #c8d0e8;
+  --dim: #8490b0;
+  --accent: #8B75FF;
+  --accent-soft: #c4b5ff;
+  --border: #2d2245;
+  --hover: #150e28;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { min-height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Menlo', 'Consolas', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button { font: inherit; }
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.back-link {
+  color: var(--dim);
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.back-link:hover { color: var(--fg); text-decoration: none; }
+
+.hero {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 3.5rem 1.5rem 2.5rem;
+  text-align: center;
+}
+
+.hero-title {
+  color: var(--accent);
+  font-size: clamp(2.75rem, 7vw, 4.25rem);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: 0;
+  margin: 0 0 1rem;
+}
+
+.hero-title-word {
+  display: inline;
+}
+
+.hero-sub {
+  color: var(--dim);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.library {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem 3rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.prompt-card {
+  background: var(--hover);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  cursor: pointer;
+  overflow: hidden;
+  text-align: left;
+  transition: border-color 0.15s;
+  min-height: 100%;
+}
+.prompt-card:hover { border-color: var(--accent); }
+.prompt-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.thumb {
+  height: 150px;
+  background: var(--hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.card-body {
+  padding: 0.85rem 1rem 1rem;
+}
+
+.card-title {
+  color: var(--accent-soft);
+  font-weight: 600;
+  font-size: 13.5px;
+}
+
+.card-desc {
+  color: var(--dim);
+  font-size: 12px;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 3, 12, 0.72);
+  backdrop-filter: blur(2px);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.dialog-backdrop.open { display: flex; }
+
+.dialog {
+  width: 680px;
+  max-width: 100%;
+  max-height: 84vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+}
+
+.dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.close-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--dim);
+  font-size: 12px;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.close-btn:hover { color: var(--fg); border-color: var(--dim); }
+
+.dialog-body {
+  padding: 1.25rem 1.5rem;
+  overflow-y: auto;
+}
+
+.dialog-title {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.dialog-desc {
+  color: var(--dim);
+  font-size: 12.5px;
+  margin-top: 4px;
+}
+
+.prompt-text {
+  background: var(--hover);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1rem;
+  margin: 1rem 0 0;
+  white-space: pre-wrap;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--fg);
+  max-height: 320px;
+  overflow-y: auto;
+  user-select: none;
+  transition: border-color 0.15s;
+}
+.prompt-text.unlocked {
+  user-select: text;
+  border-color: #44345f;
+}
+
+.acknowledgement {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin-top: 1rem;
+  padding: 0.8rem 0.9rem;
+  background: rgba(139, 117, 255, 0.06);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--dim);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+.acknowledgement input {
+  width: 15px;
+  height: 15px;
+  margin-top: 2px;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+.acknowledgement strong {
+  color: var(--fg);
+}
+
+.dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0.85rem 1.5rem;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.action-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.note {
+  color: var(--dim);
+  font-size: 11.5px;
+  min-height: 18px;
+}
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-right: none;
+  border-radius: 3px 0 0 3px;
+  color: var(--accent);
+  font-size: 12px;
+  height: 34px;
+  padding: 0 0.75rem;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.copy-btn:hover {
+  border-color: var(--accent);
+  background: rgba(139, 117, 255, 0.05);
+}
+.copy-btn:disabled,
+.send-toggle:disabled {
+  color: var(--dim);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.copy-btn:disabled:hover,
+.send-toggle:disabled:hover {
+  border-color: var(--border);
+  background: transparent;
+}
+
+.send-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 0 3px 3px 0;
+  color: var(--accent);
+  font-size: 12px;
+  line-height: 1;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.send-toggle:hover,
+.send-toggle.active {
+  border-color: var(--accent);
+  background: rgba(139, 117, 255, 0.05);
+}
+
+.send-menu {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  right: 0;
+  width: min(440px, calc(100vw - 2rem));
+  background: var(--hover);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+  overflow: hidden;
+}
+.send-menu.open { display: block; }
+
+.send-menu-title {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--dim);
+  font-size: 12px;
+}
+
+.send-link {
+  display: block;
+  color: var(--fg);
+  font-size: 12px;
+  padding: 0.55rem 0.85rem;
+  text-decoration: none;
+}
+.send-link:hover {
+  background: #1a1233;
+  color: var(--accent-soft);
+  text-decoration: none;
+}
+.send-link.disabled {
+  color: var(--dim);
+  cursor: not-allowed;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.footer {
+  text-align: center;
+  color: var(--dim);
+  font-size: 11px;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 600px) {
+  .header { padding: 0.75rem 1rem; }
+  .hero { padding: 2.5rem 1rem 2rem; }
+  .hero-title-word { display: block; }
+  .library { padding: 0 1rem 2.5rem; }
+  .grid { grid-template-columns: 1fr; gap: 16px; }
+  .dialog-backdrop { padding: 12px; }
+  .dialog-actions { align-items: flex-start; flex-direction: column; }
+  .action-group { justify-content: flex-start; }
+  .send-menu { left: 0; right: auto; }
+}
+</style>
+<script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
+</head>
+<body>
+<main class="page">
+  <header class="header">
+    <a href="index.html" class="back-link">← back</a>
+  </header>
+
+  <section class="hero">
+    <h1 class="hero-title"><span class="hero-title-word">Prompt</span> <span class="hero-title-word">Library</span></h1>
+    <div class="hero-sub">Battle-tested prompts for agents and everyday work.<br>Click a card to read the full prompt and copy it.</div>
+  </section>
+
+  <section class="library">
+    <div class="grid" id="prompt-grid"></div>
+  </section>
+
+  <footer class="footer">
+    MIT License · <a href="index.html">skills.devnads.com</a>
+  </footer>
+</main>
+
+<div class="dialog-backdrop" id="dialog-backdrop" aria-hidden="true">
+  <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+    <div class="dialog-head">
+      <button class="close-btn" type="button" id="close-btn">esc ✕</button>
+    </div>
+    <div class="dialog-body">
+      <div class="dialog-title" id="dialog-title"></div>
+      <div class="dialog-desc" id="dialog-desc"></div>
+      <pre class="prompt-text" id="dialog-prompt"></pre>
+      <label class="acknowledgement" for="risk-ack">
+        <input type="checkbox" id="risk-ack">
+        <span><strong>I understand I am copying an AI project prompt.</strong> I will verify the generated work, audit the code and smart contracts before production, and accept the risks of using AI-generated code.</span>
+      </label>
+    </div>
+    <div class="dialog-actions">
+      <span class="note" id="copy-note"></span>
+      <div class="action-group">
+        <button class="copy-btn" type="button" id="copy-btn">copy prompt</button>
+        <button class="send-toggle" type="button" id="send-toggle" aria-expanded="false" aria-controls="send-menu">▼</button>
+        <div class="send-menu" id="send-menu">
+          <div class="send-menu-title">Send to</div>
+          <a class="send-link" data-agent="claude-cli" href="#">Claude Code (terminal)</a>
+          <a class="send-link" data-agent="claude-desktop" href="#">Claude Code (desktop)</a>
+          <a class="send-link" data-agent="cursor" href="#">Cursor</a>
+          <a class="send-link" data-agent="cursor-web" href="#">Cursor (web)</a>
+          <a class="send-link" data-agent="codex" href="#">Codex</a>
+          <a class="send-link" data-agent="windsurf" href="#">Windsurf</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<template id="prompt-intent-bridge-to-monad">
+Before building, open `https://skills.devnads.com/install.md` and follow its MONSKILLS install instructions. After MONSKILLS is installed, use the local `monskill` routing skill and build an intent-based bridge-to-Monad app.
+
+Fetch `scaffold/` first. Build an app where a user connects a wallet, states an intent such as "I want 100 USDC on Monad" or "bridge my available ETH into MON on Monad," and the app discovers which assets the user has across supported source networks and which of those assets can be used to bridge into the desired token on Monad. The user should not need to know the source chain, bridge provider, wrapped asset, or intermediate swap path upfront; the app should explain the available options before asking for confirmation.
+
+Use existing verified bridge, swap, and route-aggregation tooling. The app's core job is to scan balances across supported networks, normalize token metadata, resolve the desired destination asset on Monad, ask available providers what assets and routes are supported, and present eligible options clearly. For each option, show source asset, source network, provider, expected Monad output, total fees, estimated time, price impact if available, source gas, destination gas, trust assumptions, quote expiry, minimum received, destination token address, and recipient address.
+
+Fetch `wallet-integration/` for embedded and external wallet connect. Fetch `tooling-and-infra/` to identify Monad-supported bridges, RPC providers, token metadata providers, route aggregators, explorers, and monitoring tools from official sources. Fetch `addresses/` before recognizing Monad destination tokens, bridge contracts, routers, wrapped assets, or stablecoins, and verify code on every relevant network. Fetch `gas/` because the app must show gas-limit based costs for Monad destination actions and source-chain gas estimates. Fetch `concepts/` for block states, async execution, and finality labels so the bridge status can show quoted, submitted, source confirmed, relayed, received on Monad, safe, finalized, failed, or refundable. Fetch `indexer/` if building cross-chain transfer history, user receipts, route analytics, or support tooling.
+
+Add safety rails. Never invent token addresses or bridge support. Warn about unsupported networks, wrapped versus canonical assets, bridge trust assumptions, quote expiry, slippage, insufficient source gas, and destination gas requirements. Simulate approvals and swaps when possible, request the smallest necessary approval, support approval revocation prompts, reject routes with unknown token contracts, and require explicit confirmation before any bridge, swap, or approval transaction. Include a manual recipient check and prevent sending to contracts unless the user explicitly allows it.
+
+Deliver wallet connect, cross-chain balance discovery, intent input, eligible-asset list, provider quote screen, approval and bridge execution flow, Monad receipt and status tracking, route history, support/debug panel, tests for wrong recipient, expired quote, unsupported token, insufficient gas, bad token address, slippage failure, duplicate submission, and failed bridge recovery, `.monskills` metadata for Monad networks used, and production warnings that bridge integrations require provider review, security review, legal review, and live monitoring.
+</template>
+
+<template id="prompt-wallet-portfolio-cleaner">
+Before building, open `https://skills.devnads.com/install.md` and follow its MONSKILLS install instructions. After MONSKILLS is installed, use the local `monskill` routing skill and build a wallet portfolio cleaner for Monad testnet.
+
+Fetch `scaffold/` first. Build an app where a user connects a wallet, scans token balances, prices assets, and chooses a cleanup threshold such as assets below $2, below $5, below a custom value, or tokens marked as likely spam/trash. The app should help users review, hide, revoke approvals, swap, donate, burn, or transfer dust tokens only after clear simulation and explicit confirmation. Never auto-clean by default, never send assets to a developer-controlled wallet, and never label a token as worthless without showing the evidence used.
+
+Design a token classification engine. For each token, show contract address, balance, estimated USD value, liquidity confidence, holder count if available, verified metadata status, transferability, honeypot or blacklist signals if available, recent activity, allowance exposure, and whether the token is known, unknown, low-value, suspicious, or user-hidden. Treat "trash" as a review category, not an irreversible fact. Include manual overrides, never-clean lists, and a protected-assets list for MON, stablecoins, blue-chip assets, LP tokens, staked assets, and user-selected tokens.
+
+Fetch `wallet-integration/` for wallet connect and optional Para onboarding. Fetch `addresses/` before recognizing canonical tokens, routers, stablecoins, or burn addresses, and verify code on the selected network. Fetch `tooling-and-infra/` to choose Monad-supported RPC, token metadata, price, swap, risk, explorer, and indexer providers from official sources. Fetch `gas/` because cleaning dust can cost more than the token value; show gas-limit based cost, net value after gas, and warnings when cleanup is irrational. Fetch `concepts/` for block states so the UI shows pending, safe, finalized, and failed cleanup states. Fetch `indexer/` if building balance history, allowance history, cleanup receipts, or spam-token analytics.
+
+Build cleanup actions as separate safe flows: hide locally without transactions, revoke token allowances, swap selected dust into MON or a verified token when liquidity is safe, transfer selected assets to another user-owned address, donate to a configured recipient chosen by the user, or burn only when the token contract supports a safe burn path or the user explicitly chooses a verified burn address. Simulate every transaction, batch only compatible actions, show per-action gas and net value, and require a final typed confirmation for burns, donations, or transfers.
+
+Deliver wallet scan, threshold filters, suspicious-token review, protected-assets settings, allowance revoke flow, dust swap flow, optional donate/burn/transfer flows, transaction simulation, cleanup receipts, indexed history, tests for protected token blocking, bad price data, failed transfers, fee-greater-than-value warnings, malicious token metadata, and unsafe recipient prevention, `.monskills` metadata, and production warnings that token pricing, spam detection, approvals, swaps, and burns require independent security review.
+</template>
+
+<template id="prompt-protocol-learning-quest">
+Before building, open `https://skills.devnads.com/install.md` and follow its MONSKILLS install instructions. After MONSKILLS is installed, use the local `monskill` routing skill and build a protocol learning quest app for Monad testnet.
+
+Fetch `scaffold/` first. Build an app that teaches users Monad ecosystem protocols by turning lessons into guided protocol interactions. Each module should focus on one protocol or primitive, explain the concept briefly, then ask the user to complete a safe testnet action such as connecting a wallet, swapping a tiny amount, minting a test asset, supplying to a market, creating a position, claiming a reward, voting, bridging in a test flow, or reading a protocol dashboard. Keep editorial lesson content, quiz copy, hints, and module metadata offchain; put optional proof-of-completion, badges, or course progress commitments onchain only when it adds value.
+
+Fetch `tooling-and-infra/` to identify Monad-supported protocol, RPC, explorer, indexer, analytics, and wallet infrastructure from official sources. Fetch `addresses/` before integrating any protocol contract and verify every address and code presence on the selected network. Fetch `wallet-integration/` for Para onboarding so learners can start with email, passkey, social login, or connect an external wallet. Fetch `concepts/` for block states, async execution, and realtime feedback so lessons show clear pending, safe, finalized, and failed states. Fetch `gas/` because repeated learning transactions must use tight gas limits and explain costs. Fetch `indexer/` to track lesson completions from protocol events and to power streaks, progress, cohorts, and completion history.
+
+Design the lesson engine so new modules can be added from configuration: protocol name, learning objective, required action, contract or API target, expected event or state change, safety constraints, success condition, fallback read-only mode, and completion reward. Never ask users to spend meaningful funds. Default to Monad testnet, use tiny bounded amounts, simulate before sending, show exact contract addresses, warn when a protocol is experimental, and require explicit user confirmation before each transaction.
+
+Deliver a polished learning dashboard, module catalog, guided lesson runner, wallet onboarding, transaction simulation and confirmation states, protocol interaction adapters, indexed progress history, optional badge or proof contract, admin module editor, tests for lesson validation and unsafe amount blocking, `.monskills` metadata, and a production note that protocol modules must be reviewed for address accuracy, user safety, and protocol-specific risk before launch.
+</template>
+
+<template id="prompt-community-funding-portal">
+Before building, open `https://skills.devnads.com/install.md` and follow its MONSKILLS install instructions. After MONSKILLS is installed, use the local `monskill` routing skill and build a community funding portal on Monad testnet.
+
+Fetch `scaffold/` first. Build a project funding app where creators publish campaigns with funding goals, deadlines, reward tiers, milestone updates, and backer-only posts. Put pledges, campaign state, funding thresholds, refunds, creator withdrawals, reward-tier claims, and milestone approvals onchain; keep long descriptions, images, comments, shipping details, and rich updates offchain. Use OpenZeppelin primitives where relevant.
+
+Fetch `wallet-integration/` for Para login so backers can pledge with email, passkey, social login, or an external wallet. Fetch `gas/` because pledge, refund, claim, and withdrawal transactions need tight gas limits on Monad. Fetch `indexer/` after deployment and verification to index CampaignCreated, PledgeMade, GoalReached, RefundClaimed, RewardClaimed, MilestonePosted, and FundsWithdrawn events for campaign pages, creator dashboards, and backer history. Fetch `wallet/` for deployment and any admin or treasury actions that must go through the Monskills agent wallet and Safe flow.
+
+Deliver campaign creation, public campaign pages, pledge and refund flows, reward-tier claim tracking, creator withdrawal controls, backer dashboard, deployed and verified contracts, tests for deadlines, goal accounting, refunds, and withdrawal permissions, `.monskills` metadata, and a clear note that real-funds crowdfunding requires audits, legal review, and careful handling of offchain fulfillment data.
+</template>
+
+<template id="prompt-token-discovery-feed">
+Before building, open `https://skills.devnads.com/install.md` and follow its MONSKILLS install instructions. After MONSKILLS is installed, use the local `monskill` routing skill and build a short-form token discovery feed for Monad.
+
+Fetch `scaffold/` first. Build an app where users discover new Monad tokens through a vertical swipe feed similar to short-form video. Each card should show one token with a concise thesis, chart preview, liquidity and holder signals, contract safety indicators, recent activity, social links, and a clear risk label. Users can swipe up to discard or skip the token, swipe right to save or watchlist, and swipe left to start a buy flow. A swipe left must open a trade preview and require explicit confirmation before any transaction is submitted.
+
+Build a configurable discovery algorithm. It should rank tokens using transparent signals such as launch time, liquidity, volume, holder growth, verified metadata, contract age, ownership or admin-risk signals, social momentum, user interests, watchlist behavior, hidden/discarded tokens, and manual allowlists or blocklists. Let users tune the feed between new launches, trending tokens, safer tokens, experimental tokens, and tokens from specific categories. Treat the algorithm as a recommendation layer, not financial advice, and show why each token appeared.
+
+Fetch `tooling-and-infra/` to choose Monad-supported RPC, indexer, explorer, token metadata, price, swap, chart, and risk-signal providers from official sources. Fetch `addresses/` before recognizing tokens, routers, stablecoins, wrapped assets, or known protocol contracts, and verify code on the selected network. Fetch `wallet-integration/` for wallet connect and optional Para onboarding. Fetch `gas/` because fast discovery trades must still show gas-limit based cost and net received. Fetch `concepts/` for block states so trade status can show submitted, pending, safe, finalized, failed, or reverted. Fetch `indexer/` for token discovery data, feed scoring inputs, user interactions, watchlists, trade history, and analytics.
+
+Add trading safety rails. Never auto-buy from a swipe alone. Before a buy, show token address, route, amount in, minimum received, price impact, slippage, liquidity, estimated fees, gas cost, approval amount, recipient, quote expiry, and risk warnings. Use tiny default trade sizes, user-defined max buy limits, token blocklists, daily limits, cooldowns, simulations where available, approval minimization, and a final confirmation step. Block or warn on honeypot signals, unverified contracts, extreme taxes, missing liquidity, spoofed metadata, or suspicious owner permissions.
+
+Deliver vertical swipe feed, token detail view, custom discovery algorithm settings, watchlist, discarded-token history, buy preview, trade execution flow, portfolio follow-up cards, indexed analytics, admin moderation tools, tests for bad token addresses, spoofed metadata, duplicate feed items, unsafe buy limits, failed swaps, expired quotes, slippage failures, and blocked risk signals, `.monskills` metadata, and production warnings that token discovery and trading involve financial risk, data-quality risk, market manipulation risk, legal review, compliance review, and independent security audits.
+</template>
+
+<template id="prompt-private-payroll">
+Before building, open `https://skills.devnads.com/install.md` and follow its MONSKILLS install instructions. After MONSKILLS is installed, use the local `monskill` routing skill and build a private onchain payroll app for Monad testnet.
+
+Fetch `scaffold/` first. Build an app where an employer can pay employees or contractors onchain while reducing the ability for the employer, coworkers, or public observers to link a payroll recipient to the employee's later spending activity. The product should support payroll runs, employee onboarding, salary or invoice amounts, payment tokens, payout schedules, receipts, and accounting exports. Keep legal names, tax forms, HR details, salary metadata, and employee preferences offchain and encrypted; put only the minimum payment commitments, payout execution state, and optional proofs or attestations onchain.
+
+Design the privacy model explicitly. Let each employee register or rotate a payroll receiving address, smart account, or shielded/payment-forwarding address that is not reused for everyday spending. Support one-time payout addresses, address rotation, encrypted employee payout instructions, and optional employee-controlled forwarding after funds arrive. The employer should be able to prove payroll was funded and delivered, but should not get a built-in dashboard of how employees spend after receipt. Include privacy education explaining what remains visible onchain, what metadata can still leak, and which privacy guarantees are not provided.
+
+Fetch `wallet-integration/` for employer admin wallets and employee onboarding with embedded or external wallets. Fetch `wallet/` for payroll treasury deployment, Safe-controlled admin actions, and batched payouts. Fetch `addresses/` before supporting payroll tokens or stablecoins, and verify token contracts on the selected network. Fetch `gas/` because batch payroll must estimate gas limits tightly and show employer cost. Fetch `concepts/` for block states and finality labels on payroll status. Fetch `indexer/` for employer payroll history, employee receipt history, accounting exports, and payment status without exposing unnecessary employee spending data. Fetch `tooling-and-infra/` if selecting custody, compliance, accounting, tax, identity, or encryption providers from official supported options.
+
+Build payroll flows with guardrails: employee invite and verification, encrypted payout profile, payroll-run creation, CSV import, token balance and allowance checks, dry-run simulation, review and approval, batch execution, employee receipt portal, address rotation, failed-payment retry, cancellation, and audit logs. Include role-based access control so finance admins see what they need for payroll operations but not employee downstream wallet activity. Support optional compliance exports, payroll receipts, and employee-downloadable records without writing sensitive personal data onchain.
+
+Deliver employer dashboard, employee onboarding, encrypted payout profile storage, payroll run builder, batch payout contract or verified payment flow, Safe approval path, receipt portal, privacy settings, accounting exports, indexed payment status, tests for wrong recipient, duplicate payouts, leaked metadata, unauthorized admin access, failed transfers, revoked employee addresses, and gas-limit overpayment risks, `.monskills` metadata, and production warnings that payroll requires tax, employment, privacy, sanctions, compliance, custody, and independent security review.
+</template>
+
+<template id="prompt-x402-fund-audit-agent">
+Before building, open `https://skills.devnads.com/install.md` and follow its MONSKILLS install instructions. After MONSKILLS is installed, use the local `monskill` routing skill and build an x402-gated AI security audit agent for crypto funds.
+
+Fetch `scaffold/` first. Build a web app and API where a fund manager submits a vault, protocol, fund, treasury, or strategy scope, then an AI agent performs the security audit workflow defined by the user. Do not prescribe the audit methodology. Provide extension points for the user to define checks, severity rubric, data sources, report format, human review requirements, and pass/fail policy.
+
+Define the Monad x402 layer explicitly. Use the Monad x402 Facilitator at `https://x402-facilitator.molandak.org` after confirming support with `GET /supported`. Use x402 version 2 or newer, Monad testnet network `eip155:10143`, and Monad testnet USDC `0x534b2f3A21130d7a60830c2Df862319e593943A3` for the test build. Configure a backend `PAY_TO_ADDRESS`, install `@x402/core`, `@x402/evm`, `@x402/fetch`, and `@x402/next`, and protect paid endpoints such as `/audit/quote`, `/audit/run`, `/audit/report`, and `/audit/artifacts` with x402.
+
+If a request lacks payment, return HTTP 402 Payment Required with payment instructions in `PAYMENT-REQUIRED`. Bind each quote to resource path, audit scope hash, price, token, network identifier, recipient, expiry, and nonce. Prefer the `v2-eip155-exact` scheme for fixed-price USDC audit reports. Use `v2-eip155-upto` only for metered usage such as LLM tokens or compute, and require `@x402/evm` 2.12.0 or newer if using upto. Require the client or agent to resubmit with `PAYMENT-SIGNATURE`. Call facilitator `POST /verify` before running expensive work or revealing gated content, then call `POST /settle` after successful delivery so the facilitator settles onchain and covers gas. Return receipt and transaction metadata in `X-PAYMENT-RESPONSE`, then store a local audit-payment record.
+
+Add x402 safety checks: reject replayed signatures and nonces, expired quotes, mismatched resource paths, changed audit scopes, wrong amount, wrong token, wrong network, wrong recipient, duplicate concurrent runs, and paid-but-denied states. Include idempotency keys, pessimistic locking around paid jobs, signed scope hashes, clear refund and retry states, and audit logs that tie report artifacts to payment receipts without exposing secrets or private fund data.
+
+Fetch `wallet-integration/` for auth and wallet UX if there is a frontend. Fetch `tooling-and-infra/` for the Monad agentic payments docs and facilitator details. Use Monad-facing contracts only where they add value, such as optional report attestation hashes or access commitments. Fetch `indexer/` only if onchain events are emitted for attestations or receipts.
+
+Deliver project intake, x402 quote and payment middleware, paid audit job queue, report viewer, receipt history, admin review controls, tests for payment binding, replay, concurrency, and refund states, `.monskills` metadata if a Monad network is used, and a production warning that real fund audits require user-defined methodology, expert review, legal and compliance review, and independent security validation.
+</template>
+
+<template id="prompt-social-trade-agent">
+Before building, open `https://skills.devnads.com/install.md` and follow its MONSKILLS install instructions. After MONSKILLS is installed, use the local `monskill` routing skill and build a social-command trading agent for Monad testnet.
+
+Fetch `scaffold/` first. Build an app where a user links their X account, connects or creates a wallet, funds a trading wallet, and defines strict trading permissions. The user can later reply to a post on X, tag the bot, and write a trade command such as "buy 10 USDC of TOKEN with max 1% slippage" or "sell 25% of TOKEN if simulation passes." Treat X as an intent source only; execute nothing unless the X handle is linked to the user, the command matches an approved syntax, the token and route are allowed, and the request fits the user's preconfigured limits.
+
+Support two custody modes. In user-wallet mode, use wallet permissions, limited allowances, or delegated/session-style approvals so the bot can only trade within explicit caps, expiry, token allowlists, and route allowlists. In platform-wallet mode, create a per-user trading wallet, show deposit and withdrawal flows, keep private keys out of frontend code, and require clear recovery and custody warnings. Store command metadata, parsed intent, limits, and execution status offchain; put trades, optional policy commitments, and optional revocation or proof events onchain only when useful.
+
+Fetch `wallet-integration/` for onboarding with Para and external wallets. Fetch `concepts/` for EIP-7702, session keys, async execution, block states, and reserve balance if you add delegated execution. Fetch `gas/` because bot-submitted swaps must use tight gas limits and show cost ceilings. Fetch `addresses/` before using any token, router, permit, or protocol address, and verify code on the selected Monad network. Fetch `tooling-and-infra/` to choose supported RPC, swap, price, X/API, custody, and monitoring providers from official docs. Fetch `indexer/` to build command history, trade history, PnL, allowance changes, deposits, withdrawals, and failure analytics.
+
+Build a command pipeline: ingest mentions or replies from X using current supported API access, verify the poster's linked identity, normalize the command, simulate the trade, enforce limits, check price impact and slippage, require extra confirmation for risky or large orders, submit the transaction, then reply or notify with pending, safe, finalized, failed, or rejected status. Add rate limits, replay protection, idempotency keys, duplicate tweet detection, command expiry, allowlisted tokens and routers, sanctions and compliance hooks, and emergency pause controls.
+
+Deliver X account linking, wallet setup, funding and withdrawal screens, permission editor, command parser, simulation preview, trade executor, bot response worker, indexed audit trail, admin risk console, tests for unauthorized handles, replayed commands, exceeded limits, bad token addresses, slippage failures, and revoked approvals, `.monskills` metadata, and production warnings that social trading involves financial risk, custody risk, platform API risk, legal review, compliance review, and independent security audits.
+</template>
+
+<template id="prompt-onchain-referral-sdk">
+Before building, open `https://skills.devnads.com/install.md` and follow its MONSKILLS install instructions. After MONSKILLS is installed, use the local `monskill` routing skill and build an onchain referral SDK and developer dashboard for Monad testnet.
+
+Fetch `scaffold/` first. Build a developer product that lets any Monad protocol add referral codes and onchain referral rewards to its own app. The protocol developer should be able to create a referral campaign, define code rules, decide what counts as a conversion, set reward amounts or basis points, cap rewards, choose payout token or native MON, and integrate the system through a small SDK or smart contract adapter. Keep campaign descriptions, docs, logos, analytics labels, and human-readable metadata offchain; put referral code ownership, campaign config commitments, conversion attribution, reward accrual, claims, revocations, and admin permissions onchain.
+
+Design the contract system around reusable primitives: a ReferralRegistry for code creation and ownership, a CampaignManager for protocol-specific campaigns, an AttributionRecorder that protocol contracts or trusted backend signers can call when a referred action happens, and a RewardVault for escrowed rewards and user claims. Include support for invite codes, wallet-bound codes, protocol-generated codes, custom code aliases, expiries, per-code caps, per-user caps, campaign pause, reward clawback or invalidation, and dispute/admin review states.
+
+Build developer-facing integration paths. Provide a TypeScript SDK, React hooks, example Next.js components, Foundry interfaces, and a sample protocol integration showing how a protocol records a conversion when a referred user mints, swaps, deposits, signs up, or completes another target action. Include examples for direct onchain calls and backend-signed attribution messages. The SDK should resolve referral codes, attach referral params to links, store pending referrals safely, submit attribution, read claimable rewards, and render referral dashboards.
+
+Fetch `wallet-integration/` for protocol developer login and optional referrer/user dashboards. Fetch `addresses/` before supporting reward tokens and verify token contracts on the selected network. Fetch `gas/` because referral recording and reward claims must use tight gas limits and predictable costs. Fetch `concepts/` for block states and async execution so dashboards distinguish pending, safe, finalized, and disputed conversions. Fetch `indexer/` to power campaign analytics, referrer leaderboards, conversion funnels, reward history, and fraud review. Fetch `wallet/` for deployment and any Safe-controlled admin actions.
+
+Deliver deployed and verified contracts, TypeScript SDK package, sample protocol app, developer dashboard, campaign creator, referral link/code generator, reward vault and claim flow, indexed analytics, fraud and duplicate-attribution checks, admin pause/revoke tools, unit and integration tests for attribution spoofing, double rewards, cap enforcement, expired codes, revoked campaigns, and reward accounting, `.monskills` metadata, and production warnings that real referral programs require anti-sybil design, legal review, token compliance review, and independent audits.
+</template>
+
+<script>
+var prompts = [
+  {
+    title: 'Intent Bridge to Monad',
+    desc: 'A user-friendly bridge app that turns destination-token intents into verified cross-chain routes.',
+    thumb: 'bridge route',
+    image: 'assets/prompt-library/intent-bridge-to-monad.png',
+    template: 'prompt-intent-bridge-to-monad'
+  },
+  {
+    title: 'Wallet Portfolio Cleaner',
+    desc: 'A wallet cleanup app for low-value and suspicious tokens with thresholds, simulations, and safe actions.',
+    thumb: 'wallet clean',
+    image: 'assets/prompt-library/wallet-portfolio-cleaner.png',
+    template: 'prompt-wallet-portfolio-cleaner'
+  },
+  {
+    title: 'Protocol Learning Quest',
+    desc: 'A lesson app where users learn Monad protocols by completing guided, safe testnet interactions.',
+    thumb: 'lesson path',
+    image: 'assets/prompt-library/protocol-learning-quest.png',
+    template: 'prompt-protocol-learning-quest'
+  },
+  {
+    title: 'Community Funding Portal',
+    desc: 'Campaign funding with goals, deadlines, pledges, refunds, reward tiers, milestones, and backer history.',
+    thumb: 'funding page',
+    image: 'assets/prompt-library/community-funding-portal.png',
+    template: 'prompt-community-funding-portal'
+  },
+  {
+    title: 'Token Discovery Feed',
+    desc: 'A short-form swipe feed for discovering Monad tokens with watchlists, risk signals, and trade previews.',
+    thumb: 'token feed',
+    image: 'assets/prompt-library/token-discovery-feed.png',
+    template: 'prompt-token-discovery-feed'
+  },
+  {
+    title: 'Private Payroll',
+    desc: 'Onchain payroll with encrypted payout profiles, address rotation, receipts, and privacy-aware accounting.',
+    thumb: 'payroll vault',
+    image: 'assets/prompt-library/private-payroll.png',
+    template: 'prompt-private-payroll'
+  },
+  {
+    title: 'x402 Fund Audit Agent',
+    desc: 'A paid AI audit service for crypto funds with x402-gated intake, reports, receipts, and settlement records.',
+    thumb: 'audit agent',
+    image: 'assets/prompt-library/x402-audit-agent.png',
+    template: 'prompt-x402-fund-audit-agent'
+  },
+  {
+    title: 'Social Trade Agent',
+    desc: 'An X-tagged trading bot with linked identities, scoped wallet permissions, simulations, and audit trails.',
+    thumb: 'trade bot',
+    image: 'assets/prompt-library/social-trade-agent.png',
+    template: 'prompt-social-trade-agent'
+  },
+  {
+    title: 'Onchain Referral SDK',
+    desc: 'A developer toolkit for protocols to add referral codes, attribution, reward vaults, and analytics.',
+    thumb: 'referral sdk',
+    image: 'assets/prompt-library/onchain-referral-sdk.png',
+    template: 'prompt-onchain-referral-sdk'
+  }
+];
+
+var activePrompt = null;
+var grid = document.getElementById('prompt-grid');
+var backdrop = document.getElementById('dialog-backdrop');
+var dialogTitle = document.getElementById('dialog-title');
+var dialogDesc = document.getElementById('dialog-desc');
+var dialogPrompt = document.getElementById('dialog-prompt');
+var closeBtn = document.getElementById('close-btn');
+var copyBtn = document.getElementById('copy-btn');
+var sendToggle = document.getElementById('send-toggle');
+var sendMenu = document.getElementById('send-menu');
+var copyNote = document.getElementById('copy-note');
+var riskAck = document.getElementById('risk-ack');
+var sendLinks = Array.prototype.slice.call(document.querySelectorAll('.send-link'));
+var noteTimer;
+
+function promptText(item) {
+  return document.getElementById(item.template).content.textContent.trim();
+}
+
+function setControlsEnabled(enabled) {
+  copyBtn.disabled = !enabled;
+  sendToggle.disabled = !enabled;
+  dialogPrompt.classList.toggle('unlocked', enabled);
+  if (!enabled) setSendMenu(false);
+  sendLinks.forEach(function(link) {
+    link.classList.toggle('disabled', !enabled);
+    link.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+    link.tabIndex = enabled ? 0 : -1;
+  });
+}
+
+function openPrompt(item) {
+  activePrompt = item;
+  dialogTitle.textContent = item.title;
+  dialogDesc.textContent = item.desc;
+  dialogPrompt.textContent = promptText(item);
+  copyBtn.textContent = 'copy prompt';
+  copyNote.textContent = '';
+  riskAck.checked = false;
+  setSendMenu(false);
+  setControlsEnabled(false);
+  updateSendLinks(item);
+  backdrop.classList.add('open');
+  backdrop.setAttribute('aria-hidden', 'false');
+  riskAck.focus();
+}
+
+function closePrompt() {
+  backdrop.classList.remove('open');
+  backdrop.setAttribute('aria-hidden', 'true');
+  setSendMenu(false);
+  setControlsEnabled(false);
+  activePrompt = null;
+}
+
+function fallbackCopy(text) {
+  var textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.setAttribute('readonly', '');
+  textarea.style.position = 'fixed';
+  textarea.style.left = '-9999px';
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textarea);
+}
+
+function flashCopied() {
+  clearTimeout(noteTimer);
+  copyBtn.textContent = 'copied ✓';
+  copyNote.textContent = 'prompt copied to clipboard';
+  noteTimer = window.setTimeout(function() {
+    copyBtn.textContent = 'copy prompt';
+    copyNote.textContent = '';
+  }, 1800);
+}
+
+function copyActivePrompt() {
+  if (!activePrompt || copyBtn.disabled) return;
+  var text = promptText(activePrompt);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(flashCopied).catch(function() {
+      fallbackCopy(text);
+      flashCopied();
+    });
+  } else {
+    fallbackCopy(text);
+    flashCopied();
+  }
+}
+
+function setSendMenu(open) {
+  sendMenu.classList.toggle('open', open);
+  sendToggle.classList.toggle('active', open);
+  sendToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+
+function toggleSendMenu() {
+  if (sendToggle.disabled) return;
+  setSendMenu(!sendMenu.classList.contains('open'));
+}
+
+function deepLink(agent, prompt) {
+  var encodedPrompt = encodeURIComponent(prompt);
+  if (agent === 'claude-cli') return 'claude-cli://open?q=' + encodedPrompt;
+  if (agent === 'claude-desktop') return 'claude://code/new?q=' + encodedPrompt;
+  if (agent === 'cursor') return 'cursor://anysphere.cursor-deeplink/prompt?text=' + encodedPrompt;
+  if (agent === 'cursor-web') return 'https://cursor.com/link/prompt?text=' + encodedPrompt;
+  if (agent === 'codex') return 'codex://threads/new?prompt=' + encodedPrompt;
+  if (agent === 'windsurf') return 'windsurf://cascade/newChat?prompt=' + encodedPrompt;
+  return '#';
+}
+
+function updateSendLinks(item) {
+  var text = promptText(item);
+  sendLinks.forEach(function(link) {
+    link.href = deepLink(link.dataset.agent, text);
+  });
+}
+
+prompts.forEach(function(item) {
+  var button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'prompt-card';
+  button.innerHTML =
+    '<div class="thumb"><img loading="lazy" alt=""></div>' +
+    '<div class="card-body">' +
+      '<div class="card-title"></div>' +
+      '<div class="card-desc"></div>' +
+    '</div>';
+  var image = button.querySelector('.thumb img');
+  image.src = item.image;
+  image.alt = item.title;
+  button.querySelector('.card-title').textContent = item.title;
+  button.querySelector('.card-desc').textContent = item.desc;
+  button.addEventListener('click', function() { openPrompt(item); });
+  grid.appendChild(button);
+});
+
+closeBtn.addEventListener('click', closePrompt);
+copyBtn.addEventListener('click', copyActivePrompt);
+riskAck.addEventListener('change', function() {
+  var enabled = riskAck.checked;
+  clearTimeout(noteTimer);
+  copyBtn.textContent = 'copy prompt';
+  setControlsEnabled(enabled);
+  copyNote.textContent = '';
+});
+sendToggle.addEventListener('click', function(event) {
+  event.stopPropagation();
+  toggleSendMenu();
+});
+sendLinks.forEach(function(link) {
+  link.addEventListener('click', function(event) {
+    if (link.classList.contains('disabled')) {
+      event.preventDefault();
+      return;
+    }
+    setSendMenu(false);
+  });
+});
+backdrop.addEventListener('click', function(event) {
+  if (event.target === backdrop) closePrompt();
+});
+window.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') closePrompt();
+});
+document.addEventListener('click', function(event) {
+  if (!event.target.closest('.action-group')) setSendMenu(false);
+});
+</script>
+</body>
+</html>

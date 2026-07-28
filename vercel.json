@@ -4,6 +4,11 @@
     { "src": "/(scaffold|why-monad|addresses|wallet|wallet-integration|gas|concepts|tooling-and-infra|indexer|idea-validator)/SKILL.zh.md", "dest": "/api/skill?name=$1&lang=zh" },
     { "src": "/(scaffold|why-monad|addresses|wallet|wallet-integration|gas|concepts|tooling-and-infra|indexer|idea-validator)/SKILL.md", "dest": "/api/skill?name=$1" },
     { "src": "/(scaffold|why-monad|addresses|wallet|wallet-integration|gas|concepts|tooling-and-infra|indexer|idea-validator)", "dest": "/api/skill?name=$1" },
+    { "src": "/(scaffold|why-monad|addresses|wallet|wallet-integration|gas|concepts|tooling-and-infra|indexer)/SKILL.zh.md", "dest": "/api/skill?name=$1&lang=zh" },
+    { "src": "/(scaffold|why-monad|addresses|wallet|wallet-integration|gas|concepts|tooling-and-infra|indexer)/SKILL.md", "dest": "/api/skill?name=$1" },
+    { "src": "/(scaffold|why-monad|addresses|wallet|wallet-integration|gas|concepts|tooling-and-infra|indexer)", "dest": "/api/skill?name=$1" },
+    { "src": "/install", "dest": "/install.md" },
+    { "src": "/prompts", "dest": "/prompt-library.html" },
     { "src": "/changelog", "dest": "/changelog.html" }
   ],
   "functions": {
