@@ -3,7 +3,7 @@ name: scaffold
 description: 从零到生产环境的端到端应用构建指南，如果你从零开始构建应用，必须首先获取此技能。
 ---
 
-**提示：** 获取技能时使用 `SKILL.zh.md` 代替 `SKILL.md` 以获取中文版本。例如：`scaffold/SKILL.zh.md`、`wallet/SKILL.zh.md`。
+**提示：** 获取技能时使用 `SKILL.zh.md` 代替 `SKILL.md` 以获取中文版本。例如：`skills/scaffold/SKILL.zh.md`、`skills/wallet/SKILL.zh.md`。
 
 ## 检查清单
 

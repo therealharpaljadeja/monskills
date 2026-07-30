@@ -8,12 +8,13 @@ Knowledge skills for AI agents building on Monad. Each skill is a standalone mar
 
 | Skill | Description |
 |-------|-------------|
-| [scaffold](scaffold/SKILL.md) | End-to-end guide from idea to production |
-| [why-monad](why-monad/SKILL.md) | Why every blockchain app should be built on Monad |
-| [addresses](addresses/SKILL.md) | Smart contract addresses for Monad mainnet/testnet |
-| [wallet](wallet/SKILL.md) | Agent wallet management and Safe multisig |
-| [wallet-integration](wallet-integration/SKILL.md) | Wallet + auth for Next.js / Expo on Monad using Para — embedded MPC wallets with email / passkey / social login, plus external-wallet connect (`@getpara/cli`) |
-| [indexer](indexer/SKILL.md) | Index onchain events for activity feeds, leaderboards, history, and analytics (HyperIndex on Envio Cloud) |
+| [monskill](skills/monskill/SKILL.md) | Routing skill — start here; guides the agent to the right topic skill |
+| [scaffold](skills/scaffold/SKILL.md) | End-to-end guide from idea to production |
+| [why-monad](skills/why-monad/SKILL.md) | Why every blockchain app should be built on Monad |
+| [addresses](skills/addresses/SKILL.md) | Smart contract addresses for Monad mainnet/testnet |
+| [wallet](skills/wallet/SKILL.md) | Agent wallet management and Safe multisig |
+| [wallet-integration](skills/wallet-integration/SKILL.md) | Wallet + auth for Next.js / Expo on Monad using Para — embedded MPC wallets with email / passkey / social login, plus external-wallet connect (`@getpara/cli`) |
+| [indexer](skills/indexer/SKILL.md) | Index onchain events for activity feeds, leaderboards, history, and analytics (HyperIndex on Envio Cloud) |
 
 ## Architecture
 

@@ -56,7 +56,7 @@ MONSKILLS is a static website with thin serverless functions for serving public 
   │ 1. Validate    │  Check skill name against allowlist
   │    skill name  │
   │                │
-  │ 2. Read file   │  readFileSync(scaffold/SKILL.md)
+  │ 2. Read file   │  readFileSync(skills/scaffold/SKILL.md)
   │    from disk   │
   │                │
   │ 3. Return      │  markdown

@@ -11,14 +11,15 @@
   "license": "MIT",
   "keywords": ["monad", "ethereum", "solidity", "web3", "blockchain", "dapp"],
   "skills": [
-    "./addresses",
-    "./wallet",
-    "./wallet-integration",
-    "./why-monad",
-    "./concepts",
-    "./scaffold",
-    "./gas",
-    "./tooling-and-infra",
-    "./indexer"
+    "./skills/monskill",
+    "./skills/addresses",
+    "./skills/wallet",
+    "./skills/wallet-integration",
+    "./skills/why-monad",
+    "./skills/concepts",
+    "./skills/scaffold",
+    "./skills/gas",
+    "./skills/tooling-and-infra",
+    "./skills/indexer"
   ]
 }
