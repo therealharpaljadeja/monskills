@@ -1,16 +1,16 @@
 {
   "routes": [
     { "src": "/SKILL.md", "dest": "/api/skill?name=monskill" },
-    { "src": "/(scaffold|why-monad|addresses|wallet|wallet-integration|gas|concepts|tooling-and-infra|indexer)/SKILL.zh.md", "dest": "/api/skill?name=$1&lang=zh" },
-    { "src": "/(scaffold|why-monad|addresses|wallet|wallet-integration|gas|concepts|tooling-and-infra|indexer)/SKILL.md", "dest": "/api/skill?name=$1" },
-    { "src": "/(scaffold|why-monad|addresses|wallet|wallet-integration|gas|concepts|tooling-and-infra|indexer)", "dest": "/api/skill?name=$1" },
+    { "src": "/(scaffold|why-monad|addresses|wallet|wallet-integration|gas|concepts|tooling-and-infra|indexer|monskill)/SKILL.zh.md", "dest": "/api/skill?name=$1&lang=zh" },
+    { "src": "/(scaffold|why-monad|addresses|wallet|wallet-integration|gas|concepts|tooling-and-infra|indexer|monskill)/SKILL.md", "dest": "/api/skill?name=$1" },
+    { "src": "/(scaffold|why-monad|addresses|wallet|wallet-integration|gas|concepts|tooling-and-infra|indexer|monskill)", "dest": "/api/skill?name=$1" },
     { "src": "/install", "dest": "/install.md" },
     { "src": "/prompts", "dest": "/prompt-library.html" },
     { "src": "/changelog", "dest": "/changelog.html" }
   ],
   "functions": {
     "api/skill.js": {
-      "includeFiles": "{SKILL.md,*/SKILL.md,*/SKILL.zh.md,*/references/*.md,*/references/*.zh.md}"
+      "includeFiles": "{skills/*/SKILL.md,skills/*/SKILL.zh.md,skills/*/references/*.md,skills/*/references/*.zh.md}"
     }
   },
   "headers": [

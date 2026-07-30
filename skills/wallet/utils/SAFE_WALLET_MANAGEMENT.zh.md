@@ -316,4 +316,4 @@ cast receipt <TRANSACTION_HASH> --rpc-url https://testnet-rpc.monad.xyz --json \
 
 ### 5. 验证智能合约
 
-**每次智能合约部署后，你必须验证合约。** 不要跳过此步骤。有关完整说明，请参阅 `scaffold/SKILL.md` 中的 **Verification (All Explorers)** 部分。使用验证 API（`https://agents.devnads.com/v1/verify`）— 一次调用即可在所有 3 个浏览器（MonadVision、Socialscan、Monadscan）上进行验证。
+**每次智能合约部署后，你必须验证合约。** 不要跳过此步骤。有关完整说明，请参阅 `skills/scaffold/SKILL.md` 中的 **Verification (All Explorers)** 部分。使用验证 API（`https://agents.devnads.com/v1/verify`）— 一次调用即可在所有 3 个浏览器（MonadVision、Socialscan、Monadscan）上进行验证。

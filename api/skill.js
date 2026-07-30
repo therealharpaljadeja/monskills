@@ -26,17 +26,13 @@ export default async function handler(req, res) {
   let content;
   try {
     const filename = lang ? "SKILL.zh.md" : "SKILL.md";
-    const filePath = skill === "monskill"
-      ? join(process.cwd(), filename)
-      : join(process.cwd(), skill, filename);
+    const filePath = join(process.cwd(), "skills", skill, filename);
     content = readFileSync(filePath, "utf-8");
   } catch {
     // Fallback to English if Chinese version not found
     if (lang) {
       try {
-        const fallback = skill === "monskill"
-          ? join(process.cwd(), "SKILL.md")
-          : join(process.cwd(), skill, "SKILL.md");
+        const fallback = join(process.cwd(), "skills", skill, "SKILL.md");
         content = readFileSync(fallback, "utf-8");
       } catch {
         return res.status(404).send("Skill not found");

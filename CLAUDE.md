@@ -1,1 +1,1 @@
-SKILL.md
+skills/monskill/SKILL.md
