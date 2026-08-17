@@ -1,6 +1,6 @@
 ---
 name: wallet
-description: This skill manages the coding agent's own onchain wallet on Monad mainnet and testnet via the Alchemy CLI Agent Wallet — the private key stays in Alchemy's Privy enclave, the agent only holds a session token the developer can revoke from the Alchemy Dashboard, so it signs without ever touching a raw private key. Use when the agent itself needs to sign and broadcast a Monad transaction — sending native MON, calling an existing contract, or deploying a new contract (CREATE2 via CreateX); not for end-user frontend wallets (fetch wallet-integration/ for that). For example: "deploy my token contract to Monad testnet", "send 0.5 MON to 0xabc…", or "call mint() on my deployed NFT contract".
+description: 'This skill manages the coding agent''s own onchain wallet on Monad mainnet and testnet via the Alchemy CLI Agent Wallet — the private key stays in Alchemy''s Privy enclave, the agent only holds a session token the developer can revoke from the Alchemy Dashboard, so it signs without ever touching a raw private key. Use when the agent itself needs to sign and broadcast a Monad transaction — sending native MON, calling an existing contract, or deploying a new contract (CREATE2 via CreateX); not for end-user frontend wallets (fetch wallet-integration/ for that). For example: "deploy my token contract to Monad testnet", "send 0.5 MON to 0xabc…", or "call mint() on my deployed NFT contract".'
 ---
 
 # Agent wallet on Monad — Alchemy Agent Wallet
