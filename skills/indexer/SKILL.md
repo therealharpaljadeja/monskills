@@ -26,12 +26,12 @@ Run the init command inside an `indexer/` folder at the project root. Create the
 
 ```bash
 mkdir -p indexer && cd indexer
-pnpx envio@3.0.0-alpha.21 init contract-import explorer \
+pnpx envio init contract-import explorer \
   -b monad \
   -c <CONTRACT_ADDRESS> \
-  -n <CONTRACT_NAME> \
+  -n <PROJECT_NAME> \
   -l typescript \
-  -d ./ -o ./ \
+  -d ./ \
   --all-events --single-contract --api-token ""
 ```
 
@@ -39,31 +39,44 @@ pnpx envio@3.0.0-alpha.21 init contract-import explorer \
 
 ```bash
 mkdir -p indexer && cd indexer
-pnpx envio@3.0.0-alpha.21 init contract-import explorer \
+pnpx envio init contract-import explorer \
   -b monad-testnet \
   -c <CONTRACT_ADDRESS> \
-  -n <CONTRACT_NAME> \
+  -n <PROJECT_NAME> \
   -l typescript \
-  -d ./ -o ./ \
+  -d ./ \
   --all-events --single-contract --api-token ""
 ```
 
 **Notes:**
 - `<CONTRACT_ADDRESS>` — the deployed, verified contract address.
-- `<CONTRACT_NAME>` — the contract name (matches the Solidity contract, e.g. `MyToken`).
+- `<PROJECT_NAME>` — the name of the indexer project (e.g. `my-app-indexer`). The contract name is read from the verified ABI, not passed here.
 - `--all-events` imports every event in the ABI. Narrow this later by editing `config.yaml` if the user wants only specific events.
 - `--single-contract` scaffolds for one contract. Re-run the command for additional contracts, or edit the config by hand.
 - `--api-token ""` is intentional — leave it empty.
 - `-l typescript` is a flag, not a positional — the envio CLI rejects `typescript` as a bare positional arg.
-- The version is pinned to `envio@3.0.0-alpha.21` (use exactly this).
+- Do not pin a version — `pnpx envio` resolves the latest release, and init records the exact version in `package.json`.
+
+If init ends with `Failed installing project dependencies` / `ERR_PNPM_IGNORED_BUILDS` (pnpm 11+), the project files were still generated: set `allowBuilds.esbuild` to `true` in `indexer/pnpm-workspace.yaml` and run `pnpm install`.
 
 After init, the `indexer/` folder will contain `config.yaml`, `schema.graphql`, and handler stubs. The user edits the handlers to decide what gets stored in the database. Once the code is ready and pushed to GitHub, deploy to Envio Cloud (see below).
 
 ### Opt into transaction fields before writing handlers
 
-By default, `event.transaction.*` is typed `never` in generated handlers — accessing `event.transaction.hash` (or any other tx field) is a TypeScript error. Most frontends want the tx hash (for explorer links, dedup, etc.), so opt in explicitly before writing handler code.
+By default, `event.transaction.*` fields are not selected in generated handlers — accessing `event.transaction.hash` (or any other tx field) is a TypeScript error. Most frontends want the tx hash (for explorer links, dedup, etc.), so opt in explicitly before writing handler code.
 
-Add `field_selection` to `config.yaml`:
+The simplest way is the handler's own `fields` option, which needs no codegen:
+
+```ts
+indexer.onEvent(
+  { contract: "MyToken", event: "Transfer", fields: { transaction: ["hash"] } },
+  async ({ event, context }) => {
+    event.transaction.hash; // string
+  },
+);
+```
+
+Or add `field_selection` to `config.yaml`, which applies to every handler:
 
 ```yaml
 field_selection:
@@ -71,7 +84,7 @@ field_selection:
     - hash
 ```
 
-Place it at the top level of `config.yaml` (sibling of `networks:`, `contracts:`, etc.), not nested under a network or contract. After editing, re-run `pnpm codegen` (or `pnpx envio@3.0.0-alpha.21 codegen`) so the types regenerate — otherwise `event.transaction.hash` will still be typed `never`.
+Place it at the top level of `config.yaml` (sibling of `chains:`, `contracts:`, etc.), not nested under a chain or contract. After editing, re-run `pnpm codegen` (or `pnpx envio codegen`) so the types regenerate — otherwise `event.transaction.hash` will still be a type error.
 
 Add other fields the handlers need (`from`, `to`, `value`, `gasUsed`, `input`, etc.) to the same list. Envio only pulls and types the fields listed here, so keep it minimal. The full set of available fields is in the [Envio field selection docs](https://docs.envio.dev/docs/HyperIndex/configuration-file#field-selection).
 

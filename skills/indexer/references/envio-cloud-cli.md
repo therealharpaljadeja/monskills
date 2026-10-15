@@ -45,21 +45,22 @@ Query shape comes from `indexer/schema.graphql` — whatever entities the handle
 
 ## Environment variables
 
-- **Never echo secret values back to the user.** If you read env vars via `envio-cloud indexer env list`, don't include the values in your response.
-- **Setting an env var does not restart running deployments.** Follow up with `envio-cloud deployment restart <indexer> <commit>` if the change needs to take effect on an active deployment.
+- **Keys must be prefixed with `ENVIO_`.** Syntax: `envio-cloud indexer env set <indexer> ENVIO_KEY=value`.
+- **Never echo secret values back to the user.** If you read env vars via `envio-cloud indexer env list <indexer>`, don't include the values in your response.
+- **Setting an env var does not restart running deployments.** Follow up with `envio-cloud deployment restart <indexer> <commit> --yes` if the change needs to take effect on an active deployment.
 
 ## IP allowlist — order matters
 
 Enabling the allowlist without adding the user's current IP first will lock them out of their own indexer's API. Always:
 
-1. Add the user's current IP via `envio-cloud indexer security add-ip <ip>`
-2. *Then* enable via `envio-cloud indexer security enable`
+1. Add the user's current IP via `envio-cloud indexer security add-ip <indexer> <ip>`
+2. *Then* enable via `envio-cloud indexer security enable <indexer>`
 
 Ask the user for their IP — don't assume.
 
 ## Indexer deletion is irreversible
 
-`envio-cloud indexer delete <name> <org>` cannot be undone. Confirm by name with the user before running it. Don't add retry logic around it.
+`envio-cloud indexer delete <name> <org> --yes` cannot be undone. Confirm by name with the user before running it — `--yes` skips the CLI's own prompt, so the user's confirmation is the only safeguard. Don't add retry logic around it.
 
 ## Exit codes
 

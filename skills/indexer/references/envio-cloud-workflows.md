@@ -14,9 +14,10 @@ Use when: the user wants to take a local HyperIndex project and put it on Envio 
    Ask the user for their org slug if you don't know it. Don't guess.
 3. **Register the indexer:**
    ```bash
-   envio-cloud indexer add --name <name> --repo <owner/repo>
+   envio-cloud indexer add --name <name> --repo <repo> \
+     --branch "$(git branch --show-current)" --root-dir indexer --yes
    ```
-   The `--repo` argument is `owner/repo`, not a full URL.
+   `--repo` is the bare repository name as listed by `envio-cloud repos`, not `owner/repo` or a URL. `--branch` defaults to `envio` and `--root-dir` to `./`, so pass the real branch and `indexer` (the folder this skill creates). `--yes` skips the confirmation prompt.
 4. **Wait for the deployment to build.** The add command returns a commit SHA. Poll with:
    ```bash
    envio-cloud deployment status <name> <commit>
@@ -52,7 +53,7 @@ Use when: the user wants to take a local HyperIndex project and put it on Envio 
    Do this transparently — the user shouldn't have to know about the empty-commit workaround.
 6. **Promote to production when indexing is actually progressing:**
    ```bash
-   envio-cloud deployment promote <name> "$NEW_COMMIT"
+   envio-cloud deployment promote <name> "$NEW_COMMIT" --yes
    ```
    Use the post-empty-commit SHA (`$NEW_COMMIT` from step 5) — that's the deployment that's actually indexing. Only promote after confirming the indexer is syncing and returning data as expected.
 7. **Wire the GraphQL URL into the frontend automatically** (see "Get the GraphQL endpoint URL" recipe below). If the project has a frontend (e.g. `web/`), resolve the endpoint and write it to `web/.env.local` as `NEXT_PUBLIC_INDEXER_URL` without handing a URL back to the user to paste themselves.
@@ -86,7 +87,7 @@ Fix it by pushing an empty commit to the indexer repo so Envio Cloud triggers a 
    `--watch-till-synced` streams status until all chains are 100% synced. Safe to use here because you already verified the indexer is now actually running (non-zero metrics); it would hang if the indexer were still stuck.
 4. **Re-promote** if the stuck deployment had been promoted (otherwise the promoted URL still points at the broken deployment):
    ```bash
-   envio-cloud deployment promote <indexer> "$NEW_COMMIT"
+   envio-cloud deployment promote <indexer> "$NEW_COMMIT" --yes
    ```
 5. **Re-resolve and re-wire the endpoint URL** (see the GraphQL endpoint recipe). Commit SHA changed, so the URL may have changed — update `NEXT_PUBLIC_INDEXER_URL` in the frontend env file.
 6. **Do this transparently.** The user doesn't need to know about the envio-cloud quirk — just report "indexer is now syncing" once it's unstuck.
@@ -106,13 +107,13 @@ Use when: `deployment status` shows `failed`, `errored`, or the indexer is stuck
    ```
    Persistent lag with no errors usually means underpowered resources or an RPC-side bottleneck, not a code bug.
 3. **Common causes, in order of likelihood:**
-   - Missing or wrong env var — check with `envio-cloud indexer env list`.
+   - Missing or wrong env var — check with `envio-cloud indexer env list <indexer>`.
    - Schema/handler mismatch that the CI build did not catch.
    - RPC endpoint rate-limited or wrong chain.
 4. **If you fix code**, the user pushes a new commit to GitHub, then re-deploy by running `indexer add` is **not** needed — the cloud should pick up the new commit automatically. Check with `deployment status <indexer> <new-commit>`.
 5. **If you only changed env vars**, restart the current deployment:
    ```bash
-   envio-cloud deployment restart <indexer> <commit>
+   envio-cloud deployment restart <indexer> <commit> --yes
    ```
 
 ## Rotate env vars
@@ -121,12 +122,12 @@ Use when: the user rotated an API key, RPC URL, or database credential and needs
 
 1. **Set the new value:**
    ```bash
-   envio-cloud indexer env set <KEY> <new-value>
+   envio-cloud indexer env set <indexer> ENVIO_<KEY>=<new-value>
    ```
-   Ask the user to paste the value directly into their terminal — do not ask them to send it to you.
+   Keys must be prefixed with `ENVIO_`. Ask the user to paste the value directly into their terminal — do not ask them to send it to you.
 2. **Restart the deployment** so the new value is loaded:
    ```bash
-   envio-cloud deployment restart <indexer> <commit>
+   envio-cloud deployment restart <indexer> <commit> --yes
    ```
 3. **Verify it's running** by tailing logs for a few seconds.
 4. **Never print the new value back** to the user. A generic "updated" confirmation is fine.
@@ -137,17 +138,17 @@ Use when: the user wants to restrict the indexer's API to specific IPs (e.g. the
 
 1. **Add the user's current IP first** so enabling the allowlist doesn't lock them out:
    ```bash
-   envio-cloud indexer security add-ip <user-ip>
+   envio-cloud indexer security add-ip <indexer> <user-ip>
    ```
    Ask the user for their IP — don't assume.
 2. **Add any additional IPs or CIDRs** they want allowlisted.
 3. **Enable the allowlist:**
    ```bash
-   envio-cloud indexer security enable
+   envio-cloud indexer security enable <indexer>
    ```
 4. **Confirm the current state:**
    ```bash
-   envio-cloud indexer security get
+   envio-cloud indexer security get <indexer>
    ```
 
 ## Get the GraphQL endpoint URL (and wire it into the frontend)
@@ -206,6 +207,7 @@ Use when: the user explicitly says they want to remove an indexer.
 1. **Confirm with the user by name** before running delete. Say the indexer name and org back to them and wait for explicit yes.
 2. **Run delete:**
    ```bash
-   envio-cloud indexer delete <name> <org>
+   envio-cloud indexer delete <name> <org> --yes
    ```
+   `--yes` skips the CLI's type-the-name prompt, which would hang a non-interactive shell — only pass it after the user's explicit yes.
 3. This is irreversible. Don't add retry logic around it.
